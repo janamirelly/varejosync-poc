@@ -1,0 +1,26 @@
+﻿/* VarejoSync - Evidência PI: Venda com Desconto (PDV Vendedora) */
+/* Data/Hora: 2026-02-21 11:22:09 */
+
+-- Query (simulada):
+SELECT id_venda, id_item, id_variacao, sku, produto, quantidade, preco_original, desconto_percent, desconto_valor, preco_final, subtotal, movs
+FROM vw_relatorio_rastreabilidade_venda
+WHERE id_venda = 5;
+
+-- Resultado:
+
+id_venda id_item id_variacao sku         produto         quantidade preco_original desconto_percent desconto_valor preco_fi
+                                                                                                                        nal
+-------- ------- ----------- ---         -------         ---------- -------------- ---------------- -------------- --------
+       5       5           7 CAM-PRETO-G Camiseta Básica          1              0                0              0    53,91
+
+
+
+
+-- Resumo da venda:
+
+id_venda forma_pagamento total_bruto desconto_total total_final
+-------- --------------- ----------- -------------- -----------
+       5 PIX                    59,9           5,99       53,91
+
+
+
