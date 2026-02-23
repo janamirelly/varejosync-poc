@@ -1,0 +1,11 @@
+# SQLite databases (não versionar)
+*.db
+*.db-wal
+*.db-shm
+
+# Backups / dumps comuns
+*.sqlite
+*.sqlite3
+*.bak
+*.tmp
+
