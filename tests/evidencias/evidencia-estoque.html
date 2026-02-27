@@ -1,0 +1,807 @@
+<!doctype html>
+<html lang="pt-br">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Evidência — Estoquista (PI) | VarejoSync</title>
+
+    <style>
+      :root {
+        --bg: #0b0f14;
+        --panel: #101826;
+        --panel2: #0f172a;
+        --txt: #e5e7eb;
+        --muted: #9ca3af;
+        --line: #1f2a3a;
+        --ok: #22c55e;
+        --warn: #f59e0b;
+        --bad: #ef4444;
+        --info: #60a5fa;
+        --chip: #0b1220;
+        --mono:
+          ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas,
+          "Liberation Mono", "Courier New", monospace;
+        --sans:
+          ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial,
+          "Helvetica Neue", "Noto Sans", "Liberation Sans", sans-serif;
+      }
+      * {
+        box-sizing: border-box;
+      }
+      body {
+        margin: 0;
+        background: linear-gradient(180deg, #070a0f 0%, var(--bg) 100%);
+        color: var(--txt);
+        font-family: var(--sans);
+      }
+      header {
+        border-bottom: 1px solid var(--line);
+        background: rgba(15, 23, 42, 0.4);
+      }
+      .wrap {
+        max-width: 1120px;
+        margin: 0 auto;
+        padding: 24px;
+      }
+      h1 {
+        margin: 0;
+        font-size: 20px;
+        letter-spacing: 0.2px;
+      }
+      .sub {
+        color: var(--muted);
+        font-size: 13px;
+        margin-top: 6px;
+        line-height: 1.35;
+      }
+
+      .grid {
+        display: grid;
+        gap: 14px;
+      }
+      @media (min-width: 980px) {
+        .grid {
+          grid-template-columns: 1.12fr 0.88fr;
+        }
+      }
+
+      .card {
+        background: rgba(16, 24, 38, 0.88);
+        border: 1px solid var(--line);
+        border-radius: 14px;
+        padding: 16px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+      }
+      .section {
+        margin-top: 14px;
+      }
+
+      h2 {
+        margin: 0 0 12px;
+        font-size: 14px;
+        letter-spacing: 0.2px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 10px;
+      }
+
+      .chip {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 6px 10px;
+        border-radius: 999px;
+        border: 1px solid var(--line);
+        background: rgba(11, 18, 32, 0.7);
+        font-size: 12px;
+        color: var(--muted);
+        white-space: nowrap;
+      }
+
+      .two {
+        display: grid;
+        gap: 12px;
+      }
+      @media (min-width: 980px) {
+        .two {
+          grid-template-columns: 1fr 1fr;
+        }
+      }
+
+      /* ===== Textareas: scroll discreto (vertical + horizontal) ===== */
+      textarea {
+        width: 100%;
+        min-height: 140px;
+        padding: 10px 12px;
+        border-radius: 12px;
+        border: 1px solid var(--line);
+        background: rgba(11, 18, 32, 0.9);
+        color: var(--txt);
+        outline: none;
+        font-family: var(--mono);
+        font-size: 12px;
+        line-height: 1.35;
+
+        /* JSON “bonito” */
+        white-space: pre;
+
+        /* scroll vertical e horizontal */
+        overflow-y: auto;
+        overflow-x: auto;
+
+        /* permite quebrar quando o texto for “colado” sem indentação */
+        overflow-wrap: anywhere;
+        word-break: break-word;
+
+        /* remove cantinho/resize */
+        resize: none;
+
+        /* Firefox scrollbar */
+        scrollbar-width: thin;
+        scrollbar-color: rgba(156, 163, 175, 0.35) rgba(11, 18, 32, 0.35);
+      }
+
+      /* Scrollbar: WebKit (Chrome/Edge) */
+      textarea::-webkit-scrollbar {
+        width: 10px;
+        height: 10px;
+      }
+      textarea::-webkit-scrollbar-track {
+        background: rgba(11, 18, 32, 0.35);
+        border-radius: 999px;
+      }
+      textarea::-webkit-scrollbar-thumb {
+        background: rgba(156, 163, 175, 0.28);
+        border: 1px solid rgba(31, 42, 58, 0.75);
+        border-radius: 999px;
+      }
+      textarea::-webkit-scrollbar-thumb:hover {
+        background: rgba(156, 163, 175, 0.38);
+      }
+
+      .row {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+        margin-top: 10px;
+      }
+
+      /* ===== Botões com leve destaque ===== */
+      button {
+        padding: 10px 14px;
+        border-radius: 12px;
+        border: 1px solid rgba(96, 165, 250, 0.25);
+        background: linear-gradient(
+          180deg,
+          rgba(17, 28, 45, 0.95),
+          rgba(11, 18, 32, 0.95)
+        );
+        color: var(--txt);
+        cursor: pointer;
+        font-weight: 800;
+        font-size: 13px;
+        font-family: var(--sans);
+        letter-spacing: 0.1px;
+        box-shadow: 0 10px 24px rgba(0, 0, 0, 0.25);
+      }
+      button:hover {
+        border-color: rgba(96, 165, 250, 0.45);
+        box-shadow: 0 12px 28px rgba(0, 0, 0, 0.32);
+      }
+      button:active {
+        transform: translateY(1px);
+      }
+
+      #btnLimpar {
+        border-color: rgba(156, 163, 175, 0.22);
+        background: linear-gradient(
+          180deg,
+          rgba(15, 23, 42, 0.75),
+          rgba(11, 18, 32, 0.85)
+        );
+      }
+      #btnLimpar:hover {
+        border-color: rgba(156, 163, 175, 0.4);
+      }
+
+      .small {
+        color: var(--muted);
+        font-size: 12px;
+        margin-top: 10px;
+        line-height: 1.35;
+      }
+
+      .kpis {
+        display: grid;
+        gap: 10px;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+      }
+      @media (max-width: 900px) {
+        .kpis {
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+      }
+
+      .kpi {
+        border: 1px solid var(--line);
+        background: rgba(11, 18, 32, 0.55);
+        border-radius: 14px;
+        padding: 12px;
+      }
+      .label {
+        color: var(--muted);
+        font-size: 12px;
+      }
+      .val {
+        font-size: 20px;
+        font-weight: 900;
+        margin-top: 6px;
+      }
+      .hint {
+        color: var(--muted);
+        font-size: 10px;
+        margin-top: 6px;
+        font-family: var(--mono);
+      }
+
+      .table-wrap {
+        overflow: auto;
+        border-radius: 14px;
+        border: 1px solid var(--line);
+      }
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        background: rgba(11, 18, 32, 0.35);
+      }
+      th,
+      td {
+        border-bottom: 1px solid rgba(31, 42, 58, 0.75);
+        padding: 10px 8px;
+        text-align: left;
+        font-size: 12px;
+        vertical-align: top;
+        overflow-wrap: anywhere;
+        word-break: break-word;
+      }
+      th {
+        color: #cbd5e1;
+        font-weight: 800;
+        background: rgba(15, 23, 42, 0.65);
+        position: sticky;
+        top: 0;
+      }
+
+      .muted {
+        color: var(--muted);
+      }
+
+      .pill {
+        display: inline-flex;
+        align-items: center;
+        padding: 5px 10px;
+        border-radius: 999px;
+        font-size: 12px;
+        font-weight: 900;
+        border: 1px solid var(--line);
+        background: var(--chip);
+        white-space: nowrap;
+      }
+      .p-ok {
+        color: var(--ok);
+        border-color: rgba(34, 197, 94, 0.35);
+      }
+      .p-warn {
+        color: var(--warn);
+        border-color: rgba(245, 158, 11, 0.35);
+      }
+      .p-bad {
+        color: var(--bad);
+        border-color: rgba(239, 68, 68, 0.35);
+      }
+      .p-info {
+        color: var(--info);
+        border-color: rgba(96, 165, 250, 0.35);
+      }
+
+      details {
+        border: 1px solid var(--line);
+        border-radius: 12px;
+        padding: 10px 12px;
+        background: rgba(11, 18, 32, 0.55);
+      }
+      summary {
+        cursor: pointer;
+        color: var(--muted);
+        font-size: 12px;
+      }
+      pre {
+        margin: 10px 0 0;
+        font-family: var(--mono);
+        font-size: 12px;
+        white-space: pre-wrap;
+        word-break: break-word;
+        overflow-wrap: anywhere;
+      }
+
+      #secResultados .two {
+        align-items: stretch;
+      }
+
+      #secResultados .two > div {
+        display: flex;
+        flex-direction: column;
+      }
+
+      #secResultados details {
+        flex: 1;
+        overflow: auto;
+        max-height: 260px;
+      }
+
+      @media print {
+        header,
+        button,
+        textarea {
+          display: none !important;
+        }
+        .wrap {
+          max-width: 100% !important;
+          padding: 0 !important;
+        }
+        .card {
+          box-shadow: none !important;
+        }
+        details {
+          page-break-inside: avoid;
+        }
+      }
+    </style>
+  </head>
+
+  <body>
+    <header>
+      <div class="wrap">
+        <h1>VarejoSync • Evidência Estoquista</h1>
+        <!-- <div class="sub">
+          Cole os JSONs do Postman (08.01 /estoque/detalhado, 08.02 /movimentacoes, 08.03 ajuste manual, 08.04 ajuste mínimo).<br/>
+          Esta página não chama backend — é evidência visual para prints.
+        </div> -->
+      </div>
+    </header>
+
+    <div class="wrap">
+      <div class="grid">
+        <div class="card">
+          <h2>Entrada de dados (JSON do Postman)</h2>
+
+          <div class="two">
+            <div>
+              <div class="chip">08.01 • GET /estoque/detalhado (array)</div>
+              <textarea
+                id="jsonEstoque"
+                spellcheck="false"
+                autocapitalize="off"
+                autocomplete="off"
+                autocorrect="off"
+                placeholder="Cole aqui o JSON de /estoque/detalhado (array)"
+              ></textarea>
+            </div>
+
+            <div>
+              <div class="chip">08.02 • GET /movimentacoes (array)</div>
+              <textarea
+                id="jsonMov"
+                spellcheck="false"
+                autocapitalize="off"
+                autocomplete="off"
+                autocorrect="off"
+                placeholder="Cole aqui o JSON de /movimentacoes (array)"
+              ></textarea>
+            </div>
+          </div>
+
+          <div class="two section">
+            <div>
+              <div class="chip">08.03 • POST /movimentacoes (resposta)</div>
+              <textarea
+                id="jsonAjuste"
+                spellcheck="false"
+                autocapitalize="off"
+                autocomplete="off"
+                autocorrect="off"
+                placeholder="Cole aqui a resposta do ajuste manual (08.03)"
+              ></textarea>
+            </div>
+
+            <div>
+              <div class="chip">08.04 • PUT /estoque/:id/minimo (resposta)</div>
+              <textarea
+                id="jsonMinimo"
+                spellcheck="false"
+                autocapitalize="off"
+                autocomplete="off"
+                autocorrect="off"
+                placeholder="Cole aqui a resposta do ajuste mínimo (08.04)"
+              ></textarea>
+            </div>
+          </div>
+
+          <div class="row">
+            <button id="btnRender">Renderizar evidência</button>
+            <button id="btnLimpar">Limpar</button>
+          </div>
+
+          <!-- <div class="small">
+            Dica PI: prints por partes ✅ (1) KPIs • (2) Estoque com status • (3) Movimentações com origem • (4) Resultados 08.03/08.04
+          </div> -->
+        </div>
+
+        <div class="card">
+          <h2>KPIs rápidos (derivados)</h2>
+
+          <div class="kpis">
+            <div class="kpi">
+              <div class="label">Itens no estoque</div>
+              <div class="val" id="kpiTotalItens">—</div>
+              <div class="hint">count(estoque)</div>
+            </div>
+            <div class="kpi">
+              <div class="label">Status CRITICO</div>
+              <div class="val" id="kpiCritico">—</div>
+              <div class="hint">status=CRITICO</div>
+            </div>
+            <div class="kpi">
+              <div class="label">Status ATENCAO</div>
+              <div class="val" id="kpiAtencao">—</div>
+              <div class="hint">status=ATENCAO</div>
+            </div>
+            <div class="kpi">
+              <div class="label">Status ESGOTADO</div>
+              <div class="val" id="kpiEsgotado">—</div>
+              <div class="hint">status=ESGOTADO</div>
+            </div>
+          </div>
+
+          <div class="section">
+            <div class="chip">Última movimentação</div>
+            <div class="small" id="kpiUltMov">—</div>
+          </div>
+
+          <div class="section">
+            <div class="chip">Ajuste manual (08.03)</div>
+            <div class="small" id="kpiAjuste">—</div>
+          </div>
+
+          <div class="section">
+            <div class="chip">Ajuste mínimo (08.04)</div>
+            <div class="small" id="kpiMinimo">—</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card section">
+        <h2>
+          Estoque detalhado (08.01)
+          <span class="chip"
+            >status: DISPONIVEL / ATENCAO / CRITICO / ESGOTADO</span
+          >
+        </h2>
+
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Produto</th>
+                <th>Variação</th>
+                <th>SKU</th>
+                <th>Preço</th>
+                <th>Qtd</th>
+                <th>Mín</th>
+                <th>Status</th>
+                <th>Atualizado</th>
+              </tr>
+            </thead>
+            <tbody id="tblEstoque"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="card section">
+        <h2>
+          Movimentações (08.02)
+          <span class="chip">origem: SISTEMA vs USUARIO</span>
+        </h2>
+
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Data/Hora</th>
+                <th>Tipo</th>
+                <th>Qtd</th>
+                <th>Variação</th>
+                <th>Observação</th>
+                <th>Usuário</th>
+                <th>Perfil</th>
+                <th>Origem</th>
+              </tr>
+            </thead>
+            <tbody id="tblMov"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="card section" id="secResultados">
+        <h2>
+          Resultados (08.03 e 08.04)
+          <span class="chip">respostas do Postman</span>
+        </h2>
+
+        <div class="two">
+          <div>
+            <div class="chip">08.03 • Ajuste manual (resposta)</div>
+            <div class="small" id="r083Resumo">—</div>
+            <details class="section">
+              <summary>JSON completo (08.03)</summary>
+              <pre id="r083Json">—</pre>
+            </details>
+          </div>
+
+          <div>
+            <div class="chip">08.04 • Ajuste mínimo (resposta)</div>
+            <div class="small" id="r084Resumo">—</div>
+            <details class="section">
+              <summary>JSON completo (08.04)</summary>
+              <pre id="r084Json">—</pre>
+            </details>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      function safeParse(text) {
+        const t = (text || "").trim();
+        if (!t) return null;
+        try {
+          return JSON.parse(t);
+        } catch (e) {
+          return { __erro: e.message };
+        }
+      }
+
+      function prettyTextarea(textarea) {
+        const raw = (textarea.value || "").trim();
+        if (!raw) return;
+        const obj = safeParse(raw);
+        if (obj && obj.__erro) return;
+        try {
+          textarea.value = JSON.stringify(obj, null, 2);
+        } catch {}
+      }
+
+      function pillStatus(status) {
+        const s = String(status || "").toUpperCase();
+        if (s === "DISPONIVEL")
+          return `<span class="pill p-ok">DISPONIVEL</span>`;
+        if (s === "ATENCAO") return `<span class="pill p-warn">ATENCAO</span>`;
+        if (s === "CRITICO") return `<span class="pill p-bad">CRITICO</span>`;
+        if (s === "ESGOTADO") return `<span class="pill p-bad">ESGOTADO</span>`;
+        return `<span class="pill p-info">${s || "—"}</span>`;
+      }
+
+      function pillOrigem(origem) {
+        const o = String(origem || "").toUpperCase();
+        if (o === "SISTEMA") return `<span class="pill p-info">SISTEMA</span>`;
+        if (o === "USUARIO") return `<span class="pill p-ok">USUARIO</span>`;
+        return `<span class="pill p-info">${o || "—"}</span>`;
+      }
+
+      function money(n) {
+        const x = Number(n);
+        return Number.isFinite(x) ? x.toFixed(2).replace(".", ",") : "0,00";
+      }
+
+      function renderKPIs(estoqueArr, movArr, ajusteObj, minimoObj) {
+        const total = estoqueArr.length;
+        const crit = estoqueArr.filter(
+          (x) => String(x.status).toUpperCase() === "CRITICO",
+        ).length;
+        const aten = estoqueArr.filter(
+          (x) => String(x.status).toUpperCase() === "ATENCAO",
+        ).length;
+        const esg = estoqueArr.filter(
+          (x) => String(x.status).toUpperCase() === "ESGOTADO",
+        ).length;
+
+        document.getElementById("kpiTotalItens").textContent = total;
+        document.getElementById("kpiCritico").textContent = crit;
+        document.getElementById("kpiAtencao").textContent = aten;
+        document.getElementById("kpiEsgotado").textContent = esg;
+
+        const ult = movArr && movArr.length ? movArr[0] : null;
+        document.getElementById("kpiUltMov").innerHTML = ult
+          ? `<span class="muted">${ult.criado_em}</span> • ${ult.tipo} • qtd ${ult.quantidade} • <span class="muted">${ult.origem || "—"}</span>`
+          : "—";
+
+        document.getElementById("kpiAjuste").textContent =
+          ajusteObj && !ajusteObj.__erro ? "OK (08.03)" : "—";
+        document.getElementById("kpiMinimo").textContent =
+          minimoObj && !minimoObj.__erro ? "OK (08.04)" : "—";
+      }
+
+      function renderEstoque(rows) {
+        const tbody = document.getElementById("tblEstoque");
+        tbody.innerHTML = "";
+
+        const sorted = [...rows].sort((a, b) => {
+          const pa = String(a.produto || "").localeCompare(
+            String(b.produto || ""),
+            "pt-BR",
+          );
+          if (pa !== 0) return pa;
+          return String(a.sku || "").localeCompare(
+            String(b.sku || ""),
+            "pt-BR",
+          );
+        });
+
+        for (const r of sorted) {
+          const variacao = `${r.cor || "—"} • ${r.tamanho || "—"} <span class="muted">(#${r.id_variacao})</span>`;
+          tbody.insertAdjacentHTML(
+            "beforeend",
+            `
+            <tr>
+              <td>${r.produto || "—"}</td>
+              <td>${variacao}</td>
+              <td class="muted">${r.sku || "—"}</td>
+              <td>R$ ${money(r.preco)}</td>
+              <td><b>${Number(r.quantidade ?? 0)}</b></td>
+              <td>${Number(r.estoque_min ?? 0)}</td>
+              <td>${pillStatus(r.status)}</td>
+              <td class="muted">${r.atualizado_em || "—"}</td>
+            </tr>
+          `,
+          );
+        }
+      }
+
+      function renderMov(rows) {
+        const tbody = document.getElementById("tblMov");
+        tbody.innerHTML = "";
+
+        const sorted = [...rows].sort((a, b) =>
+          String(b.criado_em || "").localeCompare(String(a.criado_em || "")),
+        );
+
+        for (const r of sorted) {
+          const usuario = `${r.usuario_nome || "—"}<br/><span class="muted">${r.usuario_email || ""}</span>`;
+          tbody.insertAdjacentHTML(
+            "beforeend",
+            `
+            <tr>
+              <td class="muted">${r.criado_em || "—"}</td>
+              <td><b>${r.tipo || "—"}</b></td>
+              <td>${Number(r.quantidade ?? 0)}</td>
+              <td class="muted">#${r.id_variacao ?? "—"}</td>
+              <td>${r.observacao || "—"}</td>
+              <td>${usuario}</td>
+              <td>${r.perfil || "—"}</td>
+              <td>${pillOrigem(r.origem)}</td>
+            </tr>
+          `,
+          );
+        }
+      }
+
+      function renderResultados(ajusteObj, minimoObj) {
+        if (ajusteObj && !ajusteObj.__erro) {
+          const ok = ajusteObj.ok === undefined ? true : !!ajusteObj.ok;
+          const idVar = ajusteObj.id_variacao ?? "—";
+          const tipo = ajusteObj.tipo ?? "—";
+          const qtd = ajusteObj.quantidade ?? "—";
+
+          document.getElementById("r083Resumo").innerHTML =
+            `<b>${ok ? "OK" : "ERRO"}</b> • variação: <b>${idVar}</b> • tipo: <b>${tipo}</b> • qtd: <b>${qtd}</b>`;
+          document.getElementById("r083Json").textContent = JSON.stringify(
+            ajusteObj,
+            null,
+            2,
+          );
+        } else {
+          document.getElementById("r083Resumo").textContent =
+            "Cole o JSON da resposta 08.03 para aparecer aqui.";
+          document.getElementById("r083Json").textContent = "—";
+        }
+
+        if (minimoObj && !minimoObj.__erro) {
+          const ok = minimoObj.ok === undefined ? true : !!minimoObj.ok;
+          const idVar = minimoObj.id_variacao ?? "—";
+          const minimo =
+            minimoObj.estoque_min ??
+            minimoObj.minimo ??
+            minimoObj.novo_minimo ??
+            minimoObj.valor ??
+            "—";
+
+          document.getElementById("r084Resumo").innerHTML =
+            `<b>${ok ? "OK" : "ERRO"}</b> • variação: <b>${idVar}</b> • novo mínimo: <b>${minimo}</b>`;
+          document.getElementById("r084Json").textContent = JSON.stringify(
+            minimoObj,
+            null,
+            2,
+          );
+        } else {
+          document.getElementById("r084Resumo").textContent =
+            "Cole o JSON da resposta 08.04 para aparecer aqui.";
+          document.getElementById("r084Json").textContent = "—";
+        }
+      }
+
+      function renderAll() {
+        ["jsonEstoque", "jsonMov", "jsonAjuste", "jsonMinimo"].forEach((id) => {
+          const el = document.getElementById(id);
+          if (el) prettyTextarea(el);
+        });
+
+        const estoque = safeParse(document.getElementById("jsonEstoque").value);
+        const mov = safeParse(document.getElementById("jsonMov").value);
+        const ajuste = safeParse(document.getElementById("jsonAjuste").value);
+        const minimo = safeParse(document.getElementById("jsonMinimo").value);
+
+        if (estoque && estoque.__erro)
+          alert("JSON Estoque inválido: " + estoque.__erro);
+        if (mov && mov.__erro)
+          alert("JSON Movimentações inválido: " + mov.__erro);
+        if (ajuste && ajuste.__erro)
+          alert("JSON Ajuste (08.03) inválido: " + ajuste.__erro);
+        if (minimo && minimo.__erro)
+          alert("JSON Mínimo (08.04) inválido: " + minimo.__erro);
+
+        const estoqueArr = Array.isArray(estoque) ? estoque : [];
+        const movArr = Array.isArray(mov) ? mov : [];
+
+        renderKPIs(estoqueArr, movArr, ajuste, minimo);
+        renderEstoque(estoqueArr);
+        renderMov(movArr);
+        renderResultados(ajuste, minimo);
+      }
+
+      function limpar() {
+        ["jsonEstoque", "jsonMov", "jsonAjuste", "jsonMinimo"].forEach((id) => {
+          const el = document.getElementById(id);
+          if (el) el.value = "";
+        });
+
+        document.getElementById("tblEstoque").innerHTML = "";
+        document.getElementById("tblMov").innerHTML = "";
+
+        ["kpiTotalItens", "kpiCritico", "kpiAtencao", "kpiEsgotado"].forEach(
+          (id) => (document.getElementById(id).textContent = "—"),
+        );
+        ["kpiUltMov", "kpiAjuste", "kpiMinimo"].forEach(
+          (id) => (document.getElementById(id).textContent = "—"),
+        );
+
+        document.getElementById("r083Resumo").textContent = "—";
+        document.getElementById("r083Json").textContent = "—";
+        document.getElementById("r084Resumo").textContent = "—";
+        document.getElementById("r084Json").textContent = "—";
+      }
+
+      document.getElementById("btnRender").addEventListener("click", renderAll);
+      document.getElementById("btnLimpar").addEventListener("click", limpar);
+
+      ["jsonEstoque", "jsonMov", "jsonAjuste", "jsonMinimo"].forEach((id) => {
+        const el = document.getElementById(id);
+        if (!el) return;
+        el.addEventListener("blur", () => prettyTextarea(el));
+        el.addEventListener("paste", () =>
+          setTimeout(() => prettyTextarea(el), 0),
+        );
+      });
+    </script>
+  </body>
+</html>

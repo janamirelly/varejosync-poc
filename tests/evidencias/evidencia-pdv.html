@@ -1,0 +1,884 @@
+<!doctype html>
+<html lang="pt-br">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Evidência — PDV (Venda OK e Bloqueio Estoque) | VarejoSync</title>
+    <style>
+      :root {
+        --bg: #0b0f14;
+        --panel: #101826;
+        --panel2: #0f172a;
+        --txt: #e5e7eb;
+        --muted: #9ca3af;
+        --line: #1f2a3a;
+        --ok: #22c55e;
+        --warn: #f59e0b;
+        --bad: #ef4444;
+        --info: #60a5fa;
+        --chip: #0b1220;
+        --mono:
+          ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas,
+          "Liberation Mono", "Courier New", monospace;
+        --sans:
+          ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial,
+          "Helvetica Neue", "Noto Sans", "Liberation Sans", sans-serif;
+      }
+      * {
+        box-sizing: border-box;
+      }
+      body {
+        margin: 0;
+        background: linear-gradient(180deg, #070a0f 0%, var(--bg) 100%);
+        color: var(--txt);
+        font-family: var(--sans);
+      }
+      .wrap {
+        max-width: 1120px;
+        margin: 0 auto;
+        padding: 24px;
+      }
+      .topbar {
+        display: flex;
+        gap: 12px;
+        align-items: flex-start;
+        justify-content: space-between;
+        flex-wrap: wrap;
+      }
+      h1 {
+        margin: 0;
+        font-size: 20px;
+        letter-spacing: 0.2px;
+      }
+      .sub {
+        color: var(--muted);
+        font-size: 13px;
+        margin-top: 6px;
+        line-height: 1.35;
+      }
+      .panel {
+        background: rgba(16, 24, 38, 0.88);
+        border: 1px solid var(--line);
+        border-radius: 14px;
+        padding: 16px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+      }
+      .grid {
+        display: grid;
+        gap: 14px;
+      }
+      @media (min-width: 980px) {
+        .grid {
+          grid-template-columns: 1.12fr 0.88fr;
+        }
+      }
+      label {
+        display: block;
+        font-size: 12px;
+        color: var(--muted);
+        margin: 10px 0 6px;
+      }
+      input,
+      textarea,
+      select {
+        width: 100%;
+        padding: 10px 12px;
+        border-radius: 10px;
+        border: 1px solid var(--line);
+        background: rgba(11, 18, 32, 0.9);
+        color: var(--txt);
+        outline: none;
+      }
+      textarea {
+        min-height: 92px;
+        font-family: var(--mono);
+        font-size: 12px;
+      }
+      .row {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+      }
+      .btn {
+        padding: 10px 12px;
+        border-radius: 12px;
+        border: 1px solid var(--line);
+        background: linear-gradient(180deg, #111c2d, #0b1220);
+        color: var(--txt);
+        cursor: pointer;
+        font-weight: 700;
+        font-size: 13px;
+      }
+      .btn:hover {
+        border-color: #2b3a52;
+      }
+      .btn.ok {
+        border-color: rgba(34, 197, 94, 0.35);
+      }
+      .btn.bad {
+        border-color: rgba(239, 68, 68, 0.35);
+      }
+      .btn.primary {
+        border-color: rgba(96, 165, 250, 0.45);
+      }
+      .btn.ghost {
+        background: transparent;
+      }
+      .chip {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 6px 10px;
+        border-radius: 999px;
+        border: 1px solid var(--line);
+        background: rgba(11, 18, 32, 0.7);
+        font-size: 12px;
+        color: var(--muted);
+      }
+      .dot {
+        width: 9px;
+        height: 9px;
+        border-radius: 99px;
+        background: var(--info);
+        display: inline-block;
+      }
+      .dot.ok {
+        background: var(--ok);
+      }
+      .dot.bad {
+        background: var(--bad);
+      }
+      .dot.warn {
+        background: var(--warn);
+      }
+      .kvs {
+        display: grid;
+        grid-template-columns: 140px 1fr;
+        gap: 8px 10px;
+        font-size: 13px;
+        margin-top: 12px;
+      }
+      .k {
+        color: var(--muted);
+      }
+      .v {
+        font-family: var(--mono);
+        font-size: 12.5px;
+        word-break: break-word;
+      }
+      details {
+        border: 1px solid var(--line);
+        border-radius: 12px;
+        padding: 10px 12px;
+        background: rgba(11, 18, 32, 0.55);
+      }
+      summary {
+        cursor: pointer;
+        color: var(--muted);
+        font-size: 12px;
+      }
+      pre {
+        margin: 10px 0 0;
+        font-family: var(--mono);
+        font-size: 12px;
+        white-space: pre-wrap;
+        word-break: break-word;
+      }
+      .statusBadge {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 6px 10px;
+        border-radius: 10px;
+        font-size: 12px;
+        border: 1px solid var(--line);
+        background: var(--chip);
+      }
+      .statusBadge.ok {
+        border-color: rgba(34, 197, 94, 0.35);
+      }
+      .statusBadge.bad {
+        border-color: rgba(239, 68, 68, 0.35);
+      }
+      .statusBadge.warn {
+        border-color: rgba(245, 158, 11, 0.35);
+      }
+      .divider {
+        height: 1px;
+        background: var(--line);
+        margin: 14px 0;
+      }
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 8px;
+      }
+      th,
+      td {
+        border-bottom: 1px solid rgba(31, 42, 58, 0.75);
+        padding: 8px 6px;
+        text-align: left;
+        font-size: 12px;
+      }
+      th {
+        color: #cbd5e1;
+        font-weight: 700;
+      }
+      .rightTop {
+        display: flex;
+        gap: 10px;
+        align-items: center;
+        justify-content: space-between;
+        flex-wrap: wrap;
+      }
+      .mini {
+        font-size: 12px;
+        color: var(--muted);
+      }
+
+      /* Modal */
+      .modalBack {
+        position: fixed;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.55);
+        display: none;
+        align-items: center;
+        justify-content: center;
+        padding: 18px;
+      }
+      .modal {
+        width: min(860px, 100%);
+        background: rgba(16, 24, 38, 0.95);
+        border: 1px solid var(--line);
+        border-radius: 16px;
+        padding: 16px;
+        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.55);
+      }
+      .modalHead {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 10px;
+      }
+      .modalTitle {
+        font-weight: 900;
+      }
+      .close {
+        background: transparent;
+        border: 1px solid var(--line);
+        color: var(--txt);
+        border-radius: 10px;
+        padding: 6px 10px;
+        cursor: pointer;
+      }
+      .smallInput {
+        font-family: var(--mono);
+        font-size: 12px;
+      }
+
+      @media print {
+        .topbar,
+        .divider,
+        .grid {
+          box-shadow: none !important;
+        }
+        details {
+          page-break-inside: avoid;
+        }
+        .modalBack {
+          position: static;
+          display: flex !important;
+          background: transparent !important;
+          padding: 0 !important;
+        }
+        .modal {
+          width: 100% !important;
+          box-shadow: none !important;
+        }
+        button,
+        input,
+        select,
+        textarea#obs {
+          display: none !important;
+        }
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="wrap">
+      <div class="topbar">
+        <div>
+          <h1>Evidência — PDV (Venda OK e Bloqueio por Estoque)</h1>
+          <div class="sub">
+            Objetivo: gerar evidências de <b>validação de estoque</b> e
+            <b>criação de venda</b>. A tela registra <b>ação</b>,
+            <b>payload</b>, <b>endpoint</b>, <b>HTTP</b> e <b>JSON</b>.
+          </div>
+        </div>
+        <div class="chip">
+          <span class="dot" id="apiDot"></span>
+          <span id="apiStatus">API não testada</span>
+        </div>
+      </div>
+
+      <div class="divider"></div>
+
+      <div class="grid">
+        <!-- CONTROLES -->
+        <div class="panel">
+          <div class="row">
+            <button
+              type="button"
+              class="btn primary"
+              id="btnPing"
+              type="button"
+            >
+              Testar API (/)
+            </button>
+            <button
+              type="button"
+              class="btn primary"
+              id="btnLogin"
+              type="button"
+            >
+              Gerar token (Vendedora)
+            </button>
+            <button
+              type="button"
+              class="btn bad"
+              id="btnBloqueio"
+              type="button"
+            >
+              BLOQUEIO: estoque insuficiente
+            </button>
+            <button type="button" class="btn ok" id="btnVendaOk" type="button">
+              VENDA OK: criar venda
+            </button>
+            <button
+              type="button"
+              class="btn ghost"
+              id="btnAbrirModal"
+              type="button"
+            >
+              Ver última execução (modal)
+            </button>
+          </div>
+
+          <label>Base URL da API</label>
+          <input id="baseUrl" value="http://localhost:3000" />
+
+          <label>Token (Authorization: Bearer ...)</label>
+          <input
+            id="token"
+            class="smallInput"
+            placeholder="Cole o token da Vendedora (/auth/login)"
+          />
+
+          <div class="row">
+            <div style="flex: 1; min-width: 240px">
+              <label>Pagamento</label>
+              <select id="pagamento">
+                <option value="CREDITO" selected>CREDITO</option>
+                <option value="DEBITO">DEBITO</option>
+                <option value="PIX">PIX</option>
+                <option value="DINHEIRO">DINHEIRO</option>
+                <option value="OUTRO">OUTRO</option>
+              </select>
+            </div>
+
+            <div style="flex: 1; min-width: 240px">
+              <label> ID variação (Item 2) para VENDA OK </label>
+              <input
+                id="idOk2"
+                class="smallInput"
+                value=""
+                placeholder="Ex.: 25 ou 6"
+              />
+            </div>
+            <div style="flex: 1; min-width: 240px">
+              <label>Desconto (%)</label>
+              <input id="descPercent" class="smallInput" value="10" />
+            </div>
+
+            <div style="flex: 1; min-width: 240px">
+              <label>Motivo do desconto</label>
+              <input
+                id="motivoDesc"
+                value="Promoção"
+              />
+            </div>
+          </div>
+
+          <label>Catálogo (apenas para evidência visual)</label>
+          <textarea readonly>
+Itens do teste:
+Itens do teste:
+- 25 → Calça jeans → 99,90
+- 6  → Camiseta   → 59,90
+- 19 → Vestido    → 129,90
+
+Cenários:
+- Bloqueio por estoque insuficiente
+- Venda concluída
+- Desconto autorizado (até 10%)
+- Bloqueio de desconto acima do limite</textarea
+          >
+
+          <label>Log / Observações</label>
+          <textarea
+            id="obs"
+            placeholder=
+          ></textarea>
+        </div>
+
+        <!-- RESULTADOS -->
+        <div class="panel">
+          <div class="rightTop">
+            <div class="statusBadge" id="badgeStatus">
+              <span class="dot" id="badgeDot"></span>
+              <span id="badgeText">Aguardando ação</span>
+            </div>
+            <div class="chip">
+              <span class="k">Última ação:</span>
+              <span class="v" id="lastAction">—</span>
+            </div>
+          </div>
+
+          <div class="kvs">
+            <div class="k">HTTP</div>
+            <div class="v" id="httpStatus">—</div>
+            <div class="k">Endpoint</div>
+            <div class="v" id="httpUrl">—</div>
+            <div class="k">Horário</div>
+            <div class="v" id="httpTime">—</div>
+            <div class="k">Resumo</div>
+            <div class="v" id="httpSummary">—</div>
+          </div>
+
+          <div class="divider"></div>
+
+          <details open>
+            <summary>Payload enviado</summary>
+            <pre id="payloadOut">{}</pre>
+          </details>
+
+          <div class="divider"></div>
+
+          <details open>
+            <summary>Resposta JSON</summary>
+            <pre id="jsonOut">{}</pre>
+          </details>
+
+          <div class="divider"></div>
+
+          <details open>
+            <summary>Itens da venda (tabela — aparece quando VENDA OK)</summary>
+            <table>
+              <thead>
+                <tr>
+                  <th>id_variacao</th>
+                  <th>qtd</th>
+                  <th>preço</th>
+                  <th>subtotal</th>
+                  <th>desconto</th>
+                </tr>
+              </thead>
+              <tbody id="tbodyItens">
+                <tr>
+                  <td colspan="5" style="color: var(--muted)">—</td>
+                </tr>
+              </tbody>
+            </table>
+          </details>
+        </div>
+      </div>
+    </div>
+
+    <!-- MODAL -->
+    <div class="modalBack" id="modalBack">
+      <div class="modal">
+        <div class="modalHead">
+          <div>
+            <div class="modalTitle">Última execução (para print)</div>
+            <div class="mini">
+              Inclui payload + resposta. Deixe aberto para o print.
+            </div>
+          </div>
+          <button type="button" class="close" id="btnClose" type="button">
+            Fechar
+          </button>
+        </div>
+        <div class="divider"></div>
+        <details open>
+          <summary>Payload</summary>
+          <pre id="modalPayload">{}</pre>
+        </details>
+        <div class="divider"></div>
+        <details open>
+          <summary>Resposta</summary>
+          <pre id="modalJson">{}</pre>
+        </details>
+      </div>
+    </div>
+
+    <script>
+      (function () {
+        const el = (id) => document.getElementById(id);
+
+        el("btnLogin").addEventListener("click", async () => {
+          const url = base() + "/auth/login";
+          const payload = { email: "vendas@varejosync.com" };
+
+          const opt = {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(payload),
+          };
+
+          setLoading(true);
+          try {
+            const r = await fetch(url, opt);
+            const json = await safeParseResponse(r);
+
+            if (r.ok && json.token) {
+              el("token").value = json.token; // preenche o campo token
+              fillResult({
+                action: "AUTH — Login POC (gerar token)",
+                method: "POST",
+                url,
+                status: r.status,
+                payload,
+                json,
+              });
+            } else {
+              fillResult({
+                action: "AUTH — Falha no login",
+                method: "POST",
+                url,
+                status: r.status,
+                payload,
+                json,
+              });
+            }
+          } catch (e) {
+            fillResult({
+              action: "AUTH — Erro de rede no login",
+              method: "POST",
+              url,
+              status: 0,
+              payload,
+              json: { erro: "Falha no fetch (rede/CORS).", detalhe: String(e) },
+            });
+          } finally {
+            setLoading(false);
+          }
+        });
+
+        function setApiStatus(ok, txt) {
+          el("apiStatus").textContent = txt;
+          el("apiDot").className = "dot " + (ok ? "ok" : "bad");
+        }
+
+        function setBadge(kind, txt) {
+          el("badgeText").textContent = txt;
+          el("badgeDot").className = "dot " + kind;
+          el("badgeStatus").className =
+            "statusBadge " +
+            (kind === "ok" ? "ok" : kind === "bad" ? "bad" : "warn");
+        }
+
+        function now() {
+          return new Date().toLocaleString("pt-BR");
+        }
+
+        function base() {
+          return el("baseUrl").value.trim().replace(/\/+$/, "");
+        }
+
+        function sanitizeToken(raw) {
+          let t = String(raw || "").trim();
+          t = t.replace(/^Bearer\s+/i, ""); // remove "Bearer " se colarem
+          t = t.replace(/\s+/g, ""); // remove quebras de linha
+          return t;
+        }
+
+        function authHeader() {
+          const token = sanitizeToken(el("token").value);
+          // já monta "Bearer <token>" certinho
+          return token ? { Authorization: "Bearer " + token } : {};
+        }
+
+        function pretty(obj) {
+          try {
+            return JSON.stringify(obj, null, 2);
+          } catch {
+            return String(obj);
+          }
+        }
+
+        async function safeParseResponse(r) {
+          const ct = (r.headers.get("content-type") || "").toLowerCase();
+          const text = await r.text();
+          if (ct.includes("application/json")) {
+            try {
+              return text ? JSON.parse(text) : {};
+            } catch {
+              return { raw: text };
+            }
+          }
+          return { raw: text };
+        }
+
+        function fillItensTable(json) {
+          const tbody = el("tbodyItens");
+          const itens = Array.isArray(json?.itens) ? json.itens : [];
+          if (!itens.length) {
+            tbody.innerHTML = `<tr><td colspan="5" style="color:var(--muted)">—</td></tr>`;
+            return;
+          }
+          tbody.innerHTML = itens
+            .map((i) => {
+              const desc =
+                i.desconto_percent && i.desconto_percent > 0
+                  ? i.desconto_percent + "%"
+                  : i.desconto_valor && i.desconto_valor > 0
+                    ? "R$ " + i.desconto_valor
+                    : "0";
+              return `
+        <tr>
+          <td>${i.id_variacao ?? ""}</td>
+          <td>${i.quantidade ?? ""}</td>
+          <td>${i.preco_unit ?? ""}</td>
+          <td>${i.subtotal ?? ""}</td>
+          <td>${desc}</td>
+        </tr>
+      `;
+            })
+            .join("");
+        }
+
+        function fillResult({ action, method, url, status, payload, json }) {
+          el("lastAction").textContent = action;
+          el("httpStatus").textContent = status;
+          el("httpUrl").textContent = method + " " + url;
+          el("httpTime").textContent = now();
+          el("payloadOut").textContent = pretty(payload);
+          el("jsonOut").textContent = pretty(json);
+          el("modalPayload").textContent = pretty(payload);
+          el("modalJson").textContent = pretty(json);
+
+          let summary = "";
+          if (status === 401)
+            summary += "401 Unauthorized — token inválido/ausente. ";
+          if (json?.id_venda) summary += `id_venda=${json.id_venda} `;
+          if (json?.forma_pagamento)
+            summary += `pagamento=${json.forma_pagamento} `;
+          if (json?.total !== undefined) summary += `total=${json.total} `;
+          if (json?.erro) summary += `erro=${json.erro} `;
+          if (json?.estoque_atual !== undefined)
+            summary += `estoque_atual=${json.estoque_atual} `;
+          if (json?.solicitado !== undefined)
+            summary += `solicitado=${json.solicitado} `;
+          el("httpSummary").textContent = summary.trim() || "—";
+
+          if (status >= 200 && status < 300) {
+            setBadge("ok", "VENDA OK (2xx)");
+          } else if (
+            status === 400 &&
+            json?.erro &&
+            String(json.erro).toLowerCase().includes("estoque")
+          ) {
+            setBadge("bad", "BLOQUEIO_ESTOQUE (400)");
+          } else if (status === 401) {
+            setBadge("warn", "401 — Unauthorized (token)");
+          } else {
+            setBadge("warn", "Falha/Validação (" + status + ")");
+          }
+
+          fillItensTable(json || {});
+          el("modalBack").style.display = "flex";
+        }
+
+        function setLoading(isLoading) {
+          // trava TODOS os botões enquanto a requisição estiver em andamento
+          document.querySelectorAll("button").forEach((b) => {
+            b.disabled = isLoading;
+            b.style.opacity = isLoading ? "0.75" : "";
+            b.style.cursor = isLoading ? "not-allowed" : "";
+          });
+        }
+
+        async function doFetch(method, path, payload) {
+          const url = base() + path;
+
+          const headers = {
+            "Content-Type": "application/json",
+            ...authHeader(),
+          };
+
+          // monta options sem body se não tiver payload
+          const opt = { method, headers };
+          if (payload !== undefined && payload !== null) {
+            opt.body = JSON.stringify(payload);
+          }
+
+          setLoading(true);
+
+          try {
+            const r = await fetch(url, opt);
+            const json = await safeParseResponse(r);
+            return { url, status: r.status, json };
+          } catch (err) {
+            // padroniza erro de rede/para evidência
+            return {
+              url,
+              status: 0,
+              json: {
+                erro: "Falha no fetch (rede/CORS).",
+                detalhe: String(err?.message || err),
+              },
+            };
+          } finally {
+            setLoading(false);
+          }
+        }
+
+        function payloadBloqueio() {
+          return {
+            forma_pagamento: el("pagamento").value,
+            itens: [
+              { id_variacao: 25, quantidade: 1, preco_unit: 99.9 },
+              { id_variacao: 13, quantidade: 999, preco_unit: 129.9 }, // bloqueio por estoque
+              { id_variacao: 6, quantidade: 1, preco_unit: 59.9 },
+            ],
+          };
+        }
+
+        function payloadVendaOk() {
+          const desc = Math.max(0, Number(el("descPercent").value || 0));
+          const motivo = String(el("motivoDesc").value || "").trim();
+
+          return {
+            forma_pagamento: el("pagamento").value,
+            itens: [
+              { id_variacao: 25, quantidade: 1, preco_unit: 99.9 },
+
+              { id_variacao: 6, quantidade: 1, preco_unit: 59.9 },
+
+              {
+                id_variacao: 19,
+                quantidade: 1,
+                preco_unit: 129.9, // PREÇO ORIGINAL (obrigatório e deve bater com o cadastro)
+                desconto_percent: desc, // ex.: 10
+                motivo_desconto: motivo, // ex.: "Promoção  (desconto autorizado)"
+              },
+            ],
+          };
+        }
+
+        function payloadVendaDesconto() {
+          const d = aplicaDesconto(129.9, el("descPercent").value);
+
+          return {
+            forma_pagamento: el("pagamento").value,
+            itens: [
+              {
+                id_variacao: 19,
+                quantidade: 1,
+                preco_unit: d.original,
+                desconto_percent: d.percent,
+                motivo_desconto: el("motivoDesc").value,
+              },
+            ],
+          };
+        }
+
+        // Eventos
+        el("btnPing").addEventListener("click", async () => {
+          try {
+            const r = await fetch(base() + "/");
+            const ct = r.headers.get("content-type") || "";
+            setApiStatus(
+              r.ok && ct.includes("application/json"),
+              `GET / -> ${r.status} (${ct})`,
+            );
+          } catch (e) {
+            setApiStatus(false, "Falha ao acessar API");
+          }
+        });
+
+        el("btnBloqueio").addEventListener("click", async () => {
+          const payload = payloadBloqueio();
+          try {
+            const { url, status, json } = await doFetch(
+              "POST",
+              "/vendas",
+              payload,
+            );
+            fillResult({
+              action: "PDV — BLOQUEIO de estoque (tentativa de venda)",
+              method: "POST",
+              url,
+              status,
+              payload,
+              json,
+            });
+          } catch (e) {
+            fillResult({
+              action: "PDV — BLOQUEIO de estoque (erro de rede)",
+              method: "POST",
+              url: base() + "/vendas",
+              status: 0,
+              payload,
+              json: { erro: "Falha no fetch.", detalhe: String(e) },
+            });
+          }
+        });
+
+        el("btnVendaOk").addEventListener("click", async () => {
+          const payload = payloadVendaOk();
+          try {
+            const { url, status, json } = await doFetch(
+              "POST",
+              "/vendas",
+              payload,
+            );
+            fillResult({
+              action: "PDV — VENDA OK (criação de venda)",
+              method: "POST",
+              url,
+              status,
+              payload,
+              json,
+            });
+          } catch (e) {
+            fillResult({
+              action: "PDV — VENDA OK (erro de rede)",
+              method: "POST",
+              url: base() + "/vendas",
+              status: 0,
+              payload,
+              json: { erro: "Falha no fetch.", detalhe: String(e) },
+            });
+          }
+        });
+
+        el("btnAbrirModal").addEventListener(
+          "click",
+          () => (el("modalBack").style.display = "flex"),
+        );
+        el("btnClose").addEventListener(
+          "click",
+          () => (el("modalBack").style.display = "none"),
+        );
+        el("modalBack").addEventListener("click", (e) => {
+          if (e.target.id === "modalBack")
+            el("modalBack").style.display = "none";
+        });
+
+        setBadge("warn", "Aguardando ação");
+      })();
+    </script>
+  </body>
+</html>

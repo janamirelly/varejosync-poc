@@ -1,0 +1,585 @@
+<!doctype html>
+<html lang="pt-br">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Evidência Fiscal - VarejoSync</title>
+    <style>
+      :root {
+        --bg: #0b0f14;
+        --panel: #101826;
+        --panel2: #0f172a;
+        --txt: #e5e7eb;
+        --muted: #9ca3af;
+        --line: #1f2a3a;
+        --ok: #22c55e;
+        --warn: #f59e0b;
+        --bad: #ef4444;
+        --info: #60a5fa;
+        --chip: #0b1220;
+        --mono:
+          ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas,
+          "Liberation Mono", "Courier New", monospace;
+        --sans:
+          ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial,
+          "Helvetica Neue", "Noto Sans", "Liberation Sans", sans-serif;
+      }
+      * {
+        box-sizing: border-box;
+      }
+      body {
+        margin: 0;
+        background: linear-gradient(180deg, #070a0f 0%, var(--bg) 100%);
+        color: var(--txt);
+        font-family: var(--sans);
+      }
+      .wrap {
+        max-width: 1100px;
+        margin: 0 auto;
+        padding: 24px;
+      }
+      .topbar {
+        display: flex;
+        gap: 12px;
+        align-items: flex-start;
+        justify-content: space-between;
+        flex-wrap: wrap;
+      }
+      h1 {
+        margin: 0;
+        font-size: 22px;
+        letter-spacing: 0.2px;
+      }
+      .sub {
+        color: var(--muted);
+        font-size: 13px;
+        margin-top: 6px;
+      }
+      .panel {
+        background: rgba(16, 24, 38, 0.85);
+        border: 1px solid var(--line);
+        border-radius: 14px;
+        padding: 16px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+      }
+      .grid {
+        display: grid;
+        gap: 14px;
+      }
+      @media (min-width: 980px) {
+        .grid {
+          grid-template-columns: 1.2fr 0.8fr;
+        }
+      }
+      label {
+        display: block;
+        font-size: 12px;
+        color: var(--muted);
+        margin: 10px 0 6px;
+      }
+      input,
+      textarea {
+        width: 100%;
+        padding: 10px 12px;
+        border-radius: 10px;
+        border: 1px solid var(--line);
+        background: rgba(11, 18, 32, 0.9);
+        color: var(--txt);
+        outline: none;
+      }
+      textarea {
+        min-height: 92px;
+        font-family: var(--mono);
+        font-size: 12px;
+      }
+      .row {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+      }
+      .btn {
+        padding: 10px 12px;
+        border-radius: 12px;
+        border: 1px solid var(--line);
+        background: linear-gradient(180deg, #111c2d, #0b1220);
+        color: var(--txt);
+        cursor: pointer;
+        font-weight: 600;
+        font-size: 13px;
+      }
+      .btn:hover {
+        border-color: #2b3a52;
+      }
+      .btn.primary {
+        border-color: #274060;
+      }
+      .btn.ok {
+        border-color: rgba(34, 197, 94, 0.35);
+      }
+      .btn.bad {
+        border-color: rgba(239, 68, 68, 0.35);
+      }
+      .btn.ghost {
+        background: transparent;
+      }
+      .chip {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 6px 10px;
+        border-radius: 999px;
+        border: 1px solid var(--line);
+        background: rgba(11, 18, 32, 0.7);
+        font-size: 12px;
+        color: var(--muted);
+      }
+      .dot {
+        width: 9px;
+        height: 9px;
+        border-radius: 99px;
+        background: var(--info);
+        display: inline-block;
+      }
+      .dot.ok {
+        background: var(--ok);
+      }
+      .dot.bad {
+        background: var(--bad);
+      }
+      .dot.warn {
+        background: var(--warn);
+      }
+      .kvs {
+        display: grid;
+        grid-template-columns: 160px 1fr;
+        gap: 8px 10px;
+        font-size: 13px;
+        margin-top: 12px;
+      }
+      .k {
+        color: var(--muted);
+      }
+      .v {
+        font-family: var(--mono);
+        font-size: 12.5px;
+        word-break: break-word;
+      }
+      details {
+        border: 1px solid var(--line);
+        border-radius: 12px;
+        padding: 10px 12px;
+        background: rgba(11, 18, 32, 0.55);
+      }
+      summary {
+        cursor: pointer;
+        color: var(--muted);
+        font-size: 12px;
+      }
+      pre {
+        margin: 10px 0 0;
+        font-family: var(--mono);
+        font-size: 12px;
+        white-space: pre-wrap;
+        word-break: break-word;
+      }
+      .statusBadge {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 6px 10px;
+        border-radius: 10px;
+        font-size: 12px;
+        border: 1px solid var(--line);
+        background: var(--chip);
+      }
+      .statusBadge.ok {
+        border-color: rgba(34, 197, 94, 0.35);
+      }
+      .statusBadge.bad {
+        border-color: rgba(239, 68, 68, 0.35);
+      }
+      .statusBadge.warn {
+        border-color: rgba(245, 158, 11, 0.35);
+      }
+      .footer {
+        margin-top: 14px;
+        color: var(--muted);
+        font-size: 12px;
+      }
+      .divider {
+        height: 1px;
+        background: var(--line);
+        margin: 14px 0;
+      }
+
+      /* Modal */
+      .modalBack {
+        position: fixed;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.55);
+        display: none;
+        align-items: center;
+        justify-content: center;
+        padding: 18px;
+      }
+      .modal {
+        width: min(780px, 100%);
+        background: rgba(16, 24, 38, 0.95);
+        border: 1px solid var(--line);
+        border-radius: 16px;
+        padding: 16px;
+        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.55);
+      }
+      .modalHead {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 10px;
+      }
+      .modalTitle {
+        font-weight: 800;
+      }
+      .close {
+        background: transparent;
+        border: 1px solid var(--line);
+        color: var(--txt);
+        border-radius: 10px;
+        padding: 6px 10px;
+        cursor: pointer;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="wrap">
+      <div class="topbar">
+        <div>
+          <h1>Evidência — Documento Fiscal (PI VarejoSync)</h1>
+          <div class="sub">
+            Objetivo: comprovar <b>Emissão Fiscal (EMITIDA)</b> e
+            <b>Bloqueio de Cancelamento (BLOQUEIO_FISCAL)</b>.
+          </div>
+        </div>
+        <div class="chip">
+          <span class="dot" id="apiDot"></span>
+          <span id="apiStatus">API não testada</span>
+        </div>
+      </div>
+
+      <div class="divider"></div>
+
+      <div class="grid">
+        <!-- CONTROLES -->
+        <div class="panel">
+          <div class="row">
+            <button type="button" class="btn primary" id="btnPing">Testar API (/)</button>
+            <button type="button" class="btn primary" id="btnLoginGerente">
+              Gerar token (Gerente)
+            </button>
+            <button type="button" class="btn ok" id="btnEmitir">Emitir Fiscal</button>
+            <button type="button" class="btn bad" id="btnCancelarVenda">
+              Cancelar Venda (gera bloqueio)
+            </button>
+            <button type="button" class="btn ghost" id="btnAbrirModal">
+              Ver última resposta (modal)
+            </button>
+          </div>
+
+          <label>Base URL da API</label>
+          <input id="baseUrl" value="http://localhost:3000" />
+
+          <label>Token (Authorization: Bearer ...)</label>
+          <input id="token" placeholder="Cole aqui o token do /auth/login" />
+
+          <div class="row">
+            <div style="flex: 1; min-width: 220px">
+              <label>ID da venda (id_venda)</label>
+              <input id="idVenda" value="2" />
+            </div>
+            <div style="flex: 1; min-width: 220px">
+              <label>Rota de cancelamento</label>
+              <input id="rotaCancel" value="/vendas/{id}/cancelar" />
+              <div class="sub">
+                Se sua rota for /cancelar/:id_venda, use <b>/cancelar/{id}</b>
+              </div>
+            </div>
+          </div>
+
+          <label>Motivo do cancelamento</label>
+          <input id="motivo" value="Teste bloqueio fiscal" />
+
+          <label>Log / Observações da evidência</label>
+          <textarea
+            id="obs"
+            placeholder="Ex.: Venda emitida e fiscal bloqueia cancelamento. Print 1: emissão. Print 2: bloqueio."
+          ></textarea>
+
+          <div class="footer">
+            
+          </div>
+        </div>
+
+        <!-- RESULTADOS -->
+        <div class="panel">
+          <div
+            style="
+              display: flex;
+              gap: 10px;
+              align-items: center;
+              justify-content: space-between;
+              flex-wrap: wrap;
+            "
+          >
+            <div class="statusBadge" id="badgeStatus">
+              <span class="dot" id="badgeDot"></span>
+              <span id="badgeText">Aguardando ação</span>
+            </div>
+            <div class="chip">
+              <span class="k">Última ação:</span>
+              <span class="v" id="lastAction">—</span>
+            </div>
+          </div>
+
+          <div class="kvs" id="kvs">
+            <div class="k">HTTP</div>
+            <div class="v" id="httpStatus">—</div>
+            <div class="k">Endpoint</div>
+            <div class="v" id="httpUrl">—</div>
+            <div class="k">Horário</div>
+            <div class="v" id="httpTime">—</div>
+            <div class="k">Resumo</div>
+            <div class="v" id="httpSummary">—</div>
+          </div>
+
+          <div class="divider"></div>
+
+          <details open>
+            <summary>Resposta JSON (para evidência técnica)</summary>
+            <pre id="jsonOut">{}</pre>
+          </details>
+
+          <div class="divider"></div>
+
+          <details>
+            <summary>Checklist do que a banca deve ver</summary>
+            <pre>
+[1] Emissão fiscal:
+    - status: EMITIDA
+    - numero e chave_acesso
+    - id_venda e valor_total
+
+[2] Bloqueio fiscal:
+    - HTTP 403
+    - erro: BLOQUEIO_FISCAL
+    - mensagem explicando que deve cancelar fiscal antes
+          </pre
+            >
+          </details>
+        </div>
+      </div>
+    </div>
+
+    <!-- MODAL -->
+    <div class="modalBack" id="modalBack">
+      <div class="modal">
+        <div class="modalHead">
+          <div class="modalTitle">
+            Última resposta (para print do bloqueio/emitida)
+          </div>
+          <button type="button" class="close" id="btnClose">Fechar</button>
+        </div>
+        <div class="divider"></div>
+        <pre id="modalJson">{}</pre>
+      </div>
+    </div>
+
+    <script>
+      const el = (id) => document.getElementById(id);
+
+      function setApiStatus(ok, txt) {
+        el("apiStatus").textContent = txt;
+        el("apiDot").className = "dot " + (ok ? "ok" : "bad");
+      }
+
+      function setBadge(kind, txt) {
+        el("badgeText").textContent = txt;
+        el("badgeDot").className = "dot " + kind;
+        el("badgeStatus").className =
+          "statusBadge " +
+          (kind === "ok" ? "ok" : kind === "bad" ? "bad" : "warn");
+      }
+
+      function now() {
+        return new Date().toLocaleString("pt-BR");
+      }
+
+      function urlFor(path) {
+        const base = el("baseUrl").value.replace(/\/+$/, "");
+        return base + path;
+      }
+
+      function getAuthHeaders() {
+        const token = el("token").value.trim();
+        return token ? { Authorization: "Bearer " + token } : {};
+      }
+
+      function pretty(obj) {
+        return JSON.stringify(obj, null, 2);
+      }
+
+      function fillResult({ action, method, url, status, json }) {
+        el("lastAction").textContent = action;
+        el("httpStatus").textContent = status;
+        el("httpUrl").textContent = method + " " + url;
+        el("httpTime").textContent = now();
+        el("jsonOut").textContent = pretty(json);
+        el("modalJson").textContent = pretty(json);
+
+        // resumo inteligente
+        let summary = "";
+        if (json && json.status) summary += `status=${json.status} `;
+        if (json && json.erro) summary += `erro=${json.erro} `;
+        if (json && json.chave_acesso) summary += `chave=${json.chave_acesso} `;
+        if (json && json.numero !== undefined)
+          summary += `numero=${json.numero} `;
+        el("httpSummary").textContent = summary.trim() || "—";
+
+        // badge
+        if (status >= 200 && status < 300) {
+          if (json?.status === "EMITIDA")
+            setBadge("ok", "Documento Fiscal EMITIDA (OK)");
+          else setBadge("ok", "Operação OK (2xx)");
+        } else if (status === 403) {
+          if (json?.erro === "BLOQUEIO_FISCAL")
+            setBadge("bad", "BLOQUEIO_FISCAL (403) — evidência correta");
+          else setBadge("warn", "403 — outra regra (ex.: mesmo dia)");
+        } else {
+          setBadge("warn", "Falha/Validação (" + status + ")");
+        }
+      }
+
+      async function doFetch(method, path, body) {
+        const url = urlFor(path);
+        const headers = {
+          "Content-Type": "application/json",
+          ...getAuthHeaders(),
+        };
+        const opt = { method, headers };
+        if (body) opt.body = JSON.stringify(body);
+
+        const r = await fetch(url, opt);
+        const status = r.status;
+
+        // tenta json, senão texto
+        let json;
+        const ct = (r.headers.get("content-type") || "").toLowerCase();
+        if (ct.includes("application/json")) {
+          json = await r.json();
+        } else {
+          const t = await r.text();
+          json = { raw: t.slice(0, 2000) };
+        }
+        return { url, status, json };
+      }
+
+      // Eventos
+      el("btnPing").addEventListener("click", async () => {
+        try {
+          const r = await fetch(urlFor("/"));
+          const ct = r.headers.get("content-type") || "";
+          setApiStatus(
+            r.ok && ct.includes("application/json"),
+            `GET / -> ${r.status} (${ct})`,
+          );
+        } catch (e) {
+          setApiStatus(false, "Falha ao acessar API");
+        }
+      });
+
+      el("btnEmitir").addEventListener("click", async () => {
+        const id = el("idVenda").value.trim();
+        const path = `/fiscal/emitir/${id}`;
+        const { url, status, json } = await doFetch("POST", path);
+        fillResult({
+          action: "Emitir Fiscal",
+          method: "POST",
+          url,
+          status,
+          json,
+        });
+      });
+
+      el("btnCancelarVenda").addEventListener("click", async () => {
+        const id = el("idVenda").value.trim();
+        const rota = el("rotaCancel").value.trim().replace("{id}", id);
+        const { url, status, json } = await doFetch("PUT", rota, {
+          motivo: el("motivo").value,
+        });
+        fillResult({
+          action: "Cancelar Venda",
+          method: "PUT",
+          url,
+          status,
+          json,
+        });
+      });
+
+      el("btnAbrirModal").addEventListener(
+        "click",
+        () => (el("modalBack").style.display = "flex"),
+      );
+      el("btnClose").addEventListener(
+        "click",
+        () => (el("modalBack").style.display = "none"),
+      );
+      el("modalBack").addEventListener("click", (e) => {
+        if (e.target.id === "modalBack") el("modalBack").style.display = "none";
+      });
+
+      el("btnLoginGerente").addEventListener("click", async () => {
+        const url = urlFor("/auth/login");
+        const payload = { email: "gerente@varejosync.com" };
+
+        try {
+          const r = await fetch(url, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(payload),
+          });
+
+          const ct = (r.headers.get("content-type") || "").toLowerCase();
+          const json = ct.includes("application/json")
+            ? await r.json()
+            : { raw: await r.text() };
+
+          if (r.ok && json.token) {
+            el("token").value = json.token;
+            fillResult({
+              action: "AUTH — Login (Gerente)",
+              method: "POST",
+              url,
+              status: r.status,
+              json,
+            });
+          } else {
+            fillResult({
+              action: "AUTH — Falha login (Gerente)",
+              method: "POST",
+              url,
+              status: r.status,
+              json,
+            });
+          }
+        } catch (e) {
+          fillResult({
+            action: "AUTH — Erro de rede login (Gerente)",
+            method: "POST",
+            url,
+            status: 0,
+            json: { erro: "Falha no fetch (rede/CORS).", detalhe: String(e) },
+          });
+        }
+      });
+    </script>
+  </body>
+</html>
