@@ -1,0 +1,777 @@
+<!doctype html>
+<html lang="pt-br">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Evidência — Bloqueios (10.xx) | VarejoSync</title>
+
+    <style>
+      :root {
+        --bg: #0b0f14;
+        --panel: #101826;
+        --panel2: #0f172a;
+        --txt: #e5e7eb;
+        --muted: #9ca3af;
+        --line: #1f2a3a;
+        --ok: #22c55e;
+        --warn: #f59e0b;
+        --bad: #ef4444;
+        --info: #60a5fa;
+        --chip: #0b1220;
+        --mono:
+          ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas,
+          "Liberation Mono", "Courier New", monospace;
+        --sans:
+          ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial,
+          "Helvetica Neue", "Noto Sans", "Liberation Sans", sans-serif;
+      }
+      * {
+        box-sizing: border-box;
+      }
+      body {
+        margin: 0;
+        background: linear-gradient(180deg, #070a0f 0%, var(--bg) 100%);
+        color: var(--txt);
+        font-family: var(--sans);
+      }
+      header {
+        border-bottom: 1px solid var(--line);
+        background: rgba(15, 23, 42, 0.4);
+      }
+      .wrap {
+        max-width: 1120px;
+        margin: 0 auto;
+        padding: 24px;
+      }
+      h1 {
+        margin: 0;
+        font-size: 20px;
+        letter-spacing: 0.2px;
+      }
+      .sub {
+        color: var(--muted);
+        font-size: 13px;
+        margin-top: 6px;
+        line-height: 1.35;
+      }
+
+      .grid {
+        display: grid;
+        gap: 14px;
+      }
+      @media (min-width: 980px) {
+        .grid {
+          grid-template-columns: 1.12fr 0.88fr;
+        }
+      }
+
+      .card {
+        background: rgba(16, 24, 38, 0.88);
+        border: 1px solid var(--line);
+        border-radius: 14px;
+        padding: 16px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+      }
+      .section {
+        margin-top: 14px;
+      }
+
+      h2 {
+        margin: 0 0 12px;
+        font-size: 14px;
+        letter-spacing: 0.2px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 10px;
+      }
+
+      .chip {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 6px 10px;
+        border-radius: 999px;
+        border: 1px solid var(--line);
+        background: rgba(11, 18, 32, 0.7);
+        font-size: 12px;
+        color: var(--muted);
+        white-space: nowrap;
+      }
+
+      .two {
+        display: grid;
+        gap: 12px;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        align-items: stretch;
+      }
+      .two > div {
+        min-width: 0;
+        display: flex;
+        flex-direction: column;
+      }
+      .two > div .chip {
+        width: 100%;
+        max-width: 100%;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+      .two > div textarea {
+        flex: 1;
+        min-height: 170px;
+        width: 100%;
+      }
+
+      textarea {
+        width: 100%;
+        min-height: 140px;
+        padding: 10px 12px;
+        margin-top: 10px;
+        border-radius: 12px;
+        border: 1px solid var(--line);
+        background: rgba(11, 18, 32, 0.9);
+        color: var(--txt);
+        outline: none;
+        font-family: var(--mono);
+        font-size: 12px;
+        line-height: 1.35;
+        white-space: pre-wrap;
+        overflow-y: auto;
+        overflow-x: auto;
+        overflow-wrap: anywhere;
+        word-break: break-word;
+        resize: none;
+        scrollbar-width: thin;
+        scrollbar-color: rgba(156, 163, 175, 0.35) rgba(11, 18, 32, 0.35);
+      }
+
+      .row {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+        margin-top: 10px;
+      }
+
+      button {
+        padding: 10px 14px;
+        border-radius: 12px;
+        border: 1px solid rgba(96, 165, 250, 0.25);
+        background: linear-gradient(
+          180deg,
+          rgba(17, 28, 45, 0.95),
+          rgba(11, 18, 32, 0.95)
+        );
+        color: var(--txt);
+        cursor: pointer;
+        font-weight: 800;
+        font-size: 13px;
+        font-family: var(--sans);
+        letter-spacing: 0.1px;
+        box-shadow: 0 10px 24px rgba(0, 0, 0, 0.25);
+      }
+      button:hover {
+        border-color: rgba(96, 165, 250, 0.45);
+        box-shadow: 0 12px 28px rgba(0, 0, 0, 0.32);
+      }
+      button:active {
+        transform: translateY(1px);
+      }
+
+      #btnLimpar {
+        border-color: rgba(156, 163, 175, 0.22);
+        background: linear-gradient(
+          180deg,
+          rgba(15, 23, 42, 0.75),
+          rgba(11, 18, 32, 0.85)
+        );
+      }
+
+      .kpis {
+        display: grid;
+        gap: 10px;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+      @media (max-width: 900px) {
+        .kpis {
+          grid-template-columns: 1fr;
+        }
+      }
+
+      .kpi {
+        border: 1px solid var(--line);
+        background: rgba(11, 18, 32, 0.55);
+        border-radius: 14px;
+        padding: 12px;
+
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        min-height: 108px;
+      }
+
+      .label {
+        color: var(--muted);
+        font-size: 12px;
+        min-height: 34px;
+      }
+
+      .val {
+        font-size: 18px;
+        font-weight: 900;
+        margin-top: 8px;
+        min-height: 34px;
+        display: flex;
+        align-items: flex-end;
+        line-height: 1.05;
+      }
+
+      .hint {
+        color: var(--muted);
+        font-size: 10px;
+        margin-top: 8px;
+        font-family: var(--mono);
+        min-height: 16px;
+        line-height: 1;
+      }
+
+      .pill {
+        display: inline-flex;
+        align-items: center;
+        padding: 5px 10px;
+        border-radius: 999px;
+        font-size: 12px;
+        font-weight: 900;
+        border: 1px solid var(--line);
+        background: var(--chip);
+        white-space: nowrap;
+      }
+      .p-ok {
+        color: var(--ok);
+        border-color: rgba(34, 197, 94, 0.35);
+      }
+      .p-warn {
+        color: var(--warn);
+        border-color: rgba(245, 158, 11, 0.35);
+      }
+      .p-bad {
+        color: var(--bad);
+        border-color: rgba(239, 68, 68, 0.35);
+      }
+      .p-info {
+        color: var(--info);
+        border-color: rgba(96, 165, 250, 0.35);
+      }
+
+      /* Resumos */
+      .resumo-box {
+        border: 1px solid var(--line);
+        border-radius: 12px;
+        padding: 10px 12px;
+        background: rgba(11, 18, 32, 0.55);
+        margin-top: 10px;
+      }
+      .resumo-title {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 6px 10px;
+        border-radius: 999px;
+        border: 1px solid var(--line);
+        background: rgba(11, 18, 32, 0.7);
+        font-size: 12px;
+        color: var(--muted);
+        white-space: nowrap;
+      }
+      .resumo-text {
+        margin-top: 10px;
+        color: var(--txt);
+        font-size: 13px;
+        line-height: 1.35;
+      }
+      .muted {
+        color: var(--muted);
+      }
+
+      /* Print */
+      @media print {
+        header,
+        button {
+          display: none !important;
+        }
+        .wrap {
+          max-width: 100% !important;
+          padding: 0 !important;
+        }
+        .card {
+          box-shadow: none !important;
+        }
+        textarea {
+          display: block !important;
+          height: auto !important;
+          max-height: none !important;
+          overflow: visible !important;
+          white-space: pre-wrap !important;
+          word-break: break-word !important;
+          overflow-wrap: anywhere !important;
+        }
+      }
+      /* melhora leitura do JSON */
+      pre {
+        background: #0b1220;
+        border: 1px solid #1f2a44;
+        border-radius: 8px;
+        padding: 14px;
+        overflow-x: auto;
+        font-size: 13px;
+        line-height: 1.5;
+      }
+
+      /* melhora tabela */
+      table {
+        border-collapse: collapse;
+        width: 100%;
+      }
+
+      table td,
+      table th {
+        padding: 10px 12px;
+      }
+
+      /* hover linha */
+      tbody tr:hover {
+        background: rgba(255, 255, 255, 0.04);
+      }
+    </style>
+  </head>
+
+  <body>
+    <header>
+      <div class="wrap">
+        <h1>VarejoSync • Evidência Bloqueios</h1>
+        <!-- <div class="sub">
+          Testes negativos (regras e segurança). Cole os JSONs do Postman e gere
+          os resumos.
+        </div> -->
+      </div>
+    </header>
+
+    <div class="wrap">
+      <div class="grid">
+        <!-- ENTRADA -->
+        <div class="card">
+          <h2>Entrada de dados (JSON do Postman)</h2>
+
+          <div class="two">
+            <div>
+              <div class="chip">10.01 • Cancelar venda com Fiscal emitida</div>
+              <textarea
+                id="json_1001"
+                spellcheck="false"
+                autocapitalize="off"
+                autocomplete="off"
+                autocorrect="off"
+                placeholder="Cole aqui a resposta do 10.01 — esperado BLOQUEIO por regra fiscal/estado"
+              ></textarea>
+            </div>
+
+            <div>
+              <div class="chip">10.03 • Preço divergente (PDV)</div>
+              <textarea
+                id="json_1003"
+                spellcheck="false"
+                autocapitalize="off"
+                autocomplete="off"
+                autocorrect="off"
+                placeholder="Cole aqui a resposta do 10.03 — esperado BLOQUEIO por divergência de preço"
+              ></textarea>
+            </div>
+          </div>
+
+          <div class="two section">
+            <div>
+              <div class="chip">10.04 • Dashboard sem perfil Gerente (403)</div>
+              <textarea
+                id="json_1004"
+                spellcheck="false"
+                autocapitalize="off"
+                autocomplete="off"
+                autocorrect="off"
+                placeholder="Cole aqui a resposta do 10.04 — esperado 403 (RBAC)"
+              ></textarea>
+            </div>
+
+            <div>
+              <div class="chip">
+                10.05 • Venda com estoque insuficiente (PDV)
+              </div>
+              <textarea
+                id="json_1005"
+                spellcheck="false"
+                autocapitalize="off"
+                autocomplete="off"
+                autocorrect="off"
+                placeholder="Cole aqui a resposta do 10.05 — esperado BLOQUEIO por estoque insuficiente"
+              ></textarea>
+            </div>
+          </div>
+
+          <div class="row">
+            <button id="btnRender">Renderizar evidência</button>
+            <button id="btnLimpar">Limpar</button>
+          </div>
+        </div>
+
+        <!-- KPIs -->
+        <div class="card">
+          <h2>KPIs rápidos (derivados)</h2>
+
+          <div class="kpis">
+            <div class="kpi">
+              <div class="label">10.01 • Fiscal emitida</div>
+              <div class="val" id="kpi_1001">—</div>
+              <div class="hint">regra fiscal</div>
+            </div>
+
+            <div class="kpi">
+              <div class="label">10.03 • Preço divergente</div>
+              <div class="val" id="kpi_1003">—</div>
+              <div class="hint">validação preço</div>
+            </div>
+
+            <div class="kpi">
+              <div class="label">10.04 • RBAC (perfil)</div>
+              <div class="val" id="kpi_1004">—</div>
+              <div class="hint">HTTP 403</div>
+            </div>
+
+            <div class="kpi">
+              <div class="label">10.05 • Estoque insuficiente</div>
+              <div class="val" id="kpi_1005">—</div>
+              <div class="hint">validação estoque</div>
+            </div>
+          </div>
+
+          <div class="resumo-box">
+            <div class="resumo-title">Resumo 10.01</div>
+            <div class="resumo-text" id="res_1001">—</div>
+          </div>
+
+          <div class="resumo-box">
+            <div class="resumo-title">Resumo 10.03</div>
+            <div class="resumo-text" id="res_1003">—</div>
+          </div>
+
+          <div class="resumo-box">
+            <div class="resumo-title">Resumo 10.04</div>
+            <div class="resumo-text" id="res_1004">—</div>
+          </div>
+
+          <div class="resumo-box">
+            <div class="resumo-title">Resumo 10.05</div>
+            <div class="resumo-text" id="res_1005">—</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      // ===== Utils =====
+      function safeParse(text) {
+        const t = (text || "").trim();
+        if (!t) return null;
+        try {
+          return JSON.parse(t);
+        } catch (e) {
+          return { __erro: e.message, __raw: t };
+        }
+      }
+
+      function prettyTextarea(textarea) {
+        const raw = (textarea.value || "").trim();
+        if (!raw) return;
+        const obj = safeParse(raw);
+        if (obj && obj.__erro) return;
+        try {
+          textarea.value = JSON.stringify(obj, null, 2);
+        } catch {}
+      }
+
+      function pill(kind, txt) {
+        const k =
+          kind === "ok"
+            ? "p-ok"
+            : kind === "bad"
+              ? "p-bad"
+              : kind === "warn"
+                ? "p-warn"
+                : "p-info";
+        return `<span class="pill ${k}">${txt}</span>`;
+      }
+
+      function getFirst(obj, keys) {
+        for (const k of keys) {
+          if (
+            obj &&
+            Object.prototype.hasOwnProperty.call(obj, k) &&
+            obj[k] != null
+          )
+            return obj[k];
+        }
+        return null;
+      }
+
+      function hasErro(obj) {
+        if (!obj || obj.__erro) return false;
+        return (
+          obj.erro !== undefined ||
+          obj.error !== undefined ||
+          obj.message !== undefined ||
+          obj.mensagem !== undefined
+        );
+      }
+
+      function normalizeErro(obj) {
+        if (!obj || obj.__erro) return "";
+        return String(
+          getFirst(obj, ["erro", "error", "message", "mensagem"]) || "",
+        );
+      }
+
+      function normalizePerfil(obj) {
+        if (!obj || obj.__erro) return null;
+        return getFirst(obj, ["perfil_atual", "perfilAtual", "perfil"]);
+      }
+
+      function normalizePermitido(obj) {
+        if (!obj || obj.__erro) return [];
+        const p = getFirst(obj, ["permitido", "roles", "perfis_permitidos"]);
+        return Array.isArray(p) ? p : [];
+      }
+
+      function normalizeIdVenda(obj) {
+        if (!obj || obj.__erro) return null;
+        return getFirst(obj, [
+          "id_venda",
+          "idVenda",
+          "id",
+          "venda_id",
+          "vendaId",
+        ]);
+      }
+
+      // Formata dinheiro pt-BR
+      function money(n) {
+        const x = Number(n);
+        return Number.isFinite(x) ? x.toFixed(2).replace(".", ",") : "—";
+      }
+
+      // ===== AutoGrow para print =====
+      function autoGrow(el) {
+        if (!el) return;
+        el.style.height = "auto";
+        el.style.height = el.scrollHeight + 2 + "px";
+      }
+
+      function autoGrowAllTextareas() {
+        document.querySelectorAll("textarea").forEach(autoGrow);
+      }
+
+      // ===== KPI/Resumo por caso =====
+      function renderCase10xx(code, obj) {
+        const kpiEl = document.getElementById("kpi_" + code);
+        const resEl = document.getElementById("res_" + code);
+
+        if (!kpiEl || !resEl) return;
+
+        if (!obj) {
+          kpiEl.textContent = "—";
+          resEl.textContent = "Cole o JSON do teste " + code + ".";
+          return;
+        }
+
+        if (obj.__erro) {
+          kpiEl.innerHTML = pill("warn", "JSON inválido");
+          resEl.innerHTML = `<span class="muted">Erro de parse:</span> ${obj.__erro}`;
+          return;
+        }
+
+        const temErro = hasErro(obj);
+
+        // Regra geral: se tem "erro" -> BLOQUEADO. Se não tem -> OK.
+        kpiEl.innerHTML = temErro ? pill("bad", "BLOQUEADO") : pill("ok", "OK");
+
+        // =========================
+        // 10.04 — RBAC (perfil)
+        // =========================
+        if (code === "1004") {
+          const perfil = normalizePerfil(obj);
+          const permitido = normalizePermitido(obj);
+
+          const perfilTxt = perfil
+            ? `<b>${perfil}</b>`
+            : `<span class="muted">—</span>`;
+          const permitidoTxt = permitido.length
+            ? `<b>${permitido.join(", ")}</b>`
+            : `<span class="muted">—</span>`;
+
+          resEl.innerHTML =
+            `RBAC • ${temErro ? pill("bad", "BLOQUEADO") : pill("ok", "OK")}` +
+            ` • Perfil atual: ${perfilTxt} • Exigido: ${permitidoTxt}`;
+          return;
+        }
+
+        // =========================
+        // 10.05 — Estoque insuficiente
+        // =========================
+        if (code === "1005") {
+          const estoqueAtual = getFirst(obj, ["estoque_atual", "estoqueAtual"]);
+          const solicitado = getFirst(obj, [
+            "solicitado",
+            "quantidade_solicitada",
+            "qtd_solicitada",
+          ]);
+          const msg = normalizeErro(obj) || "Estoque insuficiente.";
+
+          // 🔎 extrai número da variação da mensagem (ex: "variação 20")
+          let variacao = null;
+          const match = msg.match(/varia(?:ç|c)(?:a|ã)o\s*#?\s*(\d+)/i);
+          if (match && match[1]) {
+            variacao = match[1];
+          }
+
+          resEl.innerHTML =
+            `Venda` +
+            (variacao ? ` • Variação <b>#${variacao}</b>` : "") +
+            ` • ${temErro ? pill("bad", "BLOQUEADO") : pill("ok", "OK")}` +
+            (estoqueAtual != null ? ` • Atual: <b>${estoqueAtual}</b>` : "") +
+            (solicitado != null ? ` • Solicitado: <b>${solicitado}</b>` : "");
+
+          return;
+        }
+
+        // =========================
+        // 10.01 — Fiscal emitida
+        // =========================
+        if (code === "1001") {
+          const idVenda = normalizeIdVenda(obj) ?? "—";
+          const doc =
+            getFirst(obj, ["documento_fiscal", "doc_fiscal", "fiscal"]) || {};
+          const status = getFirst(doc, ["status"]) || "EMITIDA";
+          const numero = getFirst(doc, ["numero", "num"]);
+          const chave = getFirst(doc, ["chave_acesso", "chave", "chaveAcesso"]);
+
+          // Sem redundância: não repetir "Acesso negado..." etc. Aqui é regra fiscal.
+          resEl.innerHTML =
+            `Cancelamento • Venda <b>#${idVenda}</b> • ${temErro ? pill("bad", "BLOQUEADO") : pill("ok", "OK")}` +
+            ` • Documento fiscal <b>${status}</b>` +
+            (numero != null ? ` • Nº <b>${numero}</b>` : "") +
+            (chave
+              ? ` • <span class="muted">chave:</span> <span class="muted">${String(chave)}</span>`
+              : "");
+
+          return;
+        }
+
+        // =========================
+        // 10.03 — Preço divergente
+        // =========================
+        if (code === "1003") {
+          const idVar =
+            getFirst(obj, ["id_variacao", "idVariacao", "variacao_id"]) ?? "—";
+          const pc = getFirst(obj, ["preco_cadastro", "precoCadastro"]);
+          const pi = getFirst(obj, ["preco_informado", "precoInformado"]);
+          const msg = normalizeErro(obj);
+
+          resEl.innerHTML =
+            `Preço • Variação <b>#${idVar}</b> • ${temErro ? pill("bad", "BLOQUEADO") : pill("ok", "OK")}` +
+            (pc != null ? ` • Cadastro: <b>R$ ${money(pc)}</b>` : "") +
+            (pi != null ? ` • Informado: <b>R$ ${money(pi)}</b>` : "") +
+            (msg ? ` • <span class="muted">${msg}</span>` : "");
+
+          return;
+        }
+
+        // =========================
+        // Fallback (se surgir outro no futuro)
+        // =========================
+        const idVenda = normalizeIdVenda(obj);
+        const msg = normalizeErro(obj);
+
+        resEl.innerHTML =
+          `Teste ${code} • ${temErro ? pill("bad", "BLOQUEADO") : pill("ok", "OK")}` +
+          (idVenda ? ` • Venda <b>#${idVenda}</b>` : "") +
+          (msg ? ` • <span class="muted">${msg}</span>` : "");
+      }
+
+      function renderAll() {
+        const ids = ["json_1001", "json_1003", "json_1004", "json_1005"];
+        ids.forEach((id) => {
+          const el = document.getElementById(id);
+          if (el) prettyTextarea(el);
+        });
+
+        const o1001 = safeParse(document.getElementById("json_1001").value);
+        const o1003 = safeParse(document.getElementById("json_1003").value);
+        const o1004 = safeParse(document.getElementById("json_1004").value);
+        const o1005 = safeParse(document.getElementById("json_1005").value);
+
+        if (o1001 && o1001.__erro)
+          alert("JSON 10.01 inválido: " + o1001.__erro);
+        if (o1003 && o1003.__erro)
+          alert("JSON 10.03 inválido: " + o1003.__erro);
+        if (o1004 && o1004.__erro)
+          alert("JSON 10.04 inválido: " + o1004.__erro);
+        if (o1005 && o1005.__erro)
+          alert("JSON 10.05 inválido: " + o1005.__erro);
+
+        renderCase10xx("1001", o1001);
+        renderCase10xx("1003", o1003);
+        renderCase10xx("1004", o1004);
+        renderCase10xx("1005", o1005);
+
+        autoGrowAllTextareas();
+      }
+
+      function limpar() {
+        ["json_1001", "json_1003", "json_1004", "json_1005"].forEach((id) => {
+          const el = document.getElementById(id);
+          if (el) el.value = "";
+        });
+
+        ["kpi_1001", "kpi_1003", "kpi_1004", "kpi_1005"].forEach((id) => {
+          const el = document.getElementById(id);
+          if (el) el.textContent = "—";
+        });
+
+        ["res_1001", "res_1003", "res_1004", "res_1005"].forEach((id) => {
+          const el = document.getElementById(id);
+          if (el) el.textContent = "—";
+        });
+
+        autoGrowAllTextareas();
+      }
+
+      document.getElementById("btnRender").addEventListener("click", renderAll);
+      document.getElementById("btnLimpar").addEventListener("click", limpar);
+
+      ["json_1001", "json_1003", "json_1004", "json_1005"].forEach((id) => {
+        const el = document.getElementById(id);
+        if (!el) return;
+        el.addEventListener("blur", () => {
+          prettyTextarea(el);
+          autoGrow(el);
+        });
+        el.addEventListener("paste", () =>
+          setTimeout(() => {
+            prettyTextarea(el);
+            autoGrow(el);
+          }, 0),
+        );
+        el.addEventListener("input", () => autoGrow(el));
+      });
+
+      window.addEventListener("beforeprint", autoGrowAllTextareas);
+    </script>
+  </body>
+</html>
