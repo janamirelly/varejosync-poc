@@ -3,7 +3,8 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width,initial-scale=1" />
-    <title>Evidência Fiscal - VarejoSync</title>
+    <title>Evidência — Fiscal | VarejoSync</title>
+
     <style>
       :root {
         --bg: #0b0f14;
@@ -24,146 +25,377 @@
           ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial,
           "Helvetica Neue", "Noto Sans", "Liberation Sans", sans-serif;
       }
+
       * {
         box-sizing: border-box;
       }
+
       body {
         margin: 0;
         background: linear-gradient(180deg, #070a0f 0%, var(--bg) 100%);
         color: var(--txt);
         font-family: var(--sans);
       }
+
+      header {
+        border-bottom: 1px solid var(--line);
+        background: rgba(15, 23, 42, 0.4);
+      }
+
       .wrap {
-        max-width: 1100px;
+        max-width: 1120px;
         margin: 0 auto;
         padding: 24px;
       }
-      .topbar {
-        display: flex;
-        gap: 12px;
-        align-items: flex-start;
-        justify-content: space-between;
-        flex-wrap: wrap;
-      }
+
       h1 {
         margin: 0;
-        font-size: 22px;
+        font-size: 20px;
         letter-spacing: 0.2px;
       }
+
       .sub {
         color: var(--muted);
         font-size: 13px;
         margin-top: 6px;
+        line-height: 1.45;
       }
-      .panel {
-        background: rgba(16, 24, 38, 0.85);
-        border: 1px solid var(--line);
-        border-radius: 14px;
-        padding: 16px;
-        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
-      }
+
       .grid {
         display: grid;
         gap: 14px;
       }
       @media (min-width: 980px) {
         .grid {
-          grid-template-columns: 1.2fr 0.8fr;
+          grid-template-columns: 1.12fr 0.88fr;
         }
       }
-      label {
-        display: block;
-        font-size: 12px;
-        color: var(--muted);
-        margin: 10px 0 6px;
-      }
-      input,
-      textarea {
-        width: 100%;
-        padding: 10px 12px;
-        border-radius: 10px;
+
+      .card {
+        background: rgba(16, 24, 38, 0.88);
         border: 1px solid var(--line);
-        background: rgba(11, 18, 32, 0.9);
-        color: var(--txt);
-        outline: none;
+        border-radius: 14px;
+        padding: 16px;
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.35);
       }
-      textarea {
-        min-height: 92px;
-        font-family: var(--mono);
-        font-size: 12px;
+
+      .section {
+        margin-top: 14px;
       }
-      .row {
+
+      h2 {
+        margin: 0 0 12px;
+        font-size: 14px;
+        letter-spacing: 0.2px;
         display: flex;
+        align-items: center;
+        justify-content: space-between;
         gap: 10px;
-        flex-wrap: wrap;
       }
-      .btn {
-        padding: 10px 12px;
-        border-radius: 12px;
-        border: 1px solid var(--line);
-        background: linear-gradient(180deg, #111c2d, #0b1220);
-        color: var(--txt);
-        cursor: pointer;
-        font-weight: 600;
-        font-size: 13px;
-      }
-      .btn:hover {
-        border-color: #2b3a52;
-      }
-      .btn.primary {
-        border-color: #274060;
-      }
-      .btn.ok {
-        border-color: rgba(34, 197, 94, 0.35);
-      }
-      .btn.bad {
-        border-color: rgba(239, 68, 68, 0.35);
-      }
-      .btn.ghost {
-        background: transparent;
-      }
+
       .chip {
         display: inline-flex;
         align-items: center;
         gap: 8px;
         padding: 6px 10px;
+        letter-spacing: 0.4px;
         border-radius: 999px;
         border: 1px solid var(--line);
         background: rgba(11, 18, 32, 0.7);
         font-size: 12px;
         color: var(--muted);
+        white-space: nowrap;
       }
-      .dot {
-        width: 9px;
-        height: 9px;
-        border-radius: 99px;
-        background: var(--info);
-        display: inline-block;
-      }
-      .dot.ok {
-        background: var(--ok);
-      }
-      .dot.bad {
-        background: var(--bad);
-      }
-      .dot.warn {
-        background: var(--warn);
-      }
-      .kvs {
+
+      .two {
         display: grid;
-        grid-template-columns: 160px 1fr;
-        gap: 8px 10px;
-        font-size: 13px;
-        margin-top: 12px;
+        gap: 12px;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        align-items: stretch;
       }
-      .k {
-        color: var(--muted);
+      @media (max-width: 980px) {
+        .two {
+          grid-template-columns: 1fr;
+        }
       }
-      .v {
+      .two > div {
+        min-width: 0;
+        display: flex;
+        flex-direction: column;
+      }
+      .two > div .chip {
+        width: 100%;
+        max-width: 100%;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+
+      /* Resultados: 3 colunas no desktop */
+      .three {
+        display: grid;
+        gap: 12px;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        align-items: stretch;
+      }
+      @media (max-width: 980px) {
+        .three {
+          grid-template-columns: 1fr;
+        }
+      }
+      .three > div {
+        min-width: 0;
+        display: flex;
+        flex-direction: column;
+      }
+
+      textarea {
+        width: 100%;
+        min-height: 160px;
+        padding: 10px 12px;
+        margin-top: 10px;
+        border-radius: 12px;
+        border: 1px solid rgba(120, 160, 255, 0.15);
+        background: #081322;
+        color: var(--txt);
+        outline: none;
         font-family: var(--mono);
-        font-size: 12.5px;
+        font-size: 12px;
+        line-height: 1.45;
+
+        white-space: pre-wrap;
+        overflow-x: hidden;
+        overflow-y: auto;
+        word-break: normal;
+        overflow-wrap: normal;
+
+        resize: none;
+        scrollbar-width: thin;
+        scrollbar-color: rgba(156, 163, 175, 0.35) rgba(11, 18, 32, 0.35);
+      }
+      textarea::-webkit-scrollbar {
+        width: 10px;
+        height: 10px;
+      }
+      textarea::-webkit-scrollbar-track {
+        background: rgba(11, 18, 32, 0.35);
+        border-radius: 999px;
+      }
+      textarea::-webkit-scrollbar-thumb {
+        background: rgba(156, 163, 175, 0.28);
+        border: 1px solid rgba(31, 42, 58, 0.75);
+        border-radius: 999px;
+      }
+      textarea::-webkit-scrollbar-thumb:hover {
+        background: rgba(156, 163, 175, 0.38);
+      }
+
+      .row {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+        margin-top: 10px;
+      }
+
+      button {
+        padding: 10px 14px;
+        border-radius: 12px;
+        border: 1px solid rgba(96, 165, 250, 0.25);
+        background: linear-gradient(
+          180deg,
+          rgba(17, 28, 45, 0.95),
+          rgba(11, 18, 32, 0.95)
+        );
+        color: var(--txt);
+        cursor: pointer;
+        font-weight: 800;
+        font-size: 13px;
+        font-family: var(--sans);
+        letter-spacing: 0.1px;
+        box-shadow: 0 10px 24px rgba(0, 0, 0, 0.25);
+      }
+      button:hover {
+        border-color: rgba(96, 165, 250, 0.45);
+        box-shadow: 0 12px 28px rgba(0, 0, 0, 0.32);
+      }
+      button:active {
+        transform: translateY(1px);
+      }
+
+      #btnLimpar {
+        border-color: rgba(156, 163, 175, 0.22);
+        background: linear-gradient(
+          180deg,
+          rgba(15, 23, 42, 0.75),
+          rgba(11, 18, 32, 0.85)
+        );
+      }
+      #btnLimpar:hover {
+        border-color: rgba(156, 163, 175, 0.4);
+      }
+
+      .kpis {
+        display: grid;
+        gap: 10px;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+      }
+      @media (max-width: 900px) {
+        .kpis {
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+      }
+      .kpi {
+        border: 1px solid var(--line);
+        background: linear-gradient(180deg, #0f1f35, #0b1627);
+        border-radius: 14px;
+        padding: 12px;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        min-height: 120px;
+      }
+      .label {
+        color: var(--muted);
+        font-size: 12px;
+      }
+      .val {
+        font-size: 20px;
+        font-weight: 900;
+        margin-top: 6px;
+      }
+
+      .kpi {
+        min-width: 0;
+        overflow: hidden;
+      }
+
+      .kpi .val {
+        display: flex;
+        align-items: center;
+        justify-content: flex-start;
+        gap: 8px;
+        min-height: 34px;
+
+        /* permite quebrar sem “empurrar” o card */
+        white-space: normal;
+        overflow-wrap: anywhere;
+        word-break: break-word;
+
+        /* evita altura infinita */
+        max-height: 48px;
+        overflow: hidden;
+      }
+      /* KPI: quando o valor for uma pill, mantém padrão visual */
+      .kpi .val .pill {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        padding: 7px 14px;
+        border-radius: 999px;
+        line-height: 1;
+        white-space: nowrap;
+        font-size: 12px;
+        font-weight: 900;
+        max-width: 100%;
+      }
+      #kpiPeriodo_0602 .nobr {
+        white-space: nowrap;
+      }
+
+      #kpiPeriodo_0602 {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 2px;
+        max-height: none;
+        overflow: visible;
+        font-size: 12px;
+        line-height: 1.25;
+        font-weight: 700;
+
+        /* permite quebrar APENAS entre as datas (por causa dos espaços) */
+        white-space: normal;
+        overflow-wrap: normal;
+        word-break: normal;
+      }
+      #kpiPeriodo_0602 .muted {
+        font-size: 14px;
+      }
+
+      .hint {
+        color: var(--muted);
+        font-size: 10px;
+        margin-top: 6px;
+        font-family: var(--mono);
+      }
+
+      .table-wrap {
+        overflow: auto;
+        border-radius: 14px;
+        border: 1px solid var(--line);
+      }
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        background: rgba(11, 18, 32, 0.35);
+      }
+      th,
+      td {
+        border-bottom: 1px solid rgba(31, 42, 58, 0.75);
+        padding: 10px 8px;
+        text-align: left;
+        font-size: 12px;
+        vertical-align: top;
+        overflow-wrap: anywhere;
         word-break: break-word;
       }
+      th {
+        color: #cbd5e1;
+        font-weight: 800;
+        background: rgba(15, 23, 42, 0.65);
+        position: sticky;
+        top: 0;
+      }
+      tbody tr:hover {
+        background: rgba(255, 255, 255, 0.04);
+      }
+
+      .muted {
+        color: var(--muted);
+      }
+
+      .pill {
+        display: inline-flex;
+        align-items: center;
+        padding: 5px 10px;
+        border-radius: 999px;
+        font-size: 12px;
+        font-weight: 900;
+        border: 1px solid var(--line);
+        background: var(--chip);
+        white-space: nowrap;
+      }
+      /* Status docs (06.02) menor */
+      #kpiStatusPeriodo .pill {
+        font-size: 10px;
+        padding: 4px 8px;
+      }
+      .p-ok {
+        color: var(--ok);
+        border-color: rgba(34, 197, 94, 0.35);
+      }
+      .p-warn {
+        color: var(--warn);
+        border-color: rgba(245, 158, 11, 0.35);
+      }
+      .p-bad {
+        color: var(--bad);
+        border-color: rgba(239, 68, 68, 0.35);
+      }
+      .p-info {
+        color: var(--info);
+        border-color: rgba(96, 165, 250, 0.35);
+      }
+
       details {
         border: 1px solid var(--line);
         border-radius: 12px;
@@ -175,411 +407,1274 @@
         color: var(--muted);
         font-size: 12px;
       }
+
+      /* JSON: scroll interno discreto + altura fixa para não desalinha */
+      #secResultados details {
+        flex: 1;
+        overflow: auto;
+        max-height: 360px;
+        min-height: 360px;
+        scrollbar-width: thin;
+        scrollbar-color: rgba(156, 163, 175, 0.25) rgba(11, 18, 32, 0.25);
+      }
+      #secResultados details::-webkit-scrollbar {
+        width: 10px;
+      }
+      #secResultados details::-webkit-scrollbar-track {
+        background: rgba(11, 18, 32, 0.25);
+        border-radius: 999px;
+      }
+      #secResultados details::-webkit-scrollbar-thumb {
+        background: rgba(156, 163, 175, 0.22);
+        border: 1px solid rgba(31, 42, 58, 0.75);
+        border-radius: 999px;
+      }
+
+      #secResultados .three > div {
+        /* garante “corpo” consistente em cada coluna */
+        min-height: 460px;
+      }
+
+      #secResultados .three > div > .sub {
+        min-height: 34px;
+        max-height: 34px;
+        overflow: hidden;
+
+        display: -webkit-box;
+        -webkit-box-orient: vertical;
+        -webkit-line-clamp: 2;
+      }
+
+      /* mantém o bloco rolável estável mesmo quando aberto */
+      #secResultados details[open] {
+        overflow: auto;
+      }
+      #secResultados summary {
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+
       pre {
         margin: 10px 0 0;
         font-family: var(--mono);
         font-size: 12px;
-        white-space: pre-wrap;
-        word-break: break-word;
-      }
-      .statusBadge {
-        display: inline-flex;
-        align-items: center;
-        gap: 8px;
-        padding: 6px 10px;
-        border-radius: 10px;
-        font-size: 12px;
-        border: 1px solid var(--line);
-        background: var(--chip);
-      }
-      .statusBadge.ok {
-        border-color: rgba(34, 197, 94, 0.35);
-      }
-      .statusBadge.bad {
-        border-color: rgba(239, 68, 68, 0.35);
-      }
-      .statusBadge.warn {
-        border-color: rgba(245, 158, 11, 0.35);
-      }
-      .footer {
-        margin-top: 14px;
-        color: var(--muted);
-        font-size: 12px;
-      }
-      .divider {
-        height: 1px;
-        background: var(--line);
-        margin: 14px 0;
+        white-space: pre;
+        overflow-x: auto;
+        line-height: 1.5;
+        background: #0b1220;
+        border: 1px solid #1f2a44;
+        border-radius: 8px;
+        padding: 14px;
       }
 
-      /* Modal */
-      .modalBack {
-        position: fixed;
-        inset: 0;
-        background: rgba(0, 0, 0, 0.55);
-        display: none;
-        align-items: center;
-        justify-content: center;
-        padding: 18px;
+      @media print {
+        header,
+        button,
+        textarea {
+          display: none !important;
+        }
+        .wrap {
+          max-width: 100% !important;
+          padding: 0 !important;
+        }
+        .card {
+          box-shadow: none !important;
+        }
+        details {
+          page-break-inside: avoid;
+        }
+
+        .kpi {
+          min-height: 128px;
+        }
+
+        .kpi .val {
+          /* anula o que estava comprimindo/cortando */
+          max-height: none !important;
+          overflow: visible !important;
+
+          display: flex;
+          align-items: center;
+          min-height: 44px;
+          margin-top: 6px;
+        }
+
+        .kpi .val {
+          white-space: nowrap;
+        }
+
+        /* 4) Período (06.02): permite 2 linhas */
+        #kpiPeriodo_0602 {
+          white-space: normal !important;
+          flex-direction: column;
+          align-items: flex-start;
+          gap: 4px;
+          line-height: 1.28;
+          font-weight: 800;
+          font-size: 18px;
+        }
+        #kpiPeriodo_0602 .nobr {
+          white-space: nowrap;
+          display: inline-block;
+        }
+        #kpiPeriodo_0602 .muted {
+          font-size: 14px;
+          font-weight: 700;
+          line-height: 1;
+        }
+
+        /* 5) Status docs (06.02) menor e proporcional */
+        #kpiStatusPeriodo .pill {
+          font-size: 10px;
+          padding: 4px 8px;
+        }
+
+        .kpi .val .pill {
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
+        }
       }
-      .modal {
-        width: min(780px, 100%);
-        background: rgba(16, 24, 38, 0.95);
-        border: 1px solid var(--line);
-        border-radius: 16px;
-        padding: 16px;
-        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.55);
+      #kpiReq_0602 {
+        white-space: pre-line;
+        font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+        font-size: 13px;
       }
-      .modalHead {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        gap: 10px;
-      }
-      .modalTitle {
-        font-weight: 800;
-      }
-      .close {
-        background: transparent;
-        border: 1px solid var(--line);
-        color: var(--txt);
-        border-radius: 10px;
-        padding: 6px 10px;
-        cursor: pointer;
+      #entradaDados {
+        opacity: 0.92;
       }
     </style>
   </head>
 
   <body>
+    <header>
+      <div class="wrap">
+        <h1>VarejoSync • Evidência Fiscal</h1>
+        <div class="sub">
+          Escopo: <b>05.10</b> (Criar venda fiscal) • <b>06.01</b> (Emitir
+          documento fiscal) • <b>06.02</b> (Fiscal por período)
+          <span class="chip">Perfil: Gerente de Operações</span>
+        </div>
+      </div>
+    </header>
+
     <div class="wrap">
-      <div class="topbar">
-        <div>
-          <h1>Evidência — Documento Fiscal (PI VarejoSync)</h1>
-          <div class="sub">
-            Objetivo: comprovar <b>Emissão Fiscal (EMITIDA)</b> e
-            <b>Bloqueio de Cancelamento (BLOQUEIO_FISCAL)</b>.
-          </div>
-        </div>
-        <div class="chip">
-          <span class="dot" id="apiDot"></span>
-          <span id="apiStatus">API não testada</span>
-        </div>
-      </div>
-
-      <div class="divider"></div>
-
       <div class="grid">
-        <!-- CONTROLES -->
-        <div class="panel">
-          <div class="row">
-            <button type="button" class="btn primary" id="btnPing">Testar API (/)</button>
-            <button type="button" class="btn primary" id="btnLoginGerente">
-              Gerar token (Gerente)
-            </button>
-            <button type="button" class="btn ok" id="btnEmitir">Emitir Fiscal</button>
-            <button type="button" class="btn bad" id="btnCancelarVenda">
-              Cancelar Venda (gera bloqueio)
-            </button>
-            <button type="button" class="btn ghost" id="btnAbrirModal">
-              Ver última resposta (modal)
-            </button>
+        <!-- ENTRADA -->
+        <div class="card">
+          <h2>Entrada de dados (JSON do Postman)</h2>
+
+          <div class="two" id="entradaDados">
+            <div>
+              <div class="chip">05.10 • Criar venda fiscal (resposta)</div>
+              <textarea
+                id="jsonVenda_0510"
+                spellcheck="false"
+                autocapitalize="off"
+                autocomplete="off"
+                autocorrect="off"
+                placeholder="Cole aqui a resposta 05.10 — ex.: { id_venda, forma_pagamento, total, itens:[...] }"
+              ></textarea>
+            </div>
+
+            <div>
+              <div class="chip">06.01 • Emitir documento fiscal (resposta)</div>
+              <textarea
+                id="jsonFiscal_0601"
+                spellcheck="false"
+                autocapitalize="off"
+                autocomplete="off"
+                autocorrect="off"
+                placeholder="Cole aqui a resposta 06.01 — ex.: { ok, id_documento, id_venda, numero, serie, status:'EMITIDA', chave_acesso, valor_total, emitido_em }"
+              ></textarea>
+            </div>
+
+            <div>
+              <div class="chip">06.02 • Fiscal por período (resposta)</div>
+              <textarea
+                id="jsonFiscalPeriodo_0602"
+                spellcheck="false"
+                autocapitalize="off"
+                autocomplete="off"
+                autocorrect="off"
+                placeholder="Cole aqui a resposta 06.02 — pode vir como ARRAY (ex.: [{dia,status,qtd_documentos,total}]) ou wrapper (ex.: {periodo:{inicio,fim}, documentos:[...]})"
+              ></textarea>
+            </div>
+
+            <!-- 4º card (Entrada) — evidência forte do request -->
+            <div>
+              <div class="chip">06.02 • Request executado no Postman</div>
+              <textarea
+                id="txtReq_0602"
+                spellcheck="false"
+                autocapitalize="off"
+                autocomplete="off"
+                autocorrect="off"
+                placeholder="Cole aqui a URL do Postman (ex.: GET /relatorios/fiscal?inicio=2026-03-01&fim=2026-03-31) + observação do teste"
+              ></textarea>
+            </div>
           </div>
 
-          <label>Base URL da API</label>
-          <input id="baseUrl" value="http://localhost:3000" />
-
-          <label>Token (Authorization: Bearer ...)</label>
-          <input id="token" placeholder="Cole aqui o token do /auth/login" />
-
           <div class="row">
-            <div style="flex: 1; min-width: 220px">
-              <label>ID da venda (id_venda)</label>
-              <input id="idVenda" value="2" />
-            </div>
-            <div style="flex: 1; min-width: 220px">
-              <label>Rota de cancelamento</label>
-              <input id="rotaCancel" value="/vendas/{id}/cancelar" />
-              <div class="sub">
-                Se sua rota for /cancelar/:id_venda, use <b>/cancelar/{id}</b>
-              </div>
-            </div>
-          </div>
-
-          <label>Motivo do cancelamento</label>
-          <input id="motivo" value="Teste bloqueio fiscal" />
-
-          <label>Log / Observações da evidência</label>
-          <textarea
-            id="obs"
-            placeholder="Ex.: Venda emitida e fiscal bloqueia cancelamento. Print 1: emissão. Print 2: bloqueio."
-          ></textarea>
-
-          <div class="footer">
-            
+            <button id="btnRender">Renderizar evidência</button>
+            <button id="btnLimpar">Limpar</button>
           </div>
         </div>
 
-        <!-- RESULTADOS -->
-        <div class="panel">
-          <div
-            style="
-              display: flex;
-              gap: 10px;
-              align-items: center;
-              justify-content: space-between;
-              flex-wrap: wrap;
-            "
-          >
-            <div class="statusBadge" id="badgeStatus">
-              <span class="dot" id="badgeDot"></span>
-              <span id="badgeText">Aguardando ação</span>
+        <!-- KPIs -->
+        <div class="card">
+          <h2>KPIs rápidos (derivados)</h2>
+
+          <div class="kpis">
+            <div class="kpi">
+              <div class="label">Venda fiscal (05.10)</div>
+              <div class="val" id="kpiVenda">—</div>
+              <div class="hint">id_venda</div>
             </div>
-            <div class="chip">
-              <span class="k">Última ação:</span>
-              <span class="v" id="lastAction">—</span>
+
+            <div class="kpi">
+              <div class="label">Total venda (05.10)</div>
+              <div class="val" id="kpiTotalVenda">—</div>
+              <div class="hint">total</div>
+            </div>
+
+            <div class="kpi">
+              <div class="label">Status fiscal (06.01)</div>
+              <div class="val" id="kpiStatusFiscal">—</div>
+              <div class="hint">status</div>
+            </div>
+
+            <div class="kpi">
+              <div class="label">Documento (06.01)</div>
+              <div class="val" id="kpiDocFiscal">—</div>
+              <div class="hint">id_documento</div>
+            </div>
+
+            <div class="kpi">
+              <div class="label">Docs no período (06.02)</div>
+              <div class="val" id="kpiQtdDocs_0602">—</div>
+              <div class="hint">qtd_documentos</div>
+            </div>
+
+            <div class="kpi">
+              <div class="label">Total fiscal período (06.02)</div>
+              <div class="val" id="kpiTotalDocs_0602">—</div>
+              <div class="hint">soma total</div>
+            </div>
+
+            <div class="kpi">
+              <div class="label">Status docs (06.02)</div>
+              <div class="val" id="kpiStatusPeriodo">—</div>
+              <div class="hint">status: qtd</div>
+            </div>
+
+            <div class="kpi">
+              <div class="label">Período (06.02)</div>
+              <div class="val" id="kpiPeriodo_0602">—</div>
+              <div class="hint">ini → fim</div>
             </div>
           </div>
 
-          <div class="kvs" id="kvs">
-            <div class="k">HTTP</div>
-            <div class="v" id="httpStatus">—</div>
-            <div class="k">Endpoint</div>
-            <div class="v" id="httpUrl">—</div>
-            <div class="k">Horário</div>
-            <div class="v" id="httpTime">—</div>
-            <div class="k">Resumo</div>
-            <div class="v" id="httpSummary">—</div>
+          <div class="section">
+            <div class="chip">Resumo venda (05.10)</div>
+            <div class="sub" id="kpiResumoVenda">—</div>
           </div>
 
-          <div class="divider"></div>
+          <div class="section">
+            <div class="chip">Resumo emissão (06.01)</div>
+            <div class="sub" id="kpiResumoFiscal">—</div>
+          </div>
 
-          <details open>
-            <summary>Resposta JSON (para evidência técnica)</summary>
-            <pre id="jsonOut">{}</pre>
-          </details>
-
-          <div class="divider"></div>
-
-          <details>
-            <summary>Checklist do que a banca deve ver</summary>
-            <pre>
-[1] Emissão fiscal:
-    - status: EMITIDA
-    - numero e chave_acesso
-    - id_venda e valor_total
-
-[2] Bloqueio fiscal:
-    - HTTP 403
-    - erro: BLOQUEIO_FISCAL
-    - mensagem explicando que deve cancelar fiscal antes
-          </pre
-            >
-          </details>
+          <div class="section">
+            <div class="chip">Resumo fiscal período (06.02)</div>
+            <div class="sub" id="kpiResumoPeriodo_0602">—</div>
+          </div>
+          <div class="section">
+            <div class="chip">Request executado (06.02)</div>
+            <div class="sub" id="kpiReq_0602">—</div>
+          </div>
         </div>
       </div>
-    </div>
 
-    <!-- MODAL -->
-    <div class="modalBack" id="modalBack">
-      <div class="modal">
-        <div class="modalHead">
-          <div class="modalTitle">
-            Última resposta (para print do bloqueio/emitida)
-          </div>
-          <button type="button" class="close" id="btnClose">Fechar</button>
+      <!-- DOC FISCAL -->
+      <div class="card section">
+        <h2>Documento fiscal (06.01)</h2>
+
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Campo</th>
+                <th>Valor</th>
+              </tr>
+            </thead>
+            <tbody id="tblFiscalCampos"></tbody>
+          </table>
         </div>
-        <div class="divider"></div>
-        <pre id="modalJson">{}</pre>
+      </div>
+
+      <!-- CARD: 06.02 tabela -->
+      <div class="card section">
+        <h2>
+          Fiscal por período (06.02)
+          <span class="chip">vw_relatorio_fiscal_periodo</span>
+        </h2>
+
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Dia</th>
+                <th>Status</th>
+                <th>Qtd documentos</th>
+                <th>Total</th>
+              </tr>
+            </thead>
+            <tbody id="tblFiscalPeriodo"></tbody>
+          </table>
+        </div>
+
+        <div class="sub section muted" id="tblFiscalPeriodoHint">
+          Cole o JSON 06.02 para renderizar a tabela do período.
+        </div>
+
+        <div class="section">
+          <div class="chip">Resumo por status (06.02)</div>
+          <div class="table-wrap section">
+            <table>
+              <thead>
+                <tr>
+                  <th>Status</th>
+                  <th>Qtd docs</th>
+                  <th>Total</th>
+                </tr>
+              </thead>
+              <tbody id="tblFiscalPeriodoStatus"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- ITENS -->
+      <div class="card section">
+        <h2>
+          Itens da venda fiscal (05.10)
+          <span class="chip">tabela derivada de itens</span>
+        </h2>
+
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>id_variacao</th>
+                <th>Qtd</th>
+                <th>Preço unit</th>
+                <th>Subtotal</th>
+                <th>Desconto</th>
+                <th>Motivo</th>
+              </tr>
+            </thead>
+            <tbody id="tblItens"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- RESULTADOS JSON -->
+      <div class="card section" id="secResultados">
+        <h2>Resultados (JSON completo)</h2>
+
+        <div class="three">
+          <div>
+            <div class="chip">05.10 • JSON completo</div>
+            <div class="sub" id="r0510Resumo">—</div>
+            <details class="section">
+              <summary>JSON completo (05.10)</summary>
+              <pre id="r0510Json">—</pre>
+            </details>
+          </div>
+
+          <div>
+            <div class="chip">06.01 • JSON completo</div>
+            <div class="sub" id="r0601Resumo">—</div>
+            <details class="section">
+              <summary>JSON completo (06.01)</summary>
+              <pre id="r0601Json">—</pre>
+            </details>
+          </div>
+
+          <div>
+            <div class="chip">06.02 • JSON completo</div>
+            <div class="sub" id="r0602Resumo">—</div>
+            <details class="section">
+              <summary>JSON completo (06.02)</summary>
+              <pre id="r0602Json">—</pre>
+            </details>
+          </div>
+        </div>
       </div>
     </div>
 
     <script>
-      const el = (id) => document.getElementById(id);
-
-      function setApiStatus(ok, txt) {
-        el("apiStatus").textContent = txt;
-        el("apiDot").className = "dot " + (ok ? "ok" : "bad");
-      }
-
-      function setBadge(kind, txt) {
-        el("badgeText").textContent = txt;
-        el("badgeDot").className = "dot " + kind;
-        el("badgeStatus").className =
-          "statusBadge " +
-          (kind === "ok" ? "ok" : kind === "bad" ? "bad" : "warn");
-      }
-
-      function now() {
-        return new Date().toLocaleString("pt-BR");
-      }
-
-      function urlFor(path) {
-        const base = el("baseUrl").value.replace(/\/+$/, "");
-        return base + path;
-      }
-
-      function getAuthHeaders() {
-        const token = el("token").value.trim();
-        return token ? { Authorization: "Bearer " + token } : {};
-      }
-
-      function pretty(obj) {
-        return JSON.stringify(obj, null, 2);
-      }
-
-      function fillResult({ action, method, url, status, json }) {
-        el("lastAction").textContent = action;
-        el("httpStatus").textContent = status;
-        el("httpUrl").textContent = method + " " + url;
-        el("httpTime").textContent = now();
-        el("jsonOut").textContent = pretty(json);
-        el("modalJson").textContent = pretty(json);
-
-        // resumo inteligente
-        let summary = "";
-        if (json && json.status) summary += `status=${json.status} `;
-        if (json && json.erro) summary += `erro=${json.erro} `;
-        if (json && json.chave_acesso) summary += `chave=${json.chave_acesso} `;
-        if (json && json.numero !== undefined)
-          summary += `numero=${json.numero} `;
-        el("httpSummary").textContent = summary.trim() || "—";
-
-        // badge
-        if (status >= 200 && status < 300) {
-          if (json?.status === "EMITIDA")
-            setBadge("ok", "Documento Fiscal EMITIDA (OK)");
-          else setBadge("ok", "Operação OK (2xx)");
-        } else if (status === 403) {
-          if (json?.erro === "BLOQUEIO_FISCAL")
-            setBadge("bad", "BLOQUEIO_FISCAL (403) — evidência correta");
-          else setBadge("warn", "403 — outra regra (ex.: mesmo dia)");
-        } else {
-          setBadge("warn", "Falha/Validação (" + status + ")");
-        }
-      }
-
-      async function doFetch(method, path, body) {
-        const url = urlFor(path);
-        const headers = {
-          "Content-Type": "application/json",
-          ...getAuthHeaders(),
-        };
-        const opt = { method, headers };
-        if (body) opt.body = JSON.stringify(body);
-
-        const r = await fetch(url, opt);
-        const status = r.status;
-
-        // tenta json, senão texto
-        let json;
-        const ct = (r.headers.get("content-type") || "").toLowerCase();
-        if (ct.includes("application/json")) {
-          json = await r.json();
-        } else {
-          const t = await r.text();
-          json = { raw: t.slice(0, 2000) };
-        }
-        return { url, status, json };
-      }
-
-      // Eventos
-      el("btnPing").addEventListener("click", async () => {
+      // =========================
+      // Utils
+      // =========================
+      function safeParse(text) {
+        const t = (text || "").trim();
+        if (!t) return null;
         try {
-          const r = await fetch(urlFor("/"));
-          const ct = r.headers.get("content-type") || "";
-          setApiStatus(
-            r.ok && ct.includes("application/json"),
-            `GET / -> ${r.status} (${ct})`,
-          );
+          return JSON.parse(t);
         } catch (e) {
-          setApiStatus(false, "Falha ao acessar API");
+          return { __erro: e.message, __raw: t };
         }
-      });
+      }
 
-      el("btnEmitir").addEventListener("click", async () => {
-        const id = el("idVenda").value.trim();
-        const path = `/fiscal/emitir/${id}`;
-        const { url, status, json } = await doFetch("POST", path);
-        fillResult({
-          action: "Emitir Fiscal",
-          method: "POST",
-          url,
-          status,
-          json,
-        });
-      });
-
-      el("btnCancelarVenda").addEventListener("click", async () => {
-        const id = el("idVenda").value.trim();
-        const rota = el("rotaCancel").value.trim().replace("{id}", id);
-        const { url, status, json } = await doFetch("PUT", rota, {
-          motivo: el("motivo").value,
-        });
-        fillResult({
-          action: "Cancelar Venda",
-          method: "PUT",
-          url,
-          status,
-          json,
-        });
-      });
-
-      el("btnAbrirModal").addEventListener(
-        "click",
-        () => (el("modalBack").style.display = "flex"),
-      );
-      el("btnClose").addEventListener(
-        "click",
-        () => (el("modalBack").style.display = "none"),
-      );
-      el("modalBack").addEventListener("click", (e) => {
-        if (e.target.id === "modalBack") el("modalBack").style.display = "none";
-      });
-
-      el("btnLoginGerente").addEventListener("click", async () => {
-        const url = urlFor("/auth/login");
-        const payload = { email: "gerente@varejosync.com" };
-
+      function prettyTextarea(textarea) {
+        const raw = (textarea.value || "").trim();
+        if (!raw) return;
+        const obj = safeParse(raw);
+        if (obj && obj.__erro) return;
         try {
-          const r = await fetch(url, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(payload),
-          });
+          textarea.value = JSON.stringify(obj, null, 2);
+        } catch {}
+      }
 
-          const ct = (r.headers.get("content-type") || "").toLowerCase();
-          const json = ct.includes("application/json")
-            ? await r.json()
-            : { raw: await r.text() };
+      function money(n) {
+        const x = Number(n);
+        return Number.isFinite(x) ? x.toFixed(2).replace(".", ",") : "—";
+      }
 
-          if (r.ok && json.token) {
-            el("token").value = json.token;
-            fillResult({
-              action: "AUTH — Login (Gerente)",
-              method: "POST",
-              url,
-              status: r.status,
-              json,
-            });
-          } else {
-            fillResult({
-              action: "AUTH — Falha login (Gerente)",
-              method: "POST",
-              url,
-              status: r.status,
-              json,
-            });
+      function formatDateBR(dateStr) {
+        if (!dateStr) return null;
+        const parts = String(dateStr).split(" ");
+        if (parts.length < 2) return dateStr;
+        const [datePart, timePart] = parts;
+        const d = datePart.split("-");
+        if (d.length !== 3) return dateStr;
+        const [year, month, day] = d;
+        return `${day}/${month}/${year} ${timePart}`;
+      }
+
+      function formatDiaBR(dia) {
+        if (!dia) return "—";
+        const s = String(dia);
+        const p = s.split("-");
+        if (p.length !== 3) return s;
+        return `${p[2]}/${p[1]}/${p[0]}`;
+      }
+
+      function pill(kind, txt) {
+        const k =
+          kind === "ok"
+            ? "p-ok"
+            : kind === "bad"
+              ? "p-bad"
+              : kind === "warn"
+                ? "p-warn"
+                : "p-info";
+        return `<span class="pill ${k}">${txt}</span>`;
+      }
+
+      function getFirst(obj, keys) {
+        for (const k of keys) {
+          if (
+            obj &&
+            Object.prototype.hasOwnProperty.call(obj, k) &&
+            obj[k] !== undefined &&
+            obj[k] !== null
+          ) {
+            return obj[k];
           }
-        } catch (e) {
-          fillResult({
-            action: "AUTH — Erro de rede login (Gerente)",
-            method: "POST",
-            url,
-            status: 0,
-            json: { erro: "Falha no fetch (rede/CORS).", detalhe: String(e) },
-          });
         }
+        return null;
+      }
+
+      function hasErro(obj) {
+        if (!obj || obj.__erro) return false;
+        return (
+          obj.erro !== undefined ||
+          obj.error !== undefined ||
+          obj.message !== undefined ||
+          obj.mensagem !== undefined
+        );
+      }
+
+      function normalizeMsg(obj) {
+        if (!obj || obj.__erro) return "";
+        return String(getFirst(obj, ["mensagem", "message"]) || "");
+      }
+
+      function normalizeErroCode(obj) {
+        if (!obj || obj.__erro) return "";
+        return String(getFirst(obj, ["erro", "error"]) || "");
+      }
+
+      // =========================
+      // 05.10 (Venda fiscal)
+      // =========================
+      function normalizeIdVenda(obj) {
+        if (!obj || obj.__erro) return null;
+        return getFirst(obj, [
+          "id_venda",
+          "idVenda",
+          "id",
+          "venda_id",
+          "vendaId",
+        ]);
+      }
+
+      function normalizeTotal(obj) {
+        if (!obj || obj.__erro) return null;
+        return getFirst(obj, [
+          "total",
+          "valor_total",
+          "total_venda",
+          "total_final",
+        ]);
+      }
+
+      function normalizePagamento(obj) {
+        if (!obj || obj.__erro) return null;
+        return getFirst(obj, [
+          "forma_pagamento",
+          "pagamento",
+          "formaPagamento",
+        ]);
+      }
+
+      function normalizeItens(obj) {
+        if (!obj || obj.__erro) return [];
+        const itens = getFirst(obj, ["itens", "items", "produtos", "linhas"]);
+        return Array.isArray(itens) ? itens : [];
+      }
+
+      // =========================
+      // 06.01 (Documento fiscal)
+      // =========================
+      function normalizeDocumentoContainer(obj) {
+        if (!obj || obj.__erro) return null;
+        return (
+          getFirst(obj, [
+            "documento",
+            "documento_fiscal",
+            "nota_fiscal",
+            "fiscal",
+          ]) || obj
+        );
+      }
+
+      function normalizeDocId(doc) {
+        if (!doc) return null;
+        return getFirst(doc, [
+          "id_documento",
+          "idDocumento",
+          "id",
+          "documento_id",
+        ]);
+      }
+
+      function normalizeDocStatus(doc) {
+        if (!doc) return null;
+        return getFirst(doc, ["status", "situacao"]);
+      }
+
+      function normalizeDocNumero(doc) {
+        if (!doc) return null;
+        return getFirst(doc, ["numero", "n_numero", "num"]);
+      }
+
+      function normalizeDocSerie(doc) {
+        if (!doc) return null;
+        return getFirst(doc, ["serie", "série"]);
+      }
+
+      function normalizeDocChave(doc) {
+        if (!doc) return null;
+        return getFirst(doc, ["chave_acesso", "chaveAcesso", "chave"]);
+      }
+
+      function normalizeDocValor(doc) {
+        if (!doc) return null;
+        return getFirst(doc, ["valor_total", "valorTotal", "total", "valor"]);
+      }
+
+      function normalizeDocEmitidoEm(doc) {
+        if (!doc) return null;
+        return getFirst(doc, [
+          "emitido_em",
+          "emitidoEm",
+          "data_emissao",
+          "dataEmissao",
+        ]);
+      }
+
+      // =========================
+      // 06.02 (Fiscal por período)
+      // =========================
+      function normalizePeriodo(obj) {
+        if (!obj || obj.__erro) return { ini: null, fim: null };
+        if (Array.isArray(obj)) return { ini: null, fim: null };
+        const p = getFirst(obj, ["periodo", "período"]) || obj;
+        const ini = getFirst(p, ["inicio", "data_inicio", "from", "dt_ini"]);
+        const fim = getFirst(p, ["fim", "data_fim", "to", "dt_fim"]);
+        return { ini, fim };
+      }
+
+      function normalizeDocsPeriodo(obj) {
+        if (!obj || obj.__erro) return [];
+        if (Array.isArray(obj)) return obj;
+
+        const docs = getFirst(obj, [
+          "documentos",
+          "docs",
+          "data",
+          "rows",
+          "result",
+        ]);
+        return Array.isArray(docs) ? docs : [];
+      }
+
+      function normalizeQtdDocsPeriodo(obj) {
+        if (!obj || obj.__erro) return null;
+
+        if (Array.isArray(obj)) {
+          let soma = 0;
+          let achouQtd = false;
+          for (const d of obj) {
+            const q = getFirst(d, ["qtd_documentos", "qtdDocs", "count"]);
+            const n = Number(q);
+            if (Number.isFinite(n)) {
+              soma += n;
+              achouQtd = true;
+            }
+          }
+          return achouQtd ? soma : obj.length;
+        }
+
+        const n = getFirst(obj, [
+          "total_documentos",
+          "totalDocs",
+          "qtd_documentos",
+          "qtdDocs",
+          "count",
+          "total",
+        ]);
+        if (Number.isFinite(Number(n))) return Number(n);
+
+        const docs = normalizeDocsPeriodo(obj);
+        return docs.length;
+      }
+
+      function normalizeTotalPeriodo(obj) {
+        if (!obj || obj.__erro) return null;
+
+        if (!Array.isArray(obj)) {
+          const v = getFirst(obj, [
+            "valor_total",
+            "total",
+            "total_geral",
+            "totalFinal",
+          ]);
+          const n = Number(v);
+          if (Number.isFinite(n)) return n;
+        }
+
+        const docs = normalizeDocsPeriodo(obj);
+        if (!docs.length) return 0;
+
+        let soma = 0;
+        for (const d of docs) {
+          const val = getFirst(d, [
+            "total",
+            "valor_total",
+            "valorTotal",
+            "valor",
+          ]);
+          const num = Number(val);
+          if (Number.isFinite(num)) soma += num;
+        }
+        return soma;
+      }
+
+      function normalizeStatusPeriodo(rows) {
+        if (!Array.isArray(rows) || rows.length === 0) return {};
+        const map = {};
+        for (const r of rows) {
+          const status = getFirst(r, ["status", "situacao"]) || "OUTRO";
+          const qtd = Number(getFirst(r, ["qtd_documentos", "count"]) || 0);
+          map[status] = (map[status] || 0) + (Number.isFinite(qtd) ? qtd : 0);
+        }
+        return map;
+      }
+
+      function derivePeriodoFromRows(rows) {
+        if (!Array.isArray(rows) || rows.length === 0)
+          return { ini: null, fim: null };
+
+        const dias = rows
+          .map((r) => getFirst(r, ["dia", "data", "dt", "date"]))
+          .filter(Boolean)
+          .map(String);
+
+        if (!dias.length) return { ini: null, fim: null };
+
+        dias.sort(); // yyyy-mm-dd ordena bem
+        return { ini: dias[0], fim: dias[dias.length - 1] };
+      }
+
+      // =========================
+      // DOM helpers
+      // =========================
+      function setText(id, txt) {
+        const el = document.getElementById(id);
+        if (el) el.textContent = txt;
+      }
+
+      function setHTML(id, html) {
+        const el = document.getElementById(id);
+        if (el) el.innerHTML = html;
+      }
+
+      // =========================
+      // AutoGrow
+      // =========================
+      function autoGrow(el) {
+        if (!el) return;
+        el.style.height = "auto";
+        el.style.height = el.scrollHeight + 2 + "px";
+      }
+      function autoGrowAllTextareas() {
+        document.querySelectorAll("textarea").forEach(autoGrow);
+      }
+
+      // =========================
+      // Render tabelas
+      // =========================
+      function renderTabelaFiscalCampos(
+        docData,
+        vendaId,
+        totalVenda,
+        bloqueado,
+      ) {
+        const tbody = document.getElementById("tblFiscalCampos");
+        if (!tbody) return;
+
+        const docId = normalizeDocId(docData);
+        const status = normalizeDocStatus(docData);
+        const numero = normalizeDocNumero(docData);
+        const serie = normalizeDocSerie(docData);
+        const chave = normalizeDocChave(docData);
+        const valorDoc = normalizeDocValor(docData);
+        const emitidoEm = normalizeDocEmitidoEm(docData);
+
+        const valorFinal =
+          (valorDoc != null ? valorDoc : totalVenda) != null
+            ? "R$ " + money(valorDoc != null ? valorDoc : totalVenda)
+            : "—";
+
+        const rows = [
+          ["ok", bloqueado ? "false" : "true"],
+          ["id_documento", docId != null ? String(docId) : "—"],
+          ["id_venda", vendaId != null ? String(vendaId) : "—"],
+          ["numero", numero != null ? String(numero) : "—"],
+          ["serie", serie != null ? String(serie) : "—"],
+          ["status", status != null ? String(status) : "—"],
+          ["chave_acesso", chave != null ? String(chave) : "—"],
+          ["valor_total", valorFinal],
+          ["emitido_em", emitidoEm != null ? formatDateBR(emitidoEm) : "—"],
+        ];
+
+        tbody.innerHTML = rows
+          .map(
+            ([k, v]) => `
+            <tr>
+              <td class="muted"><b>${k}</b></td>
+              <td>${v}</td>
+            </tr>`,
+          )
+          .join("");
+      }
+
+      function renderTabelaItensVenda(itens) {
+        const tbody = document.getElementById("tblItens");
+        if (!tbody) return;
+
+        if (!itens || !itens.length) {
+          tbody.innerHTML = `<tr><td colspan="6" class="muted">Cole o JSON 05.10 para renderizar os itens.</td></tr>`;
+          return;
+        }
+
+        tbody.innerHTML = "";
+        for (const i of itens) {
+          const idVar =
+            getFirst(i, [
+              "id_variacao",
+              "idVariacao",
+              "variacao_id",
+              "id_variation",
+            ]) ?? "—";
+          const qtd = Number(getFirst(i, ["quantidade", "qtd", "qty"]) ?? 0);
+          const preco =
+            getFirst(i, [
+              "preco_unit",
+              "preco_unitario",
+              "preco",
+              "valor_unit",
+              "precoUnit",
+            ]) ?? 0;
+          const subtotal =
+            getFirst(i, ["subtotal", "valor_subtotal", "sub_total"]) ?? null;
+
+          const descPercent = getFirst(i, [
+            "desconto_percent",
+            "descontoPercent",
+            "percentual_desconto",
+          ]);
+          const descValor = getFirst(i, [
+            "desconto_valor",
+            "descontoValor",
+            "valor_desconto",
+            "desconto",
+          ]);
+          const motivo =
+            getFirst(i, ["motivo_desconto", "motivo", "justificativa"]) ?? "—";
+
+          const descText =
+            descPercent != null && Number(descPercent) > 0
+              ? String(descPercent) + "%"
+              : descValor != null && Number(descValor) > 0
+                ? "R$ " + money(descValor)
+                : "R$ 0,00";
+
+          tbody.insertAdjacentHTML(
+            "beforeend",
+            `
+            <tr>
+              <td class="muted">Variação #${idVar}</td>
+              <td><b>${Number.isFinite(qtd) ? qtd : 0}</b></td>
+              <td>R$ ${money(preco)}</td>
+              <td>${subtotal != null ? "R$ " + money(subtotal) : `<span class="muted">—</span>`}</td>
+              <td>${descText}</td>
+              <td class="muted">${motivo}</td>
+            </tr>`,
+          );
+        }
+      }
+
+      function renderTabelaFiscalPeriodo(rows) {
+        const tbody = document.getElementById("tblFiscalPeriodo");
+        const hint = document.getElementById("tblFiscalPeriodoHint");
+        if (!tbody) return;
+
+        if (!rows || !rows.length) {
+          tbody.innerHTML = `<tr><td colspan="4" class="muted">Sem dados no período informado.</td></tr>`;
+          if (hint)
+            hint.textContent =
+              "Dica: ajuste inicio/fim para incluir a data de emissão (ex.: 2026-03-01 a 2026-03-31).";
+          return;
+        }
+
+        if (hint)
+          hint.textContent = "Tabela agregada por dia e status (06.02).";
+
+        tbody.innerHTML = "";
+        for (const r of rows) {
+          const dia = getFirst(r, ["dia", "data", "dt", "date"]) ?? "—";
+          const status = getFirst(r, ["status", "situacao"]) ?? "—";
+          const qtd =
+            getFirst(r, ["qtd_documentos", "qtdDocs", "count"]) ?? "—";
+          const total =
+            getFirst(r, ["total", "valor_total", "valorTotal", "valor"]) ??
+            null;
+
+          tbody.insertAdjacentHTML(
+            "beforeend",
+            `
+            <tr>
+              <td class="muted"><b>${formatDiaBR(dia)}</b></td>
+              <td>${status}</td>
+              <td><b>${qtd}</b></td>
+              <td>${total != null ? "R$ " + money(total) : "<span class='muted'>—</span>"}</td>
+            </tr>`,
+          );
+        }
+      }
+
+      function renderTabelaFiscalPeriodoStatus(rows) {
+        const tbody = document.getElementById("tblFiscalPeriodoStatus");
+        if (!tbody) return;
+
+        if (!rows || !rows.length) {
+          tbody.innerHTML = `<tr><td colspan="3" class="muted">Cole o JSON 06.02 para renderizar o resumo por status.</td></tr>`;
+          return;
+        }
+
+        // agrega por status (qtd + total)
+        const acc = {};
+        for (const r of rows) {
+          const status = String(getFirst(r, ["status", "situacao"]) ?? "OUTRO");
+          const qtd = Number(
+            getFirst(r, ["qtd_documentos", "qtdDocs", "count"]) ?? 0,
+          );
+          const total = Number(
+            getFirst(r, ["total", "valor_total", "valorTotal", "valor"]) ?? 0,
+          );
+
+          if (!acc[status]) acc[status] = { qtd: 0, total: 0 };
+          acc[status].qtd += Number.isFinite(qtd) ? qtd : 0;
+          acc[status].total += Number.isFinite(total) ? total : 0;
+        }
+
+        const entries = Object.entries(acc).sort((a, b) =>
+          a[0].localeCompare(b[0]),
+        );
+
+        tbody.innerHTML = "";
+        for (const [status, v] of entries) {
+          tbody.insertAdjacentHTML(
+            "beforeend",
+            `
+            <tr>
+              <td><b>${status}</b></td>
+              <td><b>${v.qtd}</b></td>
+              <td>R$ ${money(v.total)}</td>
+            </tr>`,
+          );
+        }
+      }
+
+      // =========================
+      // Render principal
+      // =========================
+      function renderAll() {
+        const ta0510 = document.getElementById("jsonVenda_0510");
+        const ta0601 = document.getElementById("jsonFiscal_0601");
+        const ta0602 = document.getElementById("jsonFiscalPeriodo_0602");
+        const taReq0602 = document.getElementById("txtReq_0602");
+
+        const req0602 = (
+          taReq0602 && taReq0602.value ? taReq0602.value : ""
+        ).trim();
+        setText("kpiReq_0602", req0602 || "—");
+
+        if (ta0510) prettyTextarea(ta0510);
+        if (ta0601) prettyTextarea(ta0601);
+        if (ta0602) prettyTextarea(ta0602);
+
+        const o0510 = safeParse((ta0510 && ta0510.value) || "");
+        const o0601 = safeParse((ta0601 && ta0601.value) || "");
+        const o0602 = safeParse((ta0602 && ta0602.value) || "");
+
+        if (o0510 && o0510.__erro)
+          alert("JSON 05.10 inválido: " + o0510.__erro);
+        if (o0601 && o0601.__erro)
+          alert("JSON 06.01 inválido: " + o0601.__erro);
+        if (o0602 && o0602.__erro)
+          alert("JSON 06.02 inválido: " + o0602.__erro);
+
+        // ---------- 05.10
+        const idVenda = normalizeIdVenda(o0510);
+        const totalVenda = normalizeTotal(o0510);
+        const pgto = normalizePagamento(o0510);
+        const itens = normalizeItens(o0510);
+
+        setHTML("kpiVenda", idVenda != null ? pill("ok", "#" + idVenda) : "—");
+        setText(
+          "kpiTotalVenda",
+          totalVenda != null ? "R$ " + money(totalVenda) : "—",
+        );
+
+        setHTML(
+          "kpiResumoVenda",
+          idVenda != null
+            ? `Venda: ${pill("ok", "OK")} • id_venda <b>#${idVenda}</b>` +
+                (pgto ? ` • pagamento <b>${pgto}</b>` : "") +
+                (totalVenda != null
+                  ? ` • total <b>R$ ${money(totalVenda)}</b>`
+                  : "") +
+                ` • itens <b>${itens.length}</b>`
+            : "—",
+        );
+
+        // ---------- 06.01
+        const bloqueado0601 = hasErro(o0601);
+        const msgErro0601 = normalizeErroCode(o0601);
+        const msgHuman0601 = normalizeMsg(o0601);
+        const docContainer = normalizeDocumentoContainer(o0601);
+
+        const docId = normalizeDocId(docContainer);
+        const docStatus = normalizeDocStatus(docContainer);
+        const docNumero = normalizeDocNumero(docContainer);
+        const docSerie = normalizeDocSerie(docContainer);
+        const docChave = normalizeDocChave(docContainer);
+        const docValor = normalizeDocValor(docContainer);
+        const docEmitidoEm = normalizeDocEmitidoEm(docContainer);
+
+        setHTML(
+          "kpiStatusFiscal",
+          docStatus
+            ? pill(bloqueado0601 ? "bad" : "ok", String(docStatus))
+            : bloqueado0601
+              ? pill("bad", "BLOQUEADO")
+              : "—",
+        );
+
+        setHTML(
+          "kpiDocFiscal",
+          docId != null ? pill("info", "#" + docId) : "—",
+        );
+
+        const msgFinal0601 =
+          msgHuman0601 ||
+          (msgErro0601 && msgErro0601 !== "BLOQUEIO_FISCAL" ? msgErro0601 : "");
+
+        const parts0601 = [];
+        parts0601.push(
+          `Fiscal: ${bloqueado0601 ? pill("bad", "BLOQUEADO") : pill("ok", "OK")}`,
+        );
+        parts0601.push(
+          `doc ${docId != null ? `<b>#${docId}</b>` : `<span class="muted">—</span>`}`,
+        );
+        parts0601.push(`venda <b>#${idVenda ?? "—"}</b>`);
+        if (docStatus) parts0601.push(`status <b>${docStatus}</b>`);
+        if (docNumero != null) parts0601.push(`número <b>${docNumero}</b>`);
+        if (docSerie != null) parts0601.push(`série <b>${docSerie}</b>`);
+        if (docChave) parts0601.push(`chave <b>${docChave}</b>`);
+
+        const valorFinal = docValor != null ? docValor : totalVenda;
+        if (valorFinal != null)
+          parts0601.push(`valor <b>R$ ${money(valorFinal)}</b>`);
+        if (docEmitidoEm)
+          parts0601.push(`emitido em: <b>${formatDateBR(docEmitidoEm)}</b>`);
+        if (msgFinal0601)
+          parts0601.push(`<span class="muted">${msgFinal0601}</span>`);
+
+        setHTML("kpiResumoFiscal", o0601 ? parts0601.join(" • ") : "—");
+
+        renderTabelaFiscalCampos(
+          docContainer,
+          idVenda,
+          totalVenda,
+          bloqueado0601,
+        );
+        renderTabelaItensVenda(itens);
+
+        // ---------- 06.02
+        const bloqueado0602 = hasErro(o0602);
+        const msg0602 = normalizeErroCode(o0602) || normalizeMsg(o0602);
+        const rows0602 = normalizeDocsPeriodo(o0602);
+        const qtdDocs0602 = normalizeQtdDocsPeriodo(o0602);
+        const totalPeriodo = normalizeTotalPeriodo(o0602);
+
+        const perPayload = normalizePeriodo(o0602); // wrapper
+        const perDer = derivePeriodoFromRows(rows0602); // array/view
+        const ini = perPayload.ini || perDer.ini;
+        const fim = perPayload.fim || perDer.fim;
+
+        setHTML(
+          "kpiQtdDocs_0602",
+          o0602 && !o0602.__erro
+            ? bloqueado0602
+              ? pill("bad", "BLOQUEADO")
+              : pill("ok", String(qtdDocs0602 ?? "0"))
+            : "—",
+        );
+
+        setText(
+          "kpiTotalDocs_0602",
+          o0602 && !o0602.__erro ? "R$ " + money(totalPeriodo ?? 0) : "—",
+        );
+
+        setHTML(
+          "kpiPeriodo_0602",
+          ini || fim
+            ? `<span class="nobr">${formatDiaBR(ini)}</span> <span class="muted">→</span> <span class="nobr">${formatDiaBR(fim)}</span>`
+            : "—",
+        );
+
+        setHTML(
+          "kpiResumoPeriodo_0602",
+          o0602 && !o0602.__erro
+            ? bloqueado0602
+              ? `${pill("bad", "ERRO")} • <span class="muted">${msg0602 || "—"}</span>`
+              : rows0602.length === 0
+                ? `${pill("info", "SEM DADOS")} • Ajuste o período (ex.: 2026-03-01 → 2026-03-31).`
+                : `Período: <b>${formatDiaBR(ini)}</b> → <b>${formatDiaBR(fim)}</b> • Docs: <b>${qtdDocs0602}</b> • Total: <b>R$ ${money(totalPeriodo)}</b>`
+            : "—",
+        );
+
+        // KPI Status docs (06.02) — padrão "pill" (igual Status fiscal 06.01)
+        const statusMap = normalizeStatusPeriodo(rows0602);
+        if (Object.keys(statusMap).length === 0) {
+          setText("kpiStatusPeriodo", "—");
+        } else {
+          const entries = Object.entries(statusMap);
+
+          // escolhe o "principal": maior qtd; empate => prioriza EMITIDA
+          entries.sort((a, b) => {
+            const dq = Number(b[1]) - Number(a[1]);
+            if (dq !== 0) return dq;
+            if (String(a[0]).toUpperCase() === "EMITIDA") return -1;
+            if (String(b[0]).toUpperCase() === "EMITIDA") return 1;
+            return String(a[0]).localeCompare(String(b[0]));
+          });
+
+          const [stRaw, qtd] = entries[0];
+          const st = String(stRaw).toUpperCase();
+
+          // regra visual: EMITIDA = vermelho (como no print)
+          const kind = st === "EMITIDA" ? "bad" : "info";
+
+          setHTML("kpiStatusPeriodo", pill(kind, `${st}: ${qtd}`));
+        }
+
+        renderTabelaFiscalPeriodo(rows0602);
+        renderTabelaFiscalPeriodoStatus(rows0602);
+
+        // ---------- JSON completo (05.10)
+        if (o0510 && !o0510.__erro) {
+          setHTML(
+            "r0510Resumo",
+            `<b>OK</b> • id_venda: <b>${idVenda ?? "—"}</b>` +
+              (totalVenda != null
+                ? ` • total: <b>R$ ${money(totalVenda)}</b>`
+                : "") +
+              ` • itens: <b>${itens.length}</b>`,
+          );
+          setText("r0510Json", JSON.stringify(o0510, null, 2));
+        } else {
+          setText(
+            "r0510Resumo",
+            "Cole o JSON da resposta 05.10 (criar venda fiscal).",
+          );
+          setText("r0510Json", "—");
+        }
+
+        // ---------- JSON completo (06.01)
+        if (o0601 && !o0601.__erro) {
+          setHTML(
+            "r0601Resumo",
+            `${bloqueado0601 ? "<b>ERRO</b>" : "<b>OK</b>"} • doc: <b>${docId ?? "—"}</b>` +
+              (docStatus ? ` • status: <b>${docStatus}</b>` : "") +
+              (docEmitidoEm ? ` • emitido_em: <b>${docEmitidoEm}</b>` : "") +
+              (msgFinal0601
+                ? ` • <span class="muted">${msgFinal0601}</span>`
+                : ""),
+          );
+          setText("r0601Json", JSON.stringify(o0601, null, 2));
+        } else {
+          setText(
+            "r0601Resumo",
+            "Cole o JSON da resposta 06.01 (emitir documento fiscal).",
+          );
+          setText("r0601Json", "—");
+        }
+
+        // ---------- JSON completo (06.02)
+        if (o0602 && !o0602.__erro) {
+          setHTML(
+            "r0602Resumo",
+            `${bloqueado0602 ? "<b>ERRO</b>" : "<b>OK</b>"} • linhas: <b>${rows0602.length}</b>` +
+              ` • docs: <b>${qtdDocs0602 ?? 0}</b>` +
+              ` • total: <b>R$ ${money(totalPeriodo ?? 0)}</b>` +
+              (msg0602 ? ` • <span class="muted">${msg0602}</span>` : ""),
+          );
+          setText("r0602Json", JSON.stringify(o0602, null, 2));
+        } else {
+          setText(
+            "r0602Resumo",
+            "Cole o JSON da resposta 06.02 (fiscal por período).",
+          );
+          setText("r0602Json", "—");
+        }
+
+        autoGrowAllTextareas();
+      }
+
+      function limpar() {
+        const idsTextareas = [
+          "jsonVenda_0510",
+          "jsonFiscal_0601",
+          "jsonFiscalPeriodo_0602",
+          "txtReq_0602",
+        ];
+        idsTextareas.forEach((id) => {
+          const el = document.getElementById(id);
+          if (el) el.value = "";
+        });
+
+        [
+          "kpiVenda",
+          "kpiTotalVenda",
+          "kpiStatusFiscal",
+          "kpiDocFiscal",
+          "kpiQtdDocs_0602",
+          "kpiTotalDocs_0602",
+          "kpiStatusPeriodo",
+          "kpiPeriodo_0602",
+        ].forEach((id) => setText(id, "—"));
+
+        ["kpiResumoVenda", "kpiResumoFiscal", "kpiResumoPeriodo_0602"].forEach(
+          (id) => setText(id, "—"),
+        );
+
+        [
+          "tblFiscalCampos",
+          "tblItens",
+          "tblFiscalPeriodo",
+          "tblFiscalPeriodoStatus",
+        ].forEach((id) => {
+          const el = document.getElementById(id);
+          if (el) el.innerHTML = "";
+        });
+
+        [
+          "r0510Resumo",
+          "r0510Json",
+          "r0601Resumo",
+          "r0601Json",
+          "r0602Resumo",
+          "r0602Json",
+        ].forEach((id) => {
+          const el = document.getElementById(id);
+          if (el) el.textContent = "—";
+        });
+
+        const hint = document.getElementById("tblFiscalPeriodoHint");
+        if (hint)
+          hint.textContent =
+            "Cole o JSON 06.02 para renderizar a tabela do período.";
+
+        autoGrowAllTextareas();
+      }
+
+      document.getElementById("btnRender").addEventListener("click", renderAll);
+      document.getElementById("btnLimpar").addEventListener("click", limpar);
+
+      // AutoGrow + pretty
+      [
+        "jsonVenda_0510",
+        "jsonFiscal_0601",
+        "jsonFiscalPeriodo_0602",
+        "txtReq_0602",
+      ].forEach((id) => {
+        const el = document.getElementById(id);
+        if (!el) return;
+        el.addEventListener("blur", () => {
+          // só "pretty" nos JSONs
+          if (id !== "txtReq_0602") prettyTextarea(el);
+          autoGrow(el);
+        });
+        el.addEventListener("paste", () =>
+          setTimeout(() => {
+            if (id !== "txtReq_0602") prettyTextarea(el);
+            autoGrow(el);
+          }, 0),
+        );
+        el.addEventListener("input", () => autoGrow(el));
       });
+
+      window.addEventListener("beforeprint", autoGrowAllTextareas);
     </script>
   </body>
 </html>
