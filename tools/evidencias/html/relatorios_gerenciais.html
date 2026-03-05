@@ -1,0 +1,963 @@
+<!doctype html>
+<html lang="pt-br">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Evidência — Relatórios/Auditoria (Gerente) | VarejoSync</title>
+
+    <style>
+      :root {
+        --bg: #0b0f14;
+        --panel: #101826;
+        --panel2: #0f172a;
+        --txt: #e5e7eb;
+        --muted: #9ca3af;
+        --line: #1f2a3a;
+        --ok: #22c55e;
+        --warn: #f59e0b;
+        --bad: #ef4444;
+        --info: #60a5fa;
+        --chip: #0b1220;
+        --mono:
+          ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas,
+          "Liberation Mono", "Courier New", monospace;
+        --sans:
+          ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial,
+          "Helvetica Neue", "Noto Sans", "Liberation Sans", sans-serif;
+      }
+      * {
+        box-sizing: border-box;
+      }
+      body {
+        margin: 0;
+        background: linear-gradient(180deg, #070a0f 0%, var(--bg) 100%);
+        color: var(--txt);
+        font-family: var(--sans);
+      }
+      header {
+        border-bottom: 1px solid var(--line);
+        background: rgba(15, 23, 42, 0.4);
+      }
+      .wrap {
+        max-width: 1120px;
+        margin: 0 auto;
+        padding: 24px;
+      }
+      h1 {
+        margin: 0;
+        font-size: 20px;
+        letter-spacing: 0.2px;
+      }
+      .sub {
+        color: var(--muted);
+        font-size: 13px;
+        margin-top: 6px;
+        line-height: 1.35;
+      }
+
+      .grid {
+        display: grid;
+        gap: 14px;
+      }
+      @media (min-width: 980px) {
+        .grid {
+          grid-template-columns: 1.12fr 0.88fr;
+        }
+      }
+
+      .card {
+        background: rgba(16, 24, 38, 0.88);
+        border: 1px solid var(--line);
+        border-radius: 14px;
+        padding: 16px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+        overflow: hidden;
+      }
+      .section {
+        margin-top: 14px;
+      }
+
+      h2 {
+        margin: 0 0 12px;
+        font-size: 14px;
+        letter-spacing: 0.2px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 10px;
+      }
+
+      .chip {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 6px 10px;
+        border-radius: 999px;
+        border: 1px solid var(--line);
+        background: rgba(11, 18, 32, 0.7);
+        font-size: 12px;
+        color: var(--muted);
+        max-width: 100%;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+
+      .two {
+        display: grid;
+        gap: 12px;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        align-items: stretch;
+      }
+      @media (max-width: 980px) {
+        .two {
+          grid-template-columns: 1fr;
+        }
+      }
+      .two > div {
+        min-width: 0;
+        display: flex;
+        flex-direction: column;
+      }
+      .two > div .chip {
+        width: 100%;
+        max-width: 100%;
+      }
+
+      textarea {
+        width: 100%;
+        min-height: 160px;
+        padding: 10px 12px;
+        margin-top: 10px;
+        border-radius: 12px;
+        border: 1px solid var(--line);
+        background: rgba(11, 18, 32, 0.9);
+        color: var(--txt);
+        outline: none;
+        font-family: var(--mono);
+        font-size: 12px;
+        line-height: 1.35;
+
+        white-space: pre-wrap;
+        overflow-x: hidden;
+        overflow-y: auto;
+        word-break: normal;
+        overflow-wrap: normal;
+
+        resize: none;
+        scrollbar-width: thin;
+        scrollbar-color: rgba(156, 163, 175, 0.35) rgba(11, 18, 32, 0.35);
+      }
+      textarea::-webkit-scrollbar {
+        width: 10px;
+        height: 10px;
+      }
+      textarea::-webkit-scrollbar-track {
+        background: rgba(11, 18, 32, 0.35);
+        border-radius: 999px;
+      }
+      textarea::-webkit-scrollbar-thumb {
+        background: rgba(156, 163, 175, 0.28);
+        border: 1px solid rgba(31, 42, 58, 0.75);
+        border-radius: 999px;
+      }
+
+      .row {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+        margin-top: 10px;
+      }
+
+      button {
+        padding: 10px 14px;
+        border-radius: 12px;
+        border: 1px solid rgba(96, 165, 250, 0.25);
+        background: linear-gradient(
+          180deg,
+          rgba(17, 28, 45, 0.95),
+          rgba(11, 18, 32, 0.95)
+        );
+        color: var(--txt);
+        cursor: pointer;
+        font-weight: 800;
+        font-size: 13px;
+        font-family: var(--sans);
+        letter-spacing: 0.1px;
+        box-shadow: 0 10px 24px rgba(0, 0, 0, 0.25);
+      }
+      #btnLimpar {
+        border-color: rgba(156, 163, 175, 0.22);
+        background: linear-gradient(
+          180deg,
+          rgba(15, 23, 42, 0.75),
+          rgba(11, 18, 32, 0.85)
+        );
+      }
+
+      .kpis {
+        display: grid;
+        gap: 10px;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+      @media (max-width: 900px) {
+        .kpis {
+          grid-template-columns: 1fr;
+        }
+      }
+      .kpi {
+        border: 1px solid var(--line);
+        background: rgba(11, 18, 32, 0.55);
+        border-radius: 14px;
+        padding: 12px;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        min-height: 108px;
+      }
+      .label {
+        color: var(--muted);
+        font-size: 12px;
+        min-height: 34px;
+      }
+      .val {
+        font-size: 18px;
+        font-weight: 900;
+        margin-top: 6px;
+        min-height: 34px;
+        display: flex;
+        align-items: flex-end;
+        line-height: 1.05;
+      }
+      .hint {
+        color: var(--muted);
+        font-size: 10px;
+        margin-top: 6px;
+        font-family: var(--mono);
+        min-height: 16px;
+      }
+
+      .pill {
+        display: inline-flex;
+        align-items: center;
+        padding: 4px 8px;
+        border-radius: 999px;
+        font-size: 11px;
+        font-weight: 900;
+        border: 1px solid var(--line);
+        background: var(--chip);
+        white-space: nowrap;
+      }
+      .p-ok {
+        color: var(--ok);
+        border-color: rgba(34, 197, 94, 0.35);
+      }
+      .p-warn {
+        color: var(--warn);
+        border-color: rgba(245, 158, 11, 0.35);
+      }
+      .p-bad {
+        color: var(--bad);
+        border-color: rgba(239, 68, 68, 0.35);
+      }
+      .p-info {
+        color: var(--info);
+        border-color: rgba(96, 165, 250, 0.35);
+      }
+
+      details {
+        border: 1px solid var(--line);
+        border-radius: 12px;
+        padding: 10px 12px;
+        background: rgba(11, 18, 32, 0.55);
+      }
+      summary {
+        cursor: pointer;
+        color: var(--muted);
+        font-size: 12px;
+      }
+      pre {
+        margin: 10px 0 0;
+        font-family: var(--mono);
+        font-size: 12px;
+        white-space: pre-wrap;
+        word-break: break-word;
+        overflow-wrap: anywhere;
+        background: #0b1220;
+        border: 1px solid #1f2a44;
+        border-radius: 8px;
+        padding: 14px;
+        overflow-x: auto;
+        line-height: 1.5;
+      }
+
+      @media print {
+        header,
+        button {
+          display: none !important;
+        }
+        .wrap {
+          max-width: 100% !important;
+          padding: 0 !important;
+        }
+        .card {
+          box-shadow: none !important;
+        }
+        details {
+          page-break-inside: avoid;
+        }
+        textarea {
+          display: block !important;
+          height: auto !important;
+          max-height: none !important;
+          overflow: visible !important;
+          white-space: pre-wrap !important;
+          word-break: break-word !important;
+          overflow-wrap: anywhere !important;
+        }
+      }
+    </style>
+  </head>
+
+  <body>
+    <header>
+      <div class="wrap">
+        <h1>VarejoSync • Evidência Relatórios/Auditoria (Gerente)</h1>
+        <div class="sub">
+          Escopo: <b>09.01</b> (Rastreabilidade da venda) e
+          <b>09.02</b> (Fechamento de caixa).
+          <span class="chip">Perfil: Gerente</span>
+        </div>
+      </div>
+    </header>
+
+    <div class="wrap">
+      <div class="grid">
+        <!-- ENTRADA -->
+        <div class="card" id="cardEntrada">
+          <h2>Entrada de dados (JSON do Postman)</h2>
+
+          <div class="two">
+            <div>
+              <div class="chip">
+                09.01 • GET /relatorios/rastreabilidade/{id_venda}
+              </div>
+              <textarea
+                id="jsonRastreabilidade_0901"
+                spellcheck="false"
+                autocapitalize="off"
+                autocomplete="off"
+                autocorrect="off"
+                placeholder="Cole aqui a resposta 09.01 — rastreabilidade (ex.: venda + itens + logs/auditoria)"
+              ></textarea>
+            </div>
+
+            <div>
+              <div class="chip">09.02 • GET /relatorios/fechamento-caixa</div>
+              <textarea
+                id="jsonFechamentoCaixa_0902"
+                spellcheck="false"
+                autocapitalize="off"
+                autocomplete="off"
+                autocorrect="off"
+                placeholder="Cole aqui a resposta 09.02 — fechamento de caixa (totais, resumo por forma de pagamento, etc.)"
+              ></textarea>
+            </div>
+            <div>
+              <div class="chip">09.03 • GET /vendas (Gerente)</div>
+              <textarea
+                id="jsonListaVendas_0505"
+                spellcheck="false"
+                autocapitalize="off"
+                autocomplete="off"
+                autocorrect="off"
+                placeholder="Cole aqui a resposta 05.05 (listar vendas) — esperado 200 com token do gerente"
+              ></textarea>
+            </div>
+
+            <div>
+              <div class="chip">09.04 • GET /vendas/{id} (Gerente)</div>
+              <textarea
+                id="jsonDetalheVenda_0506"
+                spellcheck="false"
+                autocapitalize="off"
+                autocomplete="off"
+                autocorrect="off"
+                placeholder="Cole aqui a resposta 05.06 (detalhar venda) — esperado 200 com itens"
+              ></textarea>
+            </div>
+          </div>
+
+          <div class="row">
+            <button id="btnRender">Renderizar evidência</button>
+            <button id="btnLimpar">Limpar</button>
+          </div>
+        </div>
+
+        <!-- KPIs -->
+        <div class="card">
+          <h2>KPIs rápidos (derivados)</h2>
+
+          <div class="kpis">
+            <div class="kpi">
+              <div class="label">Rastreabilidade (09.01)</div>
+              <div class="val" id="kpi0901">—</div>
+              <div class="hint">id_venda / status</div>
+            </div>
+
+            <div class="kpi">
+              <div class="label">Fechamento de caixa (09.02)</div>
+              <div class="val" id="kpi0902">—</div>
+              <div class="hint">total / período</div>
+            </div>
+          </div>
+
+          <div class="section">
+            <div class="chip">Resumo (09.01)</div>
+            <div class="sub" id="resumo0901">—</div>
+          </div>
+
+          <div class="section">
+            <div class="chip">Resumo (09.02)</div>
+            <div class="sub" id="resumo0902">—</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- RESULTADOS JSON -->
+      <div class="card section" id="secResultados">
+        <h2>Resultados (JSON completo)</h2>
+
+        <div class="two">
+          <div>
+            <div class="chip">09.01 • Rastreabilidade (JSON completo)</div>
+            <div class="sub" id="r0901Resumo">—</div>
+            <details class="section">
+              <summary>JSON completo (09.01)</summary>
+              <pre id="r0901Json">—</pre>
+            </details>
+          </div>
+
+          <div>
+            <div class="chip">09.02 • Fechamento de caixa (JSON completo)</div>
+            <div class="sub" id="r0902Resumo">—</div>
+            <details class="section">
+              <summary>JSON completo (09.02)</summary>
+              <pre id="r0902Json">—</pre>
+            </details>
+          </div>
+          <div>
+            <div class="chip">09.03 • Listar vendas (JSON completo)</div>
+            <div class="sub" id="r0505Resumo">—</div>
+            <details class="section">
+              <summary>JSON completo (09.03)</summary>
+              <pre id="r0505Json">—</pre>
+            </details>
+          </div>
+
+          <div>
+            <div class="chip">09.04 • Detalhar venda (JSON completo)</div>
+            <div class="sub" id="r0506Resumo">—</div>
+            <details class="section">
+              <summary>JSON completo (09.04)</summary>
+              <pre id="r0506Json">—</pre>
+            </details>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      // =========================
+      // Utils
+      // =========================
+      function safeParse(text) {
+        const t = (text || "").trim();
+        if (!t) return null;
+        try {
+          return JSON.parse(t);
+        } catch (e) {
+          return { __erro: e.message, __raw: t };
+        }
+      }
+
+      function prettyTextarea(textarea) {
+        const raw = (textarea.value || "").trim();
+        if (!raw) return;
+        const obj = safeParse(raw);
+        if (obj && obj.__erro) return;
+        try {
+          textarea.value = JSON.stringify(obj, null, 2);
+        } catch {}
+      }
+
+      function money(n) {
+        const x = Number(n);
+        return Number.isFinite(x) ? x.toFixed(2).replace(".", ",") : "—";
+      }
+
+      function pill(kind, txt) {
+        const k =
+          kind === "ok"
+            ? "p-ok"
+            : kind === "bad"
+              ? "p-bad"
+              : kind === "warn"
+                ? "p-warn"
+                : "p-info";
+        return `<span class="pill ${k}">${txt}</span>`;
+      }
+
+      function getFirst(obj, keys) {
+        for (const k of keys) {
+          if (
+            obj &&
+            Object.prototype.hasOwnProperty.call(obj, k) &&
+            obj[k] !== undefined &&
+            obj[k] !== null
+          ) {
+            return obj[k];
+          }
+        }
+        return null;
+      }
+
+      function hasErro(obj) {
+        if (!obj || obj.__erro) return false;
+        return (
+          obj.erro !== undefined ||
+          obj.error !== undefined ||
+          obj.message !== undefined ||
+          obj.mensagem !== undefined
+        );
+      }
+
+      function normalizeErroText(obj) {
+        if (!obj || obj.__erro) return "";
+        const msg = getFirst(obj, ["mensagem", "message"]);
+        const err = getFirst(obj, ["erro", "error"]);
+        // se vier objeto, tenta serializar
+        if (typeof msg === "string" && msg.trim()) return msg;
+        if (typeof err === "string" && err.trim()) return err;
+        if (err && typeof err === "object") {
+          try {
+            return JSON.stringify(err);
+          } catch {}
+        }
+        return "";
+      }
+
+      function setText(id, txt) {
+        const el = document.getElementById(id);
+        if (el) el.textContent = txt;
+      }
+
+      function setHTML(id, html) {
+        const el = document.getElementById(id);
+        if (el) el.innerHTML = html;
+      }
+
+      // =========================
+      // AutoGrow (print)
+      // =========================
+      function autoGrow(el) {
+        if (!el) return;
+        el.style.height = "auto";
+        el.style.height = el.scrollHeight + 2 + "px";
+      }
+
+      function autoGrowAllTextareas() {
+        document.querySelectorAll("textarea").forEach(autoGrow);
+      }
+
+      // =========================
+      // Normalizações úteis
+      // =========================
+      function pickVendaIdFromAny(obj) {
+        return (
+          getFirst(obj, ["id_venda", "idVenda", "id", "venda_id", "vendaId"]) ||
+          getFirst(obj?.venda, [
+            "id_venda",
+            "idVenda",
+            "id",
+            "venda_id",
+            "vendaId",
+          ]) ||
+          null
+        );
+      }
+
+      function pickStatusFromAny(obj) {
+        return (
+          getFirst(obj, ["status", "situacao"]) ||
+          getFirst(obj?.venda, ["status", "situacao"]) ||
+          null
+        );
+      }
+
+      function pickTotalFromAny(obj) {
+        return (
+          getFirst(obj, [
+            "total",
+            "valor_total",
+            "total_venda",
+            "total_final",
+            "totalFinal",
+          ]) ||
+          getFirst(obj?.venda, [
+            "total",
+            "valor_total",
+            "total_venda",
+            "total_final",
+            "totalFinal",
+          ]) ||
+          null
+        );
+      }
+
+      function countList(obj) {
+        if (!obj || obj.__erro) return null;
+
+        if (Array.isArray(obj)) return obj.length;
+
+        const arr = getFirst(obj, [
+          "data",
+          "rows",
+          "result",
+          "vendas",
+          "items",
+        ]);
+        if (Array.isArray(arr)) return arr.length;
+
+        const n = getFirst(obj, [
+          "count",
+          "total",
+          "total_registros",
+          "totalRegistros",
+        ]);
+        if (Number.isFinite(Number(n))) return Number(n);
+
+        return null;
+      }
+
+      // =========================
+      // KPIs (09.01/09.02) + (opcional 09.03/09.04)
+      // =========================
+      function renderKPIs(o0901, o0902, o0903, o0904) {
+        // 09.01
+        const idVenda = pickVendaIdFromAny(o0901);
+        const st = pickStatusFromAny(o0901);
+        const e0901 = normalizeErroText(o0901);
+
+        if (o0901 && !o0901.__erro) {
+          setHTML(
+            "kpi0901",
+            idVenda
+              ? pill(hasErro(o0901) ? "warn" : "ok", "#" + idVenda)
+              : pill("info", "OK"),
+          );
+          setHTML(
+            "resumo0901",
+            `Venda <b>#${idVenda ?? "—"}</b>` +
+              (st ? ` • Status: <b>${st}</b>` : "") +
+              (e0901 ? ` • <span class="muted">${e0901}</span>` : ""),
+          );
+        } else {
+          setText("kpi0901", "—");
+          setText("resumo0901", "—");
+        }
+
+        // 09.02
+        const total = getFirst(o0902, [
+          "total",
+          "total_caixa",
+          "total_geral",
+          "valor_total",
+          "totalFinal",
+        ]);
+        const ini = getFirst(o0902, [
+          "data_inicio",
+          "inicio",
+          "from",
+          "periodo_inicio",
+        ]);
+        const fim = getFirst(o0902, ["data_fim", "fim", "to", "periodo_fim"]);
+        const e0902 = normalizeErroText(o0902);
+
+        if (o0902 && !o0902.__erro) {
+          setHTML(
+            "kpi0902",
+            total != null
+              ? pill(hasErro(o0902) ? "warn" : "ok", "R$ " + money(total))
+              : pill("info", "OK"),
+          );
+
+          setHTML(
+            "resumo0902",
+            (total != null
+              ? `Total: <b>R$ ${money(total)}</b>`
+              : `Total: <b>—</b>`) +
+              (ini || fim
+                ? ` • Período: <b>${ini ?? "—"}</b> → <b>${fim ?? "—"}</b>`
+                : "") +
+              (e0902 ? ` • <span class="muted">${e0902}</span>` : ""),
+          );
+        } else {
+          setText("kpi0902", "—");
+          setText("resumo0902", "—");
+        }
+
+        // (Opcional) KPIs 09.03/09.04 se você criar no HTML depois:
+        // IDs esperados: kpi0903, resumo0903, kpi0904, resumo0904
+        if (
+          document.getElementById("kpi0903") &&
+          document.getElementById("resumo0903")
+        ) {
+          const qtd = countList(o0903);
+          const e0903 = normalizeErroText(o0903);
+          const blocked = hasErro(o0903);
+
+          setHTML(
+            "kpi0903",
+            o0903 && !o0903.__erro
+              ? blocked
+                ? pill("bad", "BLOQUEADO")
+                : pill("ok", String(qtd ?? "OK"))
+              : "—",
+          );
+
+          setHTML(
+            "resumo0903",
+            o0903 && !o0903.__erro
+              ? blocked
+                ? `${pill("bad", "Acesso")} • <span class="muted">${e0903 || "—"}</span>`
+                : `Registros: <b>${qtd ?? "—"}</b>`
+              : "—",
+          );
+        }
+
+        if (
+          document.getElementById("kpi0904") &&
+          document.getElementById("resumo0904")
+        ) {
+          const id = pickVendaIdFromAny(o0904);
+          const stt = pickStatusFromAny(o0904);
+          const tot = pickTotalFromAny(o0904);
+          const e0904 = normalizeErroText(o0904);
+          const blocked = hasErro(o0904);
+
+          setHTML(
+            "kpi0904",
+            o0904 && !o0904.__erro
+              ? blocked
+                ? pill("bad", "BLOQUEADO")
+                : id
+                  ? pill("ok", "#" + id)
+                  : pill("info", "OK")
+              : "—",
+          );
+
+          setHTML(
+            "resumo0904",
+            o0904 && !o0904.__erro
+              ? blocked
+                ? `${pill("bad", "Acesso")} • <span class="muted">${e0904 || "—"}</span>`
+                : `Venda <b>#${id ?? "—"}</b>` +
+                  (stt ? ` • Status: <b>${stt}</b>` : "") +
+                  (tot != null ? ` • Total: <b>R$ ${money(tot)}</b>` : "")
+              : "—",
+          );
+        }
+      }
+
+      // =========================
+      // Resultados (JSON completo) - usa seus IDs r0505/r0506
+      // =========================
+      function renderResultados(o0901, o0902, o0903, o0904) {
+        // 09.01
+        if (o0901 && !o0901.__erro) {
+          const id = pickVendaIdFromAny(o0901) ?? "—";
+          const st = pickStatusFromAny(o0901);
+          const msg = normalizeErroText(o0901);
+
+          setHTML(
+            "r0901Resumo",
+            `${hasErro(o0901) ? "<b>ATENÇÃO</b>" : "<b>OK</b>"} • id_venda: <b>${id}</b>` +
+              (st ? ` • status: <b>${st}</b>` : "") +
+              (msg ? ` • <span class="muted">${msg}</span>` : ""),
+          );
+          setText("r0901Json", JSON.stringify(o0901, null, 2));
+        } else {
+          setText(
+            "r0901Resumo",
+            "Cole o JSON da resposta 09.01 (rastreabilidade).",
+          );
+          setText("r0901Json", "—");
+        }
+
+        // 09.02
+        if (o0902 && !o0902.__erro) {
+          const total = getFirst(o0902, [
+            "total",
+            "total_caixa",
+            "total_geral",
+            "valor_total",
+            "totalFinal",
+          ]);
+          const msg = normalizeErroText(o0902);
+
+          setHTML(
+            "r0902Resumo",
+            `${hasErro(o0902) ? "<b>ATENÇÃO</b>" : "<b>OK</b>"}` +
+              (total != null ? ` • total: <b>R$ ${money(total)}</b>` : "") +
+              (msg ? ` • <span class="muted">${msg}</span>` : ""),
+          );
+          setText("r0902Json", JSON.stringify(o0902, null, 2));
+        } else {
+          setText(
+            "r0902Resumo",
+            "Cole o JSON da resposta 09.02 (fechamento de caixa).",
+          );
+          setText("r0902Json", "—");
+        }
+
+        // 09.03 (seu r0505*)
+        if (o0903 && !o0903.__erro) {
+          const qtd = countList(o0903);
+          const msg = normalizeErroText(o0903);
+
+          setHTML(
+            "r0505Resumo",
+            `${hasErro(o0903) ? "<b>ERRO</b>" : "<b>OK</b>"} • registros: <b>${qtd ?? "—"}</b>` +
+              (msg ? ` • <span class="muted">${msg}</span>` : ""),
+          );
+          setText("r0505Json", JSON.stringify(o0903, null, 2));
+        } else {
+          setText(
+            "r0505Resumo",
+            "Cole o JSON da resposta 09.03 (listar vendas).",
+          );
+          setText("r0505Json", "—");
+        }
+
+        // 09.04 (seu r0506*)
+        if (o0904 && !o0904.__erro) {
+          const id = pickVendaIdFromAny(o0904) ?? "—";
+          const st = pickStatusFromAny(o0904) ?? "—";
+          const tot = pickTotalFromAny(o0904);
+          const msg = normalizeErroText(o0904);
+
+          setHTML(
+            "r0506Resumo",
+            `${hasErro(o0904) ? "<b>ERRO</b>" : "<b>OK</b>"} • id_venda: <b>${id}</b> • status: <b>${st}</b>` +
+              (tot != null ? ` • total: <b>R$ ${money(tot)}</b>` : "") +
+              (msg ? ` • <span class="muted">${msg}</span>` : ""),
+          );
+          setText("r0506Json", JSON.stringify(o0904, null, 2));
+        } else {
+          setText(
+            "r0506Resumo",
+            "Cole o JSON da resposta 09.04 (detalhar venda).",
+          );
+          setText("r0506Json", "—");
+        }
+      }
+
+      // =========================
+      // Render principal
+      // =========================
+      function renderAll() {
+        const ta0901 = document.getElementById("jsonRastreabilidade_0901");
+        const ta0902 = document.getElementById("jsonFechamentoCaixa_0902");
+        const ta0903 = document.getElementById("jsonListaVendas_0505");
+        const ta0904 = document.getElementById("jsonDetalheVenda_0506");
+
+        [ta0901, ta0902, ta0903, ta0904].forEach(
+          (ta) => ta && prettyTextarea(ta),
+        );
+
+        const o0901 = safeParse((ta0901 && ta0901.value) || "");
+        const o0902 = safeParse((ta0902 && ta0902.value) || "");
+        const o0903 = safeParse((ta0903 && ta0903.value) || "");
+        const o0904 = safeParse((ta0904 && ta0904.value) || "");
+
+        if (o0901 && o0901.__erro)
+          alert("JSON 09.01 inválido: " + o0901.__erro);
+        if (o0902 && o0902.__erro)
+          alert("JSON 09.02 inválido: " + o0902.__erro);
+        if (o0903 && o0903.__erro)
+          alert("JSON 09.03 inválido: " + o0903.__erro);
+        if (o0904 && o0904.__erro)
+          alert("JSON 09.04 inválido: " + o0904.__erro);
+
+        renderKPIs(o0901, o0902, o0903, o0904);
+        renderResultados(o0901, o0902, o0903, o0904);
+        autoGrowAllTextareas();
+      }
+
+      function limpar() {
+        [
+          "jsonRastreabilidade_0901",
+          "jsonFechamentoCaixa_0902",
+          "jsonListaVendas_0505",
+          "jsonDetalheVenda_0506",
+        ].forEach((id) => {
+          const el = document.getElementById(id);
+          if (el) el.value = "";
+        });
+
+        ["kpi0901", "kpi0902", "resumo0901", "resumo0902"].forEach((id) =>
+          setText(id, "—"),
+        );
+
+        // opcionais (se você criar depois)
+        ["kpi0903", "kpi0904", "resumo0903", "resumo0904"].forEach((id) => {
+          const el = document.getElementById(id);
+          if (el) el.textContent = "—";
+        });
+
+        [
+          "r0901Resumo",
+          "r0901Json",
+          "r0902Resumo",
+          "r0902Json",
+          "r0505Resumo",
+          "r0505Json",
+          "r0506Resumo",
+          "r0506Json",
+        ].forEach((id) => {
+          const el = document.getElementById(id);
+          if (el) el.textContent = "—";
+        });
+
+        autoGrowAllTextareas();
+      }
+
+      document.getElementById("btnRender").addEventListener("click", renderAll);
+      document.getElementById("btnLimpar").addEventListener("click", limpar);
+
+      [
+        "jsonRastreabilidade_0901",
+        "jsonFechamentoCaixa_0902",
+        "jsonListaVendas_0505",
+        "jsonDetalheVenda_0506",
+      ].forEach((id) => {
+        const el = document.getElementById(id);
+        if (!el) return;
+        el.addEventListener("blur", () => {
+          prettyTextarea(el);
+          autoGrow(el);
+        });
+        el.addEventListener("paste", () =>
+          setTimeout(() => {
+            prettyTextarea(el);
+            autoGrowAllTextareas();
+          }, 0),
+        );
+        el.addEventListener("input", () => autoGrow(el));
+      });
+
+      window.addEventListener("beforeprint", autoGrowAllTextareas);
+    </script>
+  </body>
+</html>
