@@ -126,8 +126,10 @@
 
       textarea {
         width: 100%;
-        min-height: 160px;
-        padding: 10px 12px;
+        height: 260px;
+        min-height: 260px;
+        max-height: 260px;
+        padding: 12px 14px;
         margin-top: 10px;
         border-radius: 12px;
         border: 1px solid var(--line);
@@ -136,13 +138,14 @@
         outline: none;
         font-family: var(--mono);
         font-size: 12px;
-        line-height: 1.35;
+        line-height: 1.45;
 
-        white-space: pre-wrap;
-        overflow-x: hidden;
+        white-space: pre;
+        overflow-x: auto;
         overflow-y: auto;
         word-break: normal;
         overflow-wrap: normal;
+        tab-size: 2;
 
         resize: none;
         scrollbar-width: thin;
@@ -276,19 +279,47 @@
         color: var(--muted);
         font-size: 12px;
       }
+      /* resultados JSON com scroll discreto e leitura melhor */
       pre {
         margin: 10px 0 0;
         font-family: var(--mono);
         font-size: 12px;
-        white-space: pre-wrap;
-        word-break: break-word;
-        overflow-wrap: anywhere;
+        white-space: pre;
+        word-break: normal;
+        overflow-wrap: normal;
         background: #0b1220;
         border: 1px solid #1f2a44;
         border-radius: 8px;
         padding: 14px;
-        overflow-x: auto;
-        line-height: 1.5;
+        height: 330px;
+        max-height: 330px;
+        overflow: auto;
+        line-height: 1.45;
+        tab-size: 2;
+        scrollbar-width: thin;
+        scrollbar-color: rgba(156, 163, 175, 0.28) rgba(11, 18, 32, 0.25);
+      }
+
+      pre::-webkit-scrollbar {
+        width: 10px;
+        height: 10px;
+      }
+      pre::-webkit-scrollbar-track {
+        background: rgba(11, 18, 32, 0.22);
+        border-radius: 999px;
+      }
+      pre::-webkit-scrollbar-thumb {
+        background: rgba(156, 163, 175, 0.26);
+        border: 1px solid rgba(31, 42, 58, 0.7);
+        border-radius: 999px;
+      }
+      pre::-webkit-scrollbar-corner {
+        background: transparent;
+      }
+
+      /* resumos mais legíveis */
+      .sub b {
+        color: #e5e7eb;
       }
 
       @media print {
@@ -316,17 +347,308 @@
           overflow-wrap: anywhere !important;
         }
       }
+      /* ===== HIERARQUIA VISUAL: direita destaque, esquerda discreta ===== */
+      #cardEntrada {
+        background: rgba(16, 24, 38, 0.72);
+        border-color: rgba(31, 42, 58, 0.72);
+        box-shadow: 0 8px 22px rgba(0, 0, 0, 0.22);
+      }
+
+      #cardEntrada .chip {
+        opacity: 0.9;
+      }
+
+      #cardEntrada textarea {
+        background: rgba(11, 18, 32, 0.82);
+        border-color: rgba(31, 42, 58, 0.78);
+      }
+
+      .grid > .card:last-child {
+        background: rgba(16, 24, 38, 0.96);
+        border-color: rgba(96, 165, 250, 0.22);
+        box-shadow: 0 14px 32px rgba(0, 0, 0, 0.32);
+      }
+
+      /* ===== Destaques textuais elegantes ===== */
+      .hl-ok {
+        color: #34d399;
+        font-weight: 800;
+      }
+
+      .hl-warn {
+        color: #fbbf24;
+        font-weight: 800;
+      }
+
+      .hl-bad {
+        color: #fb7185;
+        font-weight: 800;
+      }
+
+      .hl-info {
+        color: #60a5fa;
+        font-weight: 800;
+      }
+
+      .hl-money {
+        color: #34d399;
+        font-weight: 900;
+      }
+
+      .hl-neutral {
+        color: #e5e7eb;
+        font-weight: 700;
+      }
+
+      /* resumos do lado direito com leitura melhor */
+      #resumo0901,
+      #resumo0902,
+      #resumo0903,
+      #resumo0904 {
+        line-height: 1.55;
+      }
+
+      /* resultados JSON: subtítulos mais fortes */
+      #r0901Resumo,
+      #r0902Resumo,
+      #r0505Resumo,
+      #r0506Resumo {
+        line-height: 1.5;
+        margin-top: 2px;
+      }
+      /* resumo acima dos JSONs: discreto e profissional */
+      #r0901Resumo,
+      #r0902Resumo,
+      #r0505Resumo,
+      #r0506Resumo {
+        color: var(--muted-2);
+        font-size: 12px;
+        line-height: 1.4;
+        margin: 2px 0 8px;
+        font-weight: 500;
+      }
+
+      #r0901Resumo b,
+      #r0902Resumo b,
+      #r0505Resumo b,
+      #r0506Resumo b {
+        color: var(--txt);
+        font-weight: 700;
+      }
+      /* resumo acima dos JSONs */
+      #r0901Resumo,
+      #r0902Resumo,
+      #r0505Resumo,
+      #r0506Resumo {
+        color: var(--muted-2);
+        font-size: 12px;
+        line-height: 1.45;
+        margin: 6px 0 12px; /* mais respiro acima e abaixo */
+        font-weight: 500;
+        min-height: 34px; /* mantém alinhamento dos cards */
+        display: block;
+      }
+
+      #r0901Resumo b,
+      #r0902Resumo b,
+      #r0505Resumo b,
+      #r0506Resumo b {
+        color: var(--txt);
+        font-weight: 700;
+      }
+
+      /* ===== Hierarquia visual do dashboard ===== */
+
+      #cardEntrada {
+        background: rgba(15, 23, 42, 0.65);
+        border-color: rgba(71, 85, 105, 0.35);
+        box-shadow: 0 6px 18px rgba(0, 0, 0, 0.25);
+      }
+
+      /* JSON menos pesado visualmente */
+      #cardEntrada textarea,
+      pre {
+        background: rgba(2, 6, 23, 0.75);
+        border-color: rgba(71, 85, 105, 0.35);
+      }
+
+      /* ===== KPIs mais destacados ===== */
+
+      .grid > .card:last-child {
+        background: linear-gradient(
+          180deg,
+          rgba(15, 23, 42, 0.95),
+          rgba(15, 23, 42, 0.88)
+        );
+
+        border: 1px solid rgba(96, 165, 250, 0.35);
+
+        box-shadow:
+          0 16px 40px rgba(0, 0, 0, 0.45),
+          inset 0 0 0 1px rgba(96, 165, 250, 0.08);
+      }
+
+      /* cards internos dos KPIs  */
+      .kpi {
+        background: rgba(2, 6, 23, 0.55);
+        border: 1px solid rgba(148, 163, 184, 0.25);
+        transition: all 0.2s ease;
+      }
+
+      /* leve efeito hover  */
+      .kpi:hover {
+        border-color: rgba(96, 165, 250, 0.45);
+        transform: translateY(-1px);
+      }
+
+      /* títulos dos resumos mais claros */
+      .section .chip {
+        border-color: rgba(96, 165, 250, 0.35);
+        background: rgba(30, 41, 59, 0.5);
+      }
+
+      /* 1) Card esquerdo mais discreto */
+      #cardEntrada {
+        background: rgba(16, 24, 38, 0.68);
+        border-color: rgba(71, 85, 105, 0.28);
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.22);
+      }
+
+      #cardEntrada textarea,
+      pre {
+        background: rgba(2, 6, 23, 0.72);
+        border-color: rgba(71, 85, 105, 0.28);
+      }
+
+      /* 2) Card direito mais protagonista */
+      .grid > .card:last-child {
+        background: linear-gradient(
+          180deg,
+          rgba(15, 23, 42, 0.97),
+          rgba(15, 23, 42, 0.9)
+        );
+        border: 1px solid rgba(96, 165, 250, 0.32);
+        box-shadow:
+          0 18px 40px rgba(0, 0, 0, 0.42),
+          inset 0 0 0 1px rgba(96, 165, 250, 0.06);
+      }
+
+      /* 3) KPIs mais fortes */
+      .kpi {
+        background: rgba(2, 6, 23, 0.55);
+        border: 1px solid rgba(148, 163, 184, 0.22);
+        min-height: 116px;
+      }
+
+      .kpi .label {
+        color: rgba(203, 213, 225, 0.78);
+        font-size: 12px;
+      }
+
+      .kpi .val {
+        font-size: 22px;
+        font-weight: 900;
+        color: #f8fafc;
+        letter-spacing: 0.2px;
+      }
+
+      .kpi .hint {
+        color: rgba(148, 163, 184, 0.78);
+        font-size: 11px;
+      }
+
+      /* 4) Resumos separados dos KPIs */
+      .grid > .card:last-child .section {
+        margin-top: 16px;
+        padding-top: 10px;
+        border-top: 1px solid rgba(148, 163, 184, 0.08);
+      }
+
+      .grid > .card:last-child .chip {
+        background: rgba(30, 41, 59, 0.48);
+        border-color: rgba(96, 165, 250, 0.24);
+        color: rgba(226, 232, 240, 0.88);
+      }
+
+      #resumo0901,
+      #resumo0902,
+      #resumo0903,
+      #resumo0904 {
+        color: rgba(226, 232, 240, 0.9);
+        line-height: 1.55;
+        margin-top: 10px;
+      }
+
+      /* 5) Títulos mais claros */
+      h2 {
+        color: #f8fafc;
+      }
+
+      #cardEntrada button {
+        box-shadow: 0 8px 18px rgba(0, 0, 0, 0.18);
+      }
+      .kpi .val {
+        font-size: 22px;
+        font-weight: 900;
+      }
+
+      .kpi:nth-child(2) .val {
+        font-size: 26px;
+        color: #22c55e;
+      }
+      .env {
+        font-size: 11px;
+        color: var(--muted);
+        margin-top: 6px;
+      }
+
+      pre {
+        font-size: 11.5px;
+        opacity: 0.92;
+        line-height: 1.45;
+      }
+
+      pre code {
+        color: #cbd5e1;
+      }
+
+      .grid > .card:last-child {
+        backdrop-filter: blur(6px);
+      }
+
+      /* efeito suave nos KPIs */
+      .kpi {
+        transition:
+          transform 0.15s ease,
+          border-color 0.15s ease;
+      }
+
+      .kpi:hover {
+        transform: translateY(-2px);
+        border-color: rgba(96, 165, 250, 0.45);
+      }
+
+      .kpi .val {
+        letter-spacing: 0.3px;
+      }
+
+      .section .chip {
+        font-size: 11px;
+        letter-spacing: 0.3px;
+        padding: 4px 10px;
+      }
     </style>
   </head>
 
   <body>
     <header>
       <div class="wrap">
-        <h1>VarejoSync • Evidência Relatórios/Auditoria (Gerente)</h1>
+        <h1>VarejoSync • Evidência Relatórios/Auditoria - Perfil Gerente</h1>
+        <div class="env">
+          Ambiente: Desenvolvimento • Teste de regras de negócio
+        </div>
         <div class="sub">
-          Escopo: <b>09.01</b> (Rastreabilidade da venda) e
-          <b>09.02</b> (Fechamento de caixa).
-          <span class="chip">Perfil: Gerente</span>
+          <!-- <span class="chip">Perfil: Gerente</span> -->
         </div>
       </div>
     </header>
@@ -335,7 +657,7 @@
       <div class="grid">
         <!-- ENTRADA -->
         <div class="card" id="cardEntrada">
-          <h2>Entrada de dados (JSON do Postman)</h2>
+          <h2>Entrada de dados (Payload da API / Postman)</h2>
 
           <div class="two">
             <div>
@@ -410,23 +732,45 @@
               <div class="val" id="kpi0902">—</div>
               <div class="hint">total / período</div>
             </div>
+
+            <div class="kpi">
+              <div class="label">Listar vendas (09.03)</div>
+              <div class="val" id="kpi0903">—</div>
+              <div class="hint">acesso / quantidade</div>
+            </div>
+
+            <div class="kpi">
+              <div class="label">Detalhar venda (09.04)</div>
+              <div class="val" id="kpi0904">—</div>
+              <div class="hint">id_venda / total</div>
+            </div>
           </div>
 
           <div class="section">
-            <div class="chip">Resumo (09.01)</div>
+            <div class="chip">Rastreabilidade</div>
             <div class="sub" id="resumo0901">—</div>
           </div>
 
           <div class="section">
-            <div class="chip">Resumo (09.02)</div>
+            <div class="chip">Fechamento de caixa</div>
             <div class="sub" id="resumo0902">—</div>
+          </div>
+
+          <div class="section">
+            <div class="chip">Listagem de vendas</div>
+            <div class="sub" id="resumo0903">—</div>
+          </div>
+
+          <div class="section">
+            <div class="chip">Detalhamento da venda</div>
+            <div class="sub" id="resumo0904">—</div>
           </div>
         </div>
       </div>
 
       <!-- RESULTADOS JSON -->
       <div class="card section" id="secResultados">
-        <h2>Resultados (JSON completo)</h2>
+        <h2>Resultados da API (JSON)</h2>
 
         <div class="two">
           <div>
@@ -558,19 +902,6 @@
       }
 
       // =========================
-      // AutoGrow (print)
-      // =========================
-      function autoGrow(el) {
-        if (!el) return;
-        el.style.height = "auto";
-        el.style.height = el.scrollHeight + 2 + "px";
-      }
-
-      function autoGrowAllTextareas() {
-        document.querySelectorAll("textarea").forEach(autoGrow);
-      }
-
-      // =========================
       // Normalizações úteis
       // =========================
       function pickVendaIdFromAny(obj) {
@@ -639,27 +970,128 @@
 
         return null;
       }
+      function sumBy(arr, key) {
+        if (!Array.isArray(arr)) return 0;
+        return arr.reduce((acc, item) => acc + Number(item?.[key] ?? 0), 0);
+      }
 
-      // =========================
-      // KPIs (09.01/09.02) + (opcional 09.03/09.04)
-      // =========================
+      function getFechamentoStats(obj) {
+        if (!obj || obj.__erro) return null;
+
+        const rows = Array.isArray(obj)
+          ? obj
+          : Array.isArray(obj?.data)
+            ? obj.data
+            : Array.isArray(obj?.rows)
+              ? obj.rows
+              : [];
+
+        if (!rows.length) {
+          const total = getFirst(obj, [
+            "total",
+            "total_caixa",
+            "total_geral",
+            "valor_total",
+            "totalFinal",
+          ]);
+          return {
+            dias: total != null ? 1 : 0,
+            total: Number(total ?? 0),
+            concluidas: Number(getFirst(obj, ["qtd_concluidas"]) ?? 0),
+            canceladas: Number(getFirst(obj, ["qtd_canceladas"]) ?? 0),
+            ticketMedio: Number(getFirst(obj, ["ticket_medio"]) ?? 0),
+          };
+        }
+
+        return {
+          dias: rows.length,
+          total: sumBy(rows, "total_concluidas"),
+          concluidas: sumBy(rows, "qtd_concluidas"),
+          canceladas: sumBy(rows, "qtd_canceladas"),
+          ticketMedio: Number(rows[0]?.ticket_medio ?? 0),
+        };
+      }
+
+      function getRastreabilidadeStats(obj) {
+        if (!obj || obj.__erro) return null;
+
+        const venda = obj?.venda || obj;
+        const itens = Array.isArray(venda?.itens)
+          ? venda.itens
+          : Array.isArray(obj?.itens)
+            ? obj.itens
+            : [];
+        const movimentos = itens.reduce(
+          (acc, item) =>
+            acc +
+            (Array.isArray(item?.movimentacoes)
+              ? item.movimentacoes.length
+              : 0),
+          0,
+        );
+
+        return {
+          id: pickVendaIdFromAny(obj),
+          status: pickStatusFromAny(obj),
+          total: pickTotalFromAny(obj),
+          forma: getFirst(venda, ["forma_pagamento"]),
+          itens: itens.length,
+          movimentos,
+          usuario:
+            getFirst(venda?.registrado_por, ["nome"]) ||
+            getFirst(obj?.registrado_por, ["nome"]) ||
+            "—",
+        };
+      }
+
+      function statusClass(status) {
+        const s = String(status || "").toUpperCase();
+        if (s.includes("CONCLUID")) return "hl-ok";
+        if (s.includes("DEVOLV")) return "hl-warn";
+        if (s.includes("CANCEL")) return "hl-bad";
+        return "hl-info";
+      }
+
+      function statusSpan(status) {
+        const cls = statusClass(status);
+        return `<span class="${cls}">${status ?? "—"}</span>`;
+      }
+
+      function moneySpan(v) {
+        return `<span class="hl-money">R$ ${money(v)}</span>`;
+      }
+
+      function countByStatus(vendas, status) {
+        if (!Array.isArray(vendas)) return 0;
+        return vendas.filter(
+          (v) =>
+            String(v?.status || "").toUpperCase() ===
+            String(status).toUpperCase(),
+        ).length;
+      }
       function renderKPIs(o0901, o0902, o0903, o0904) {
         // 09.01
-        const idVenda = pickVendaIdFromAny(o0901);
-        const st = pickStatusFromAny(o0901);
+        const r0901 = getRastreabilidadeStats(o0901);
         const e0901 = normalizeErroText(o0901);
 
-        if (o0901 && !o0901.__erro) {
+        if (r0901) {
           setHTML(
             "kpi0901",
-            idVenda
-              ? pill(hasErro(o0901) ? "warn" : "ok", "#" + idVenda)
+            r0901.id
+              ? pill(hasErro(o0901) ? "warn" : "ok", "#" + r0901.id)
               : pill("info", "OK"),
           );
+
           setHTML(
             "resumo0901",
-            `Venda <b>#${idVenda ?? "—"}</b>` +
-              (st ? ` • Status: <b>${st}</b>` : "") +
+            `Venda <b>#${r0901.id ?? "—"}</b>` +
+              (r0901.status ? ` • Status: <b>${r0901.status}</b>` : "") +
+              (r0901.forma ? ` • Pagamento: <b>${r0901.forma}</b>` : "") +
+              ` • Itens: <b>${r0901.itens}</b>` +
+              ` • Movimentações: <b>${r0901.movimentos}</b>` +
+              (r0901.usuario
+                ? ` • Registrado por: <b>${r0901.usuario}</b>`
+                : "") +
               (e0901 ? ` • <span class="muted">${e0901}</span>` : ""),
           );
         } else {
@@ -668,37 +1100,23 @@
         }
 
         // 09.02
-        const total = getFirst(o0902, [
-          "total",
-          "total_caixa",
-          "total_geral",
-          "valor_total",
-          "totalFinal",
-        ]);
-        const ini = getFirst(o0902, [
-          "data_inicio",
-          "inicio",
-          "from",
-          "periodo_inicio",
-        ]);
-        const fim = getFirst(o0902, ["data_fim", "fim", "to", "periodo_fim"]);
+        const f0902 = getFechamentoStats(o0902);
         const e0902 = normalizeErroText(o0902);
 
-        if (o0902 && !o0902.__erro) {
+        if (f0902) {
           setHTML(
             "kpi0902",
-            total != null
-              ? pill(hasErro(o0902) ? "warn" : "ok", "R$ " + money(total))
-              : pill("info", "OK"),
+            pill(hasErro(o0902) ? "warn" : "ok", `R$ ${money(f0902.total)}`),
           );
 
           setHTML(
             "resumo0902",
-            (total != null
-              ? `Total: <b>R$ ${money(total)}</b>`
-              : `Total: <b>—</b>`) +
-              (ini || fim
-                ? ` • Período: <b>${ini ?? "—"}</b> → <b>${fim ?? "—"}</b>`
+            `Total: <b>R$ ${money(f0902.total)}</b>` +
+              ` • Dias: <b>${f0902.dias}</b>` +
+              ` • Concluídas: <b>${f0902.concluidas}</b>` +
+              ` • Canceladas: <b>${f0902.canceladas}</b>` +
+              (f0902.ticketMedio > 0
+                ? ` • Ticket médio: <b>R$ ${money(f0902.ticketMedio)}</b>`
                 : "") +
               (e0902 ? ` • <span class="muted">${e0902}</span>` : ""),
           );
@@ -707,84 +1125,106 @@
           setText("resumo0902", "—");
         }
 
-        // (Opcional) KPIs 09.03/09.04 se você criar no HTML depois:
-        // IDs esperados: kpi0903, resumo0903, kpi0904, resumo0904
-        if (
-          document.getElementById("kpi0903") &&
-          document.getElementById("resumo0903")
-        ) {
-          const qtd = countList(o0903);
-          const e0903 = normalizeErroText(o0903);
-          const blocked = hasErro(o0903);
+        // 09.03
+        const vendas0903 = Array.isArray(o0903?.vendas)
+          ? o0903.vendas
+          : Array.isArray(o0903?.data)
+            ? o0903.data
+            : [];
 
-          setHTML(
-            "kpi0903",
-            o0903 && !o0903.__erro
-              ? blocked
-                ? pill("bad", "BLOQUEADO")
-                : pill("ok", String(qtd ?? "OK"))
-              : "—",
-          );
+        const qtd0903 =
+          Number(getFirst(o0903, ["total_registros", "count", "total"])) ||
+          countList(o0903) ||
+          0;
 
-          setHTML(
-            "resumo0903",
-            o0903 && !o0903.__erro
-              ? blocked
-                ? `${pill("bad", "Acesso")} • <span class="muted">${e0903 || "—"}</span>`
-                : `Registros: <b>${qtd ?? "—"}</b>`
-              : "—",
-          );
-        }
+        const concluidas0903 = countByStatus(vendas0903, "CONCLUIDA");
+        const devolvidas0903 = countByStatus(vendas0903, "DEVOLVIDA");
+        const canceladas0903 = countByStatus(vendas0903, "CANCELADA");
 
-        if (
-          document.getElementById("kpi0904") &&
-          document.getElementById("resumo0904")
-        ) {
-          const id = pickVendaIdFromAny(o0904);
-          const stt = pickStatusFromAny(o0904);
-          const tot = pickTotalFromAny(o0904);
-          const e0904 = normalizeErroText(o0904);
-          const blocked = hasErro(o0904);
+        const e0903 = normalizeErroText(o0903);
+        const blocked0903 = hasErro(o0903);
 
-          setHTML(
-            "kpi0904",
-            o0904 && !o0904.__erro
-              ? blocked
-                ? pill("bad", "BLOQUEADO")
-                : id
-                  ? pill("ok", "#" + id)
-                  : pill("info", "OK")
-              : "—",
-          );
+        setHTML(
+          "kpi0903",
+          o0903 && !o0903.__erro
+            ? blocked0903
+              ? pill("bad", "BLOQUEADO")
+              : pill("ok", String(qtd0903))
+            : "—",
+        );
 
-          setHTML(
-            "resumo0904",
-            o0904 && !o0904.__erro
-              ? blocked
-                ? `${pill("bad", "Acesso")} • <span class="muted">${e0904 || "—"}</span>`
-                : `Venda <b>#${id ?? "—"}</b>` +
-                  (stt ? ` • Status: <b>${stt}</b>` : "") +
-                  (tot != null ? ` • Total: <b>R$ ${money(tot)}</b>` : "")
-              : "—",
-          );
-        }
+        setHTML(
+          "resumo0903",
+          o0903 && !o0903.__erro
+            ? blocked0903
+              ? `Acesso: <span class="hl-bad">negado</span>` +
+                (e0903 ? ` • <span class="muted">${e0903}</span>` : "")
+              : `Total de registros: <span class="hl-info">${qtd0903}</span>` +
+                ` • Concluídas: <span class="hl-ok">${concluidas0903}</span>` +
+                ` • Devolvidas: <span class="hl-warn">${devolvidas0903}</span>` +
+                ` • Canceladas: <span class="hl-bad">${canceladas0903}</span>`
+            : "—",
+        );
+        // 09.04
+        const id0904 = pickVendaIdFromAny(o0904);
+        const st0904 = pickStatusFromAny(o0904);
+        const tot0904 = pickTotalFromAny(o0904);
+        const forma0904 =
+          getFirst(o0904?.venda, ["forma_pagamento"]) ||
+          getFirst(o0904, ["forma_pagamento"]);
+        const e0904 = normalizeErroText(o0904);
+        const blocked0904 = hasErro(o0904);
+
+        setHTML(
+          "kpi0904",
+          o0904 && !o0904.__erro
+            ? blocked0904
+              ? pill("bad", "BLOQUEADO")
+              : id0904
+                ? pill("ok", "#" + id0904)
+                : pill("info", "OK")
+            : "—",
+        );
+
+        setHTML(
+          "resumo0904",
+          o0904 && !o0904.__erro
+            ? blocked0904
+              ? `Acesso: <span class="hl-bad">negado</span>` +
+                (e0904 ? ` • <span class="muted">${e0904}</span>` : "")
+              : `Venda <span class="hl-info">#${id0904 ?? "—"}</span>` +
+                (st0904 ? ` • Status: ${statusSpan(st0904)}` : "") +
+                (forma0904
+                  ? ` • Pagamento: <span class="hl-neutral">${forma0904}</span>`
+                  : "") +
+                (tot0904 != null ? ` • Total: ${moneySpan(tot0904)}` : "")
+            : "—",
+        );
       }
 
       // =========================
-      // Resultados (JSON completo) - usa seus IDs r0505/r0506
+      // KPIs (09.01/09.02)
+      // =========================
+
+      // =========================
+      // Resultados (JSON completo)
       // =========================
       function renderResultados(o0901, o0902, o0903, o0904) {
         // 09.01
         if (o0901 && !o0901.__erro) {
           const id = pickVendaIdFromAny(o0901) ?? "—";
-          const st = pickStatusFromAny(o0901);
-          const msg = normalizeErroText(o0901);
+          const st = pickStatusFromAny(o0901) ?? "—";
+          const total = pickTotalFromAny(o0901);
+          const forma =
+            getFirst(o0901, ["forma_pagamento"]) ||
+            getFirst(o0901?.venda, ["forma_pagamento"]) ||
+            "—";
 
           setHTML(
             "r0901Resumo",
-            `${hasErro(o0901) ? "<b>ATENÇÃO</b>" : "<b>OK</b>"} • id_venda: <b>${id}</b>` +
-              (st ? ` • status: <b>${st}</b>` : "") +
-              (msg ? ` • <span class="muted">${msg}</span>` : ""),
+            `Venda <b>#${id}</b> • Status: <b>${st}</b>` +
+              (forma ? ` • Pagamento: <b>${forma}</b>` : "") +
+              (total != null ? ` • Total: <b>R$ ${money(total)}</b>` : ""),
           );
           setText("r0901Json", JSON.stringify(o0901, null, 2));
         } else {
@@ -797,20 +1237,19 @@
 
         // 09.02
         if (o0902 && !o0902.__erro) {
-          const total = getFirst(o0902, [
-            "total",
-            "total_caixa",
-            "total_geral",
-            "valor_total",
-            "totalFinal",
-          ]);
-          const msg = normalizeErroText(o0902);
+          const stats = getFechamentoStats(o0902);
 
           setHTML(
             "r0902Resumo",
-            `${hasErro(o0902) ? "<b>ATENÇÃO</b>" : "<b>OK</b>"}` +
-              (total != null ? ` • total: <b>R$ ${money(total)}</b>` : "") +
-              (msg ? ` • <span class="muted">${msg}</span>` : ""),
+            stats
+              ? `Período: <b>${stats.dias}</b> dias` +
+                  ` • Concluídas: <b>${stats.concluidas}</b>` +
+                  ` • Canceladas: <b>${stats.canceladas}</b>` +
+                  ` • Total: <b>R$ ${money(stats.total)}</b>` +
+                  (stats.ticketMedio > 0
+                    ? ` • Ticket médio: <b>R$ ${money(stats.ticketMedio)}</b>`
+                    : "")
+              : "Fechamento de caixa carregado.",
           );
           setText("r0902Json", JSON.stringify(o0902, null, 2));
         } else {
@@ -821,15 +1260,25 @@
           setText("r0902Json", "—");
         }
 
-        // 09.03 (seu r0505*)
+        // 09.03
         if (o0903 && !o0903.__erro) {
-          const qtd = countList(o0903);
-          const msg = normalizeErroText(o0903);
+          const vendas0903 = Array.isArray(o0903?.vendas)
+            ? o0903.vendas
+            : Array.isArray(o0903?.data)
+              ? o0903.data
+              : [];
+
+          const qtd =
+            Number(getFirst(o0903, ["total_registros", "count", "total"])) ||
+            countList(o0903) ||
+            0;
+          const concluidas = countByStatus(vendas0903, "CONCLUIDA");
+          const devolvidas = countByStatus(vendas0903, "DEVOLVIDA");
+          const canceladas = countByStatus(vendas0903, "CANCELADA");
 
           setHTML(
             "r0505Resumo",
-            `${hasErro(o0903) ? "<b>ERRO</b>" : "<b>OK</b>"} • registros: <b>${qtd ?? "—"}</b>` +
-              (msg ? ` • <span class="muted">${msg}</span>` : ""),
+            `Registros: <b>${qtd}</b> • Concluídas: <b>${concluidas}</b> • Devolvidas: <b>${devolvidas}</b> • Canceladas: <b>${canceladas}</b>`,
           );
           setText("r0505Json", JSON.stringify(o0903, null, 2));
         } else {
@@ -840,18 +1289,21 @@
           setText("r0505Json", "—");
         }
 
-        // 09.04 (seu r0506*)
+        // 09.04
         if (o0904 && !o0904.__erro) {
           const id = pickVendaIdFromAny(o0904) ?? "—";
           const st = pickStatusFromAny(o0904) ?? "—";
           const tot = pickTotalFromAny(o0904);
-          const msg = normalizeErroText(o0904);
+          const forma =
+            getFirst(o0904?.venda, ["forma_pagamento"]) ||
+            getFirst(o0904, ["forma_pagamento"]) ||
+            "—";
 
           setHTML(
             "r0506Resumo",
-            `${hasErro(o0904) ? "<b>ERRO</b>" : "<b>OK</b>"} • id_venda: <b>${id}</b> • status: <b>${st}</b>` +
-              (tot != null ? ` • total: <b>R$ ${money(tot)}</b>` : "") +
-              (msg ? ` • <span class="muted">${msg}</span>` : ""),
+            `Venda <b>#${id}</b> • Status: <b>${st}</b>` +
+              (forma ? ` • Pagamento: <b>${forma}</b>` : "") +
+              (tot != null ? ` • Total: <b>R$ ${money(tot)}</b>` : ""),
           );
           setText("r0506Json", JSON.stringify(o0904, null, 2));
         } else {
@@ -892,15 +1344,14 @@
 
         renderKPIs(o0901, o0902, o0903, o0904);
         renderResultados(o0901, o0902, o0903, o0904);
-        autoGrowAllTextareas();
       }
 
       function limpar() {
         [
           "jsonRastreabilidade_0901",
           "jsonFechamentoCaixa_0902",
-          "jsonListaVendas_0505",
-          "jsonDetalheVenda_0506",
+          "jsonListaVendas_0903",
+          "jsonDetalheVenda_0904",
         ].forEach((id) => {
           const el = document.getElementById(id);
           if (el) el.value = "";
@@ -929,8 +1380,6 @@
           const el = document.getElementById(id);
           if (el) el.textContent = "—";
         });
-
-        autoGrowAllTextareas();
       }
 
       document.getElementById("btnRender").addEventListener("click", renderAll);
@@ -939,22 +1388,21 @@
       [
         "jsonRastreabilidade_0901",
         "jsonFechamentoCaixa_0902",
-        "jsonListaVendas_0505",
-        "jsonDetalheVenda_0506",
+        "jsonListaVendas_0903",
+        "jsonDetalheVenda_0904",
       ].forEach((id) => {
         const el = document.getElementById(id);
         if (!el) return;
+
         el.addEventListener("blur", () => {
           prettyTextarea(el);
-          autoGrow(el);
         });
+
         el.addEventListener("paste", () =>
           setTimeout(() => {
             prettyTextarea(el);
-            autoGrowAllTextareas();
           }, 0),
         );
-        el.addEventListener("input", () => autoGrow(el));
       });
 
       window.addEventListener("beforeprint", autoGrowAllTextareas);
