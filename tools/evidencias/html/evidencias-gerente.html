@@ -1,0 +1,1558 @@
+<!doctype html>
+<html lang="pt-br">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>VarejoSync • Evidência Gerente (PI)</title>
+
+    <style>
+      :root {
+        --bg: #0b0f14;
+        --bg-top: #070a0f;
+        --panel: #101826;
+        --panel-2: #0b1220;
+        --panel-3: #0d1627;
+        --txt: #e5e7eb;
+        --muted: #9ca3af;
+        --muted-2: #cbd5e1;
+        --line: #1f2a3a;
+        --line-soft: rgba(31, 42, 58, 0.7);
+
+        --info: #60a5fa;
+        --ok: #34d399;
+        --warn: #fbbf24;
+        --danger: #fb7185;
+
+        --mono:
+          ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas,
+          "Liberation Mono", "Courier New", monospace;
+        --sans:
+          ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial,
+          "Helvetica Neue", "Noto Sans", "Liberation Sans", sans-serif;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      html {
+        scroll-behavior: smooth;
+      }
+
+      body {
+        margin: 0;
+        color: var(--txt);
+        font-family: var(--sans);
+        background:
+          radial-gradient(
+            1200px 650px at 18% -10%,
+            rgba(96, 165, 250, 0.14),
+            transparent 55%
+          ),
+          linear-gradient(180deg, var(--bg-top) 0%, var(--bg) 100%);
+      }
+
+      .wrap {
+        max-width: 1280px;
+        margin: 0 auto;
+        padding: 22px 24px 40px;
+      }
+
+      h1 {
+        margin: 0 0 14px;
+        font-size: 20px;
+        letter-spacing: 0.2px;
+      }
+
+      h2 {
+        margin: 0 0 12px;
+        font-size: 16px;
+        letter-spacing: 0.2px;
+      }
+
+      .grid,
+      .two,
+      .json-grid,
+      .result-grid {
+        min-width: 0;
+      }
+
+      .grid > *,
+      .two > *,
+      .json-grid > *,
+      .result-grid > * {
+        min-width: 0;
+      }
+
+      @media (min-width: 980px) {
+        .grid {
+          grid-template-columns: 1.15fr 0.85fr;
+          align-items: start;
+        }
+      }
+
+      .two {
+        display: grid;
+        gap: 12px;
+      }
+
+      @media (min-width: 760px) {
+        .two {
+          grid-template-columns: 1fr 1fr;
+        }
+      }
+
+      .card {
+        background: rgba(16, 24, 38, 0.9);
+        border: 1px solid rgba(31, 42, 58, 0.92);
+        border-radius: 18px;
+        padding: 18px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.28);
+        height: 100%;
+      }
+
+      .chip {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 7px 12px;
+        border-radius: 999px;
+        border: 1px solid rgba(31, 42, 58, 0.92);
+        background: rgba(11, 18, 32, 0.78);
+        color: var(--muted-2);
+        font-size: 12px;
+        margin-bottom: 10px;
+        line-height: 1.2;
+      }
+
+      .section-space {
+        margin-top: 16px;
+      }
+
+      .row {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        margin-top: 12px;
+      }
+
+      button {
+        padding: 10px 16px;
+        border-radius: 14px;
+        border: 1px solid #2b3a52;
+        background: linear-gradient(180deg, #111c2d, #0b1220);
+        color: var(--txt);
+        cursor: pointer;
+        font-weight: 700;
+        font-size: 13px;
+        letter-spacing: 0.1px;
+        transition:
+          border-color 0.18s ease,
+          transform 0.18s ease,
+          box-shadow 0.18s ease;
+      }
+
+      button:hover {
+        border-color: rgba(96, 165, 250, 0.55);
+        transform: translateY(-1px);
+        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.16);
+      }
+
+      .muted {
+        color: var(--muted);
+      }
+
+      /* =========================
+         ENTRADA JSON
+         ========================= */
+
+      .inputBox {
+        display: flex;
+        flex-direction: column;
+        min-width: 0;
+      }
+      textarea.json-input {
+        width: 100%;
+        height: 320px;
+        min-height: 320px;
+        max-height: 320px;
+        padding: 14px 14px 16px;
+        border-radius: 14px;
+        border: 1px solid rgba(31, 42, 58, 0.9);
+        background: rgba(6, 16, 35, 0.88);
+        color: #e6edf8;
+        outline: none;
+        resize: none;
+        overflow: auto;
+        font-family: var(--mono);
+        font-size: 12.5px;
+        line-height: 1.45;
+        letter-spacing: 0;
+        white-space: pre;
+        word-break: normal;
+        overflow-wrap: normal;
+        tab-size: 2;
+        transition:
+          border-color 0.18s ease,
+          box-shadow 0.18s ease,
+          background 0.18s ease;
+      }
+
+      textarea.json-input::placeholder {
+        color: #9aa8bd;
+        opacity: 0.95;
+      }
+
+      textarea.json-input:focus {
+        border-color: rgba(96, 165, 250, 0.56);
+        box-shadow: 0 0 0 3px rgba(96, 165, 250, 0.12);
+        background: rgba(6, 16, 35, 0.96);
+      }
+
+      textarea.json-input::-webkit-scrollbar {
+        width: 10px;
+        height: 10px;
+      }
+
+      textarea.json-input::-webkit-scrollbar-thumb {
+        background: rgba(148, 163, 184, 0.25);
+        border-radius: 999px;
+        border: 2px solid transparent;
+        background-clip: padding-box;
+      }
+
+      textarea.json-input::-webkit-scrollbar-corner {
+        background: transparent;
+      }
+
+      /* =========================
+         KPIs
+         ========================= */
+
+      .kpis {
+        display: grid;
+        gap: 12px;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .kpi {
+        background: linear-gradient(180deg, #071a34, #06152a);
+        border: 1px solid rgba(80, 120, 200, 0.25);
+        border-radius: 16px;
+        padding: 14px 14px 12px;
+        min-width: 0;
+      }
+
+      .kpi .label {
+        color: #ffffff;
+        font-size: 12px;
+        margin-bottom: 8px;
+      }
+
+      .kpi .val {
+        font-size: 26px;
+        font-weight: 700;
+        line-height: 1.05;
+        letter-spacing: 0.15px;
+        overflow-wrap: anywhere;
+        word-break: break-word;
+      }
+
+      .kpi .hint {
+        margin-top: 8px;
+        font-size: 11px;
+        color: var(--muted-2);
+        overflow-wrap: anywhere;
+      }
+
+      .kpi .meta {
+        margin-top: 6px;
+        font-size: 11px;
+        color: var(--muted);
+        line-height: 1.3;
+      }
+
+      .tone-info .val {
+        color: #f8fafc;
+      }
+      .tone-ok .val {
+        color: var(--ok);
+      }
+      .tone-warn .val {
+        color: var(--warn);
+      }
+      .tone-danger .val {
+        color: var(--danger);
+      }
+
+      .sync-chip {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        margin-top: 12px;
+        padding: 8px 12px;
+        border-radius: 999px;
+        border: 1px solid rgba(31, 42, 58, 0.92);
+        background: rgba(11, 18, 32, 0.74);
+        color: var(--muted-2);
+        font-size: 12px;
+      }
+
+      /* =========================
+         CARDS DE RESPOSTA JSON
+         ========================= */
+
+      .json-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 14px;
+        align-items: stretch;
+      }
+
+      @media (min-width: 760px) {
+        .json-grid {
+          grid-template-columns: 1fr 1fr;
+        }
+      }
+
+      .json-card {
+        display: flex;
+        flex-direction: column;
+        min-width: 0;
+        height: 100%;
+      }
+
+      .json-panel {
+        background: rgba(6, 16, 35, 0.82);
+        border: 1px solid rgba(31, 42, 58, 0.92);
+        border-radius: 14px;
+        padding: 0;
+        overflow: hidden;
+        height: 340px; /* altura fixa visual */
+        overflow: hidden;
+      }
+
+      .json-view {
+        margin: 0;
+        padding: 12px 14px;
+        font-family: var(--mono);
+        font-size: 12px;
+        line-height: 1.42;
+        color: #e6edf8;
+        white-space: pre;
+        overflow: auto;
+        height: 100%;
+      }
+
+      /* =========================
+         TABELAS
+         ========================= */
+
+      .table-wrap {
+        overflow-x: auto;
+        border-radius: 14px;
+        border: 1px solid rgba(31, 42, 58, 0.92);
+        background: rgba(11, 18, 32, 0.55);
+      }
+
+      table {
+        width: 100%;
+        border-collapse: collapse;
+      }
+
+      thead th {
+        text-align: left;
+        font-size: 12px;
+        font-weight: 800;
+        color: #dbe6f5;
+        padding: 12px 12px;
+        border-bottom: 1px solid rgba(31, 42, 58, 0.85);
+        background: linear-gradient(
+          180deg,
+          rgba(16, 24, 38, 0.88),
+          rgba(11, 18, 32, 0.58)
+        );
+      }
+
+      tbody td {
+        padding: 11px 12px;
+        font-size: 12px;
+        border-bottom: 1px solid rgba(31, 42, 58, 0.6);
+        vertical-align: top;
+      }
+
+      tbody tr:hover {
+        background: rgba(255, 255, 255, 0.035);
+      }
+
+      .wrapCell {
+        white-space: normal;
+        overflow-wrap: anywhere;
+        word-break: break-word;
+      }
+
+      /* debug invisível */
+      #dbg {
+        display: none;
+      }
+
+      @media print {
+        button,
+        textarea,
+        .row {
+          display: none !important;
+        }
+
+        .wrap {
+          max-width: 100% !important;
+          padding: 0 !important;
+        }
+
+        .card {
+          box-shadow: none !important;
+        }
+      }
+      /* JSON – mesma cara do Fiscal/PDV */
+      textarea.json-input,
+      .json-panel {
+        background: linear-gradient(
+          180deg,
+          rgba(6, 16, 35, 0.92),
+          rgba(6, 16, 35, 0.8)
+        );
+        border: 1px solid rgba(31, 42, 58, 0.85);
+        box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.04);
+      }
+
+      /* Entrada: melhora legibilidade */
+      textarea.json-input {
+        padding: 14px 14px 16px;
+        font-size: 12px;
+        line-height: 1.42;
+        letter-spacing: 0.1px;
+      }
+
+      /* Resposta JSON: pre mais “firme” e compacto */
+      .json-view {
+        margin: 0;
+        padding: 10px 10px 12px;
+        font-family: var(--mono);
+        font-size: 12px;
+        line-height: 1.42;
+        color: #e6edf8;
+        white-space: pre; /* mantém alinhamento do JSON */
+        overflow: auto; /* scroll interno */
+        max-height: 320px; /* trava o crescimento */
+      }
+
+      /* Scroll discreto também no pre */
+      .json-view::-webkit-scrollbar {
+        width: 10px;
+        height: 10px;
+      }
+      .json-view::-webkit-scrollbar-thumb {
+        background: rgba(148, 163, 184, 0.22);
+        border-radius: 999px;
+        border: 2px solid transparent;
+        background-clip: padding-box;
+      }
+      .json-view::-webkit-scrollbar-corner {
+        background: transparent;
+      }
+      /* garante que os cards do topo aceitem altura calculada */
+      .grid > .card {
+        height: 100%;
+      }
+
+      .grid {
+        display: grid;
+        gap: 14px;
+        align-items: stretch;
+        grid-auto-rows: 1fr;
+      }
+
+      @media (min-width: 1100px) {
+        .grid {
+          grid-template-columns: 1.15fr 0.85fr;
+        }
+      }
+
+      .kpi-card {
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+      }
+      .grid > .card {
+        height: 100%;
+      }
+      .json-input {
+        height: 260px;
+        background: rgba(4, 10, 22, 0.55);
+        border: 1px solid rgba(70, 90, 120, 0.25);
+      }
+      .card h3 {
+        font-size: 16px;
+        opacity: 0.85;
+      }
+      .val.money {
+        color: #2ee6a6;
+      }
+      .kpi-subtitle {
+        font-size: 12px;
+        opacity: 0.7;
+        margin-bottom: 10px;
+      }
+      .kpi-sub {
+        font-size: 12px;
+        opacity: 0.65;
+        margin-bottom: 10px;
+      }
+      /* KPI wide ocupa a largura toda (2 colunas) */
+      .kpi-wide {
+        grid-column: 1 / -1;
+      }
+
+      /* “tabela” compacta dentro do KPI (padrão ERP) */
+      .kv {
+        display: flex;
+        justify-content: space-between;
+        gap: 12px;
+        padding: 6px 0;
+        border-bottom: 1px dashed rgba(255, 255, 255, 0.06);
+      }
+      .kv:last-child {
+        border-bottom: none;
+      }
+      .kv .k {
+        color: rgba(203, 213, 225, 0.85);
+      }
+      .kv .v {
+        color: #e5e7eb;
+        font-weight: 700;
+      }
+
+      /* destaque sutil por cor (sem barra lateral) */
+      .v.ok {
+        color: var(--ok);
+      }
+      .v.warn {
+        color: var(--warn);
+      }
+      .v.danger {
+        color: var(--danger);
+      }
+      /* Entrada JSON vira “painel técnico”, não protagonista */
+      textarea.json-input {
+        background: rgba(4, 10, 22, 0.55);
+        border: 1px solid rgba(70, 90, 120, 0.28);
+        color: rgba(229, 231, 235, 0.9);
+      }
+
+      /* Chips da esquerda menos chamativos */
+      .inputBox .chip {
+        opacity: 0.82;
+      }
+
+      /* opcional: reduz “peso” dos JSONs sem tirar legibilidade */
+      textarea.json-input {
+        font-size: 11.8px;
+        line-height: 1.4;
+      }
+      textarea.json-input {
+        width: 100%;
+        height: 320px;
+        min-height: 320px;
+        max-height: 320px;
+        padding: 14px 14px 16px;
+        border-radius: 14px;
+        border: 1px solid rgba(31, 42, 58, 0.9);
+        background: rgba(6, 16, 35, 0.88);
+        color: #e6edf8;
+        outline: none;
+        resize: none;
+        overflow-x: auto;
+        overflow-y: auto;
+        font-family: var(--mono);
+        font-size: 11.8px;
+        line-height: 1.42;
+        letter-spacing: 0.1px;
+        white-space: pre;
+        word-break: normal;
+        overflow-wrap: normal;
+        tab-size: 2;
+      }
+      .env {
+        font-size: 11px;
+        color: var(--muted);
+        margin-top: -6px;
+        margin-bottom: 14px;
+      }
+      /* 07.03 - alinhar igual às tabelas de cima */
+      .table-0703 {
+        width: 100% !important;
+        table-layout: fixed !important;
+      }
+
+      .table-0703 th,
+      .table-0703 td {
+        text-align: left !important;
+      }
+      .table-0703 th:nth-child(1),
+      .table-0703 td:nth-child(1) {
+        width: 40% !important;
+      }
+
+      .table-0703 th:nth-child(2),
+      .table-0703 td:nth-child(2) {
+        width: 40% !important;
+      }
+
+      .table-0703 th:nth-child(3),
+      .table-0703 td:nth-child(3) {
+        width: 40% !important;
+      }
+      table {
+        width: 100%;
+        table-layout: fixed;
+      }
+      /* ===== Ajuste visual do card de entrada ===== */
+      .grid > .card:first-child {
+        display: flex;
+        flex-direction: column;
+      }
+
+      .grid > .card:first-child .input-sync-group {
+        flex: 1;
+        align-items: stretch;
+      }
+
+      .grid > .card:first-child .inputBox {
+        display: flex;
+        flex-direction: column;
+      }
+
+      .grid > .card:first-child .row {
+        margin-top: 16px;
+        padding-top: 8px;
+      }
+
+      /* reduz um pouco a altura dos JSONs para dar respiro aos botões */
+      .grid > .card:first-child textarea.json-input {
+        height: 260px;
+        min-height: 260px;
+        max-height: 260px;
+      }
+
+      .json-panel {
+        min-height: 360px;
+        height: 360px;
+      }
+
+      .json-view {
+        padding: 14px 16px;
+        font-size: 11.5px;
+        line-height: 1.5;
+        white-space: pre-wrap;
+        word-break: break-word;
+        overflow-wrap: anywhere;
+      }
+
+      .section-space .table-wrap {
+        min-height: 170px;
+      }
+
+      /* ===== AJUSTE FINAL - ENTRADA JSON / HARMONIA VISUAL ===== */
+
+/* 1) os dois campos de entrada ocupam mais altura do card */
+.grid > .card:first-child .input-sync-group {
+  align-items: stretch;
+}
+
+.grid > .card:first-child textarea.json-input {
+  height: 360px !important;
+  min-height: 360px !important;
+  max-height: 360px !important;
+}
+
+/* 2) melhora a leitura do JSON 07.01 e deixa igual ao 07.02 */
+.grid > .card:first-child textarea.json-input {
+  padding: 16px 18px !important;
+  font-size: 12px !important;
+  line-height: 1.5 !important;
+  letter-spacing: 0 !important;
+  white-space: pre-wrap !important;
+  word-break: break-word !important;
+  overflow-wrap: anywhere !important;
+  tab-size: 2 !important;
+}
+
+/* 3) garante que os dois boxes tenham a mesma “caixa visual” */
+.grid > .card:first-child .inputBox {
+  display: flex;
+  flex-direction: column;
+}
+
+.grid > .card:first-child .row {
+  margin-top: 18px !important;
+  padding-top: 6px !important;
+}
+
+/* 4) cartões de resposta JSON um pouco maiores e mais harmônicos */
+.json-panel {
+  height: 380px !important;
+  min-height: 380px !important;
+}
+
+.json-view {
+  padding: 14px 16px !important;
+  font-size: 12px !important;
+  line-height: 1.5 !important;
+  white-space: pre-wrap !important;
+  word-break: break-word !important;
+  overflow-wrap: anywhere !important;
+  max-height: none !important;
+  height: 100% !important;
+}
+
+/* 5) dá mais “presença” visual às tabelas 07.01 e 07.02 */
+.section-space .table-wrap {
+  min-height: 185px !important;
+}
+    </style>
+  </head>
+
+  <body>
+    <div class="wrap">
+      <h1>VarejoSync • Evidência - Perfil Gerente</h1>
+      <div class="env">
+        Ambiente: Desenvolvimento • Teste de regras de negócio
+      </div>
+
+      <div class="grid">
+        <!-- ENTRADA -->
+        <div class="card">
+          <h2>Entrada de dados (JSON do Postman)</h2>
+
+          <div class="two input-sync-group" id="inputSyncGroup">
+            <div class="inputBox">
+              <div class="chip">07.01 • GET /dashboard (JSON completo)</div>
+              <textarea
+                class="json-input sync-input"
+                id="jsonDash"
+                spellcheck="false"
+                wrap="off"
+                placeholder="Cole aqui o JSON completo do GET /dashboard"
+              ></textarea>
+            </div>
+
+            <div class="inputBox">
+              <div class="chip">07.02 • Abaixo do mínimo por variação</div>
+              <textarea
+                class="json-input sync-input"
+                id="jsonTop"
+                spellcheck="false"
+                wrap="off"
+                placeholder="Opcional: cole aqui APENAS o array abaixo do mínimo"
+              ></textarea>
+            </div>
+          </div>
+
+          <div class="row">
+            <button onclick="renderAll()">Renderizar evidência</button>
+            <button onclick="limpar()">Limpar</button>
+          </div>
+        </div>
+
+        <!-- KPIS -->
+        <div class="card">
+          <h2>KPIs rápidos (derivados)</h2>
+
+          <div class="kpis">
+            <div class="kpi tone-info" id="kpiEstoqueBox">
+              <div class="label">Estoque total</div>
+              <div class="val" id="kEstoqueTotal">—</div>
+              <div class="hint">cards.estoque_total</div>
+              <div class="meta" id="mEstoqueTotal">
+                Aguardando dados do dashboard.
+              </div>
+            </div>
+
+            <div class="kpi tone-info" id="kpiCriticosBox">
+              <div class="label">Produtos críticos</div>
+              <div class="val" id="kItensCriticos">—</div>
+              <div class="hint">cards.itens_criticos</div>
+              <div class="meta" id="mItensCriticos">
+                Aguardando dados do dashboard.
+              </div>
+            </div>
+
+            <div class="kpi tone-info" id="kpiHojeBox">
+              <div class="label">Pedidos hoje</div>
+              <div class="val" id="kPedidosHoje">—</div>
+              <div class="hint">cards.pedidos_hoje</div>
+              <div class="meta" id="mPedidosHoje">
+                Aguardando dados do dashboard.
+              </div>
+            </div>
+
+            <div class="kpi tone-info" id="kpi7Box">
+              <div class="label">Pedidos 7 dias</div>
+              <div class="val" id="kPedidos7">—</div>
+              <div class="hint">cards.pedidos_7dias</div>
+              <div class="meta" id="mPedidos7">
+                Aguardando dados do dashboard.
+              </div>
+            </div>
+
+            <div class="kpi tone-info" id="kpiFatBox">
+              <div class="label">Faturamento (7 dias)</div>
+              <div class="val" id="kFaturamento7">—</div>
+              <div class="hint">cards.faturamento_7dias</div>
+              <div class="meta" id="mFaturamento7">
+                Aguardando dados do dashboard.
+              </div>
+            </div>
+
+            <div class="kpi tone-info" id="kpiTicketBox">
+              <div class="label">Ticket médio (7 dias)</div>
+              <div class="val" id="kTicket7">—</div>
+              <div class="hint">cards.ticket_medio_7dias</div>
+              <div class="meta" id="mTicket7">
+                Aguardando dados do dashboard.
+              </div>
+            </div>
+            <!-- Blocos gerenciais  -->
+            <div class="kpis" style="margin-top: 12px">
+              <div class="kpi kpi-wide">
+                <div class="label">Status operacional</div>
+                <div class="meta">
+                  <div class="kv">
+                    <span class="k">Fonte</span>
+                    <span class="v">API /dashboard (Postman)</span>
+                  </div>
+                  <div class="kv">
+                    <span class="k">Validação</span>
+                    <span class="v" id="stValidacao">—</span>
+                  </div>
+                  <div class="kv">
+                    <span class="k">Registros 24h</span>
+                    <span class="v" id="stTopCount">—</span>
+                  </div>
+                  <div class="kv">
+                    <span class="k">Formas 7 dias</span>
+                    <span class="v" id="stFormasCount">—</span>
+                  </div>
+                  <div class="kv">
+                    <span class="k">Unidades críticas</span>
+                    <span class="v" id="stCriticosCount">—</span>
+                  </div>
+                </div>
+              </div>
+
+              <div class="kpi kpi-wide">
+                <div class="label">Resumo operacional</div>
+                <div class="meta">
+                  <div class="kv">
+                    <span class="k">Pedidos (7 dias)</span>
+                    <span class="v" id="rsPedidos7">—</span>
+                  </div>
+                  <div class="kv">
+                    <span class="k">Faturamento (7 dias)</span>
+                    <span class="v" id="rsFat7">—</span>
+                  </div>
+                  <div class="kv">
+                    <span class="k">Ticket médio (7 dias)</span>
+                    <span class="v" id="rsTicket7">—</span>
+                  </div>
+                  <div class="kv">
+                    <span class="k">Recomendação</span>
+                    <span class="v" id="rsRecomendacao">—</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="sync-chip">
+            Última sincronização:
+            <span id="kUltSync" class="muted">—</span>
+          </div>
+
+          <div id="dbg">(debug)</div>
+        </div>
+      </div>
+
+      <!-- RESPOSTAS JSON -->
+      <div class="card section-space">
+        <h2>Respostas JSON renderizadas</h2>
+
+        <div class="json-grid" id="jsonResponseGrid">
+          <div class="json-card">
+            <div class="chip">07.01 • JSON completo normalizado</div>
+            <div class="json-panel sync-json-panel">
+              <pre class="json-view" id="viewDash">—</pre>
+            </div>
+          </div>
+
+          <div class="json-card">
+            <div class="chip">07.02 • produtos_mais_vendidos_24h</div>
+            <div class="json-panel sync-json-panel">
+              <pre class="json-view" id="viewTop">—</pre>
+            </div>
+          </div>
+
+          <div class="json-card">
+            <div class="chip">07.03 • formas_pagamento_7dias</div>
+            <div class="json-panel sync-json-panel">
+              <pre class="json-view" id="viewFormas">—</pre>
+            </div>
+          </div>
+
+          <div class="json-card">
+            <div class="chip">07.04 • críticos / abaixo mínimo</div>
+            <div class="json-panel sync-json-panel">
+              <pre class="json-view" id="viewCriticos">—</pre>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 07.01 -->
+      <div class="card section-space">
+        <h2>Resumo — 07.01</h2>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th class="wrapCell">Produto</th>
+                <th>Unidades</th>
+                <th>Receita</th>
+              </tr>
+            </thead>
+            <tbody id="tblResumo0701"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- 07.02 -->
+      <div class="card section-space">
+        <h2>Top produtos mais vendidos (24h) — 07.02</h2>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th class="wrapCell">Produto</th>
+                <th>Unidades</th>
+                <th>Receita</th>
+              </tr>
+            </thead>
+            <tbody id="tblTop240702"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- 07.03 -->
+      <div class="card section-space">
+        <h2>Formas de pagamento (7 dias) — 07.03</h2>
+        <div class="table-wrap">
+          <table class="table-0703">
+            <thead>
+              <tr>
+                <th class="wrapCell">Forma</th>
+                <th>Total (R$)</th>
+                <th>Qtd</th>
+              </tr>
+            </thead>
+            <tbody id="tblFormas"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- 07.04 -->
+      <div class="card section-space">
+        <h2>Estoque crítico / abaixo do mínimo — 07.04</h2>
+
+        <div class="two">
+          <div>
+            <div class="chip">Críticos por produto</div>
+            <div class="table-wrap">
+              <table>
+                <thead>
+                  <tr>
+                    <th class="wrapCell">Produto</th>
+                    <th>Itens críticos</th>
+                  </tr>
+                </thead>
+                <tbody id="tblCriticos"></tbody>
+              </table>
+            </div>
+          </div>
+
+          <div>
+            <div class="chip">Abaixo do mínimo por produto</div>
+            <div class="table-wrap">
+              <table>
+                <thead>
+                  <tr>
+                    <th class="wrapCell">Produto</th>
+                    <th>Variação</th>
+                    <th>Estoque atual</th>
+                    <th>Mínimo</th>
+                    <th>Faltam</th>
+                  </tr>
+                </thead>
+                <tbody id="tblAbaixoMin"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      function safeParse(text) {
+        const t = (text || "").trim();
+        if (!t) return null;
+        try {
+          return JSON.parse(t);
+        } catch (e) {
+          return { __erro: e.message };
+        }
+      }
+
+      function prettyStringify(value) {
+        if (value == null) return "—";
+        try {
+          return JSON.stringify(value, null, 2);
+        } catch {
+          return String(value);
+        }
+      }
+
+      function formatTextareaIfValid(id) {
+        const el = document.getElementById(id);
+        if (!el) return;
+
+        const raw = (el.value || "").trim();
+        if (!raw) return;
+
+        try {
+          const parsed = JSON.parse(raw);
+          el.value = JSON.stringify(parsed, null, 2);
+        } catch {
+          // mantém texto original
+        }
+      }
+
+      function money(n) {
+        const x = Number(n);
+        return Number.isFinite(x) ? x.toFixed(2).replace(".", ",") : "0,00";
+      }
+
+      function setText(id, v) {
+        const el = document.getElementById(id);
+        if (!el) return;
+        el.textContent =
+          v === undefined || v === null || v === "" ? "—" : String(v);
+      }
+
+      function setHtml(id, v) {
+        const el = document.getElementById(id);
+        if (!el) return;
+        el.innerHTML = v;
+      }
+
+      function fillTable(tbodyId, html, colSpan) {
+        const tb = document.getElementById(tbodyId);
+        if (!tb) return;
+        tb.innerHTML =
+          html && html.trim()
+            ? html
+            : `<tr><td colspan="${colSpan}" class="muted">—</td></tr>`;
+      }
+
+      function setJsonView(id, value) {
+        const el = document.getElementById(id);
+        if (!el) return;
+        el.textContent = value == null ? "—" : prettyStringify(value);
+      }
+
+      function setKpiTone(boxId, tone) {
+        const el = document.getElementById(boxId);
+        if (!el) return;
+        el.classList.remove("tone-info", "tone-ok", "tone-warn", "tone-danger");
+        el.classList.add(tone);
+      }
+
+      function normalizeDash(obj) {
+        if (!obj || obj.__erro) return { cards: {}, breakdowns: {} };
+
+        const root = obj.data || obj.resultado || obj;
+
+        if (root.cards || root.breakdowns) {
+          return {
+            cards: root.cards || {},
+            breakdowns: root.breakdowns || {},
+          };
+        }
+
+        const looksLikeCards =
+          "estoque_total" in root ||
+          "itens_criticos" in root ||
+          "pedidos_hoje" in root ||
+          "pedidos_7dias" in root ||
+          "faturamento_7dias" in root ||
+          "ticket_medio_7dias" in root;
+
+        if (looksLikeCards) {
+          return { cards: root, breakdowns: {} };
+        }
+
+        const looksLikeBreakdowns =
+          "produtos_mais_vendidos_24h" in root ||
+          "formas_pagamento_7dias" in root ||
+          "criticos_por_produto" in root ||
+          "abaixo_min_por_produto" in root ||
+          "resumo_0701" in root ||
+          "resumo" in root;
+
+        if (looksLikeBreakdowns) {
+          return { cards: {}, breakdowns: root };
+        }
+
+        return { cards: {}, breakdowns: {} };
+      }
+
+      function renderKPIs(d) {
+        const c = d.cards || {};
+
+        const estoque = Number(c.estoque_total ?? 0);
+        const crit = Number(c.itens_criticos ?? 0);
+        const hoje = Number(c.pedidos_hoje ?? 0);
+        const p7 = Number(c.pedidos_7dias ?? 0);
+        const fat = Number(c.faturamento_7dias ?? 0);
+        const ticket = Number(c.ticket_medio_7dias ?? 0);
+
+        setText("kEstoqueTotal", c.estoque_total);
+        setText("kItensCriticos", c.itens_criticos);
+        setText("kPedidosHoje", c.pedidos_hoje);
+        setText("kPedidos7", c.pedidos_7dias);
+        setText(
+          "kFaturamento7",
+          c.faturamento_7dias != null
+            ? `R$ ${money(c.faturamento_7dias)}`
+            : "—",
+        );
+        setText(
+          "kTicket7",
+          c.ticket_medio_7dias != null
+            ? `R$ ${money(c.ticket_medio_7dias)}`
+            : "—",
+        );
+        setText("kUltSync", c.ultima_sincronizacao || "—");
+
+        if (estoque > 0) {
+          setKpiTone("kpiEstoqueBox", "tone-info");
+          setText(
+            "mEstoqueTotal",
+            "Volume consolidado disponível para leitura gerencial.",
+          );
+        } else {
+          setKpiTone("kpiEstoqueBox", "tone-warn");
+          setText(
+            "mEstoqueTotal",
+            "Sem estoque consolidado retornado no payload.",
+          );
+        }
+
+        if (crit === 0) {
+          setKpiTone("kpiCriticosBox", "tone-ok");
+          setText(
+            "mItensCriticos",
+            "Sem itens críticos identificados no recorte atual.",
+          );
+        } else if (crit > 0 && crit <= 5) {
+          setKpiTone("kpiCriticosBox", "tone-warn");
+          setText(
+            "mItensCriticos",
+            "Há itens críticos; convém revisar reposição.",
+          );
+        } else {
+          setKpiTone("kpiCriticosBox", "tone-danger");
+          setText(
+            "mItensCriticos",
+            "Quantidade crítica relevante; prioridade para abastecimento.",
+          );
+        }
+
+        if (hoje > 0) {
+          setKpiTone("kpiHojeBox", "tone-info");
+          setText(
+            "mPedidosHoje",
+            "Indica atividade operacional do dia em andamento.",
+          );
+        } else {
+          setKpiTone("kpiHojeBox", "tone-warn");
+          setText("mPedidosHoje", "Nenhum pedido retornado para o dia atual.");
+        }
+
+        if (p7 > 0) {
+          setKpiTone("kpi7Box", "tone-info");
+          setText(
+            "mPedidos7",
+            "Mostra o volume agregado recente para leitura semanal.",
+          );
+        } else {
+          setKpiTone("kpi7Box", "tone-warn");
+          setText(
+            "mPedidos7",
+            "Sem pedidos no consolidado dos últimos 7 dias.",
+          );
+        }
+
+        if (fat > 0) {
+          setKpiTone("kpiFatBox", "tone-ok");
+          setText(
+            "mFaturamento7",
+            "Receita acumulada do período usada como visão de desempenho.",
+          );
+        } else {
+          setKpiTone("kpiFatBox", "tone-warn");
+          setText(
+            "mFaturamento7",
+            "Sem faturamento apurado no período informado.",
+          );
+        }
+
+        if (ticket > 0) {
+          setKpiTone("kpiTicketBox", "tone-ok");
+          setText(
+            "mTicket7",
+            "Indicador médio por venda útil para leitura comercial.",
+          );
+        } else {
+          setKpiTone("kpiTicketBox", "tone-warn");
+          setText(
+            "mTicket7",
+            "Ticket médio indisponível ou zerado no payload.",
+          );
+        }
+      }
+
+      function renderRowsProduto(rows, tbodyId) {
+        const normalized = (Array.isArray(rows) ? rows : []).map((r) => ({
+          produto: r.produto || "—",
+          unidades: Number(
+            r.unidades ?? r.quantidade_total ?? r.quantidade ?? r.qtd ?? 0,
+          ),
+          receita: Number(
+            r.receita ?? r.receita_total ?? r.total_receita ?? r.total ?? 0,
+          ),
+        }));
+
+        const sorted = normalized.sort((a, b) => {
+          if (b.unidades !== a.unidades) return b.unidades - a.unidades;
+          return b.receita - a.receita;
+        });
+
+        let html = "";
+        for (const r of sorted) {
+          html += `
+        <tr>
+          <td class="wrapCell">${r.produto}</td>
+          <td><b>${r.unidades}</b></td>
+          <td>${r.receita > 0 ? `R$ ${money(r.receita)}` : "—"}</td>
+        </tr>
+      `;
+        }
+
+        fillTable(tbodyId, html, 3);
+      }
+
+      function renderFormas(rows) {
+        const sorted = [...rows].sort(
+          (a, b) => Number(b.total ?? 0) - Number(a.total ?? 0),
+        );
+
+        let html = "";
+        for (const r of sorted) {
+          html += `
+        <tr>
+          <td class="wrapCell">${r.forma_pagamento || r.forma || "—"}</td>
+          <td>R$ ${money(r.total ?? 0)}</td>
+          <td>${Number(r.qtd ?? r.quantidade ?? 0)}</td>
+        </tr>
+      `;
+        }
+        fillTable("tblFormas", html, 3);
+      }
+
+      function renderCriticos(rows) {
+        const sorted = [...rows].sort((a, b) => {
+          const ca = Number(a.itens_criticos ?? 0);
+          const cb = Number(b.itens_criticos ?? 0);
+          if (cb !== ca) return cb - ca;
+          return String(a.produto || "").localeCompare(
+            String(b.produto || ""),
+            "pt-BR",
+          );
+        });
+
+        let html = "";
+        for (const r of sorted) {
+          html += `
+        <tr>
+          <td class="wrapCell">${r.produto || "—"}</td>
+          <td><b>${Number(r.itens_criticos ?? 0)}</b></td>
+        </tr>
+      `;
+        }
+        fillTable("tblCriticos", html, 2);
+      }
+
+      function renderAbaixoMinVariacao(rows) {
+        const sorted = [...rows].sort((a, b) => {
+          const fa = Number(a.faltam ?? 0);
+          const fb = Number(b.faltam ?? 0);
+          if (fb !== fa) return fb - fa;
+          return String(a.produto || "").localeCompare(
+            String(b.produto || ""),
+            "pt-BR",
+          );
+        });
+
+        let html = "";
+        for (const r of sorted) {
+          html += `
+        <tr>
+          <td class="wrapCell">${r.produto || "—"}</td>
+          <td class="wrapCell">${r.variacao || "—"}</td>
+          <td>${Number(r.estoque_atual ?? 0)}</td>
+          <td>${Number(r.estoque_minimo ?? 0)}</td>
+          <td><b>${Number(r.faltam ?? 0)}</b></td>
+        </tr>
+      `;
+        }
+
+        fillTable("tblAbaixoMin", html, 5);
+      }
+
+      function equalizeTopCards() {
+        const grid = document.querySelector(".grid");
+        if (!grid) return;
+
+        const cards = grid.querySelectorAll(":scope > .card");
+        if (cards.length < 2) return;
+
+        cards.forEach((c) => (c.style.height = "auto"));
+
+        const h = Math.max(cards[0].offsetHeight, cards[1].offsetHeight);
+
+        cards[0].style.height = h + "px";
+        cards[1].style.height = h + "px";
+      }
+
+      function renderResumoStatus(dash, top, formas, criticos) {
+        const c = dash.cards || {};
+
+        const valido = !!Object.keys(c).length;
+        const st = document.getElementById("stValidacao");
+        if (st) {
+          st.textContent = valido ? "OK — payload lido" : "Atenção — sem dados";
+          st.className = "v " + (valido ? "ok" : "warn");
+        }
+
+        setText("stTopCount", String(top?.length ?? 0));
+        setText("stFormasCount", String(formas?.length ?? 0));
+
+        const critCount = (criticos || []).reduce(
+          (acc, r) => acc + Number(r.faltam ?? 0),
+          0,
+        );
+
+        const stCrit = document.getElementById("stCriticosCount");
+        if (stCrit) {
+          stCrit.textContent = String(critCount);
+          stCrit.className =
+            "v " +
+            (critCount === 0 ? "ok" : critCount <= 5 ? "warn" : "danger");
+        }
+
+        setText("rsPedidos7", c.pedidos_7dias ?? "—");
+        setText(
+          "rsFat7",
+          c.faturamento_7dias != null
+            ? `R$ ${money(c.faturamento_7dias)}`
+            : "—",
+        );
+        setText(
+          "rsTicket7",
+          c.ticket_medio_7dias != null
+            ? `R$ ${money(c.ticket_medio_7dias)}`
+            : "—",
+        );
+
+        const rec = document.getElementById("rsRecomendacao");
+        if (!rec) return;
+
+        if (!valido) {
+          rec.textContent =
+            "Cole o JSON do dashboard para consolidar os indicadores.";
+          rec.className = "v warn";
+        } else if (critCount > 0) {
+          rec.textContent =
+            "Priorizar reposição dos itens críticos e revisar mínimos.";
+          rec.className = "v danger";
+        } else {
+          rec.textContent = "Operação estável; manter monitoramento semanal.";
+          rec.className = "v ok";
+        }
+      }
+
+      function renderAll() {
+        try {
+          formatTextareaIfValid("jsonDash");
+          formatTextareaIfValid("jsonTop");
+
+          const rawDash = safeParse(document.getElementById("jsonDash").value);
+          const abaixoMin = safeParse(document.getElementById("jsonTop").value);
+
+          if (rawDash && rawDash.__erro) {
+            alert("JSON 07.01 inválido: " + rawDash.__erro);
+            return;
+          }
+
+          if (abaixoMin && abaixoMin.__erro) {
+            alert("JSON 07.02 inválido: " + abaixoMin.__erro);
+            return;
+          }
+
+          const dash = normalizeDash(rawDash);
+          const b = dash.breakdowns || {};
+
+          renderKPIs(dash);
+
+          const top = Array.isArray(b.produtos_mais_vendidos_24h)
+            ? b.produtos_mais_vendidos_24h
+            : [];
+
+          const formas = Array.isArray(b.formas_pagamento_7dias)
+            ? b.formas_pagamento_7dias
+            : [];
+
+          const criticos = Array.isArray(b.criticos_por_produto)
+            ? b.criticos_por_produto
+            : [];
+
+          const resumo =
+            Array.isArray(b.resumo_0701) && b.resumo_0701.length
+              ? b.resumo_0701
+              : Array.isArray(b.resumo) && b.resumo.length
+                ? b.resumo
+                : Array.isArray(b.estoque_por_produto) &&
+                    b.estoque_por_produto.length
+                  ? b.estoque_por_produto
+                  : [];
+
+          renderRowsProduto(resumo, "tblResumo0701");
+          renderRowsProduto(top, "tblTop240702");
+          renderFormas(formas);
+          renderCriticos(criticos);
+
+          if (Array.isArray(abaixoMin)) {
+            renderAbaixoMinVariacao(abaixoMin);
+          } else {
+            fillTable("tblAbaixoMin", "", 5);
+          }
+
+          setJsonView("viewDash", dash);
+          setJsonView("viewTop", abaixoMin);
+          setJsonView("viewFormas", formas);
+          setJsonView("viewCriticos", criticos);
+
+          renderResumoStatus(
+            dash,
+            top,
+            formas,
+            Array.isArray(abaixoMin) ? abaixoMin : [],
+          );
+
+          const dbg = document.getElementById("dbg");
+          if (dbg) {
+            dbg.textContent =
+              `(debug) resumo: ${Array.isArray(resumo) ? resumo.length : 0} | ` +
+              `top: ${Array.isArray(top) ? top.length : 0} | ` +
+              `formas: ${Array.isArray(formas) ? formas.length : 0} | ` +
+              `criticos: ${Array.isArray(criticos) ? criticos.length : 0} | ` +
+              `abaixoMin: ${Array.isArray(abaixoMin) ? abaixoMin.length : 0}`;
+          }
+
+          requestAnimationFrame(equalizeTopCards);
+        } catch (err) {
+          console.error("ERRO renderAll:", err);
+          alert("Erro no renderAll: " + err.message);
+        }
+      }
+
+      function limpar() {
+        ["jsonDash", "jsonTop"].forEach((id) => {
+          const el = document.getElementById(id);
+          if (el) el.value = "";
+        });
+
+        [
+          "kEstoqueTotal",
+          "kItensCriticos",
+          "kPedidosHoje",
+          "kPedidos7",
+          "kFaturamento7",
+          "kTicket7",
+          "kUltSync",
+        ].forEach((id) => setText(id, "—"));
+
+        [
+          "mEstoqueTotal",
+          "mItensCriticos",
+          "mPedidosHoje",
+          "mPedidos7",
+          "mFaturamento7",
+          "mTicket7",
+        ].forEach((id) => setText(id, "Aguardando dados do dashboard."));
+
+        [
+          "stValidacao",
+          "stTopCount",
+          "stFormasCount",
+          "stCriticosCount",
+          "rsPedidos7",
+          "rsFat7",
+          "rsTicket7",
+          "rsRecomendacao",
+        ].forEach((id) => setText(id, "—"));
+
+        setKpiTone("kpiEstoqueBox", "tone-info");
+        setKpiTone("kpiCriticosBox", "tone-info");
+        setKpiTone("kpiHojeBox", "tone-info");
+        setKpiTone("kpi7Box", "tone-info");
+        setKpiTone("kpiFatBox", "tone-info");
+        setKpiTone("kpiTicketBox", "tone-info");
+
+        fillTable("tblResumo0701", "", 3);
+        fillTable("tblTop240702", "", 3);
+        fillTable("tblFormas", "", 3);
+        fillTable("tblCriticos", "", 2);
+        fillTable("tblAbaixoMin", "", 5);
+
+        setJsonView("viewDash", null);
+        setJsonView("viewTop", null);
+        setJsonView("viewFormas", null);
+        setJsonView("viewCriticos", null);
+
+        const dbg = document.getElementById("dbg");
+        if (dbg) {
+          dbg.textContent = "(debug) aguardando renderização…";
+        }
+      }
+    </script>
+  </body>
+</html>
