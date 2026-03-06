@@ -3,7 +3,8 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width,initial-scale=1" />
-    <title>Evidência — PDV (Venda OK e Bloqueio Estoque) | VarejoSync</title>
+    <title>Evidência — PDV (Vendedora) | VarejoSync</title>
+
     <style>
       :root {
         --bg: #0b0f14;
@@ -24,45 +25,49 @@
           ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial,
           "Helvetica Neue", "Noto Sans", "Liberation Sans", sans-serif;
       }
+
       * {
         box-sizing: border-box;
       }
+
       body {
         margin: 0;
         background: linear-gradient(180deg, #070a0f 0%, var(--bg) 100%);
         color: var(--txt);
         font-family: var(--sans);
       }
+
+      header {
+        border-bottom: 1px solid var(--line);
+        background: rgba(15, 23, 42, 0.4);
+      }
+
       .wrap {
         max-width: 1120px;
         margin: 0 auto;
         padding: 24px;
       }
-      .topbar {
-        display: flex;
-        gap: 12px;
-        align-items: flex-start;
-        justify-content: space-between;
-        flex-wrap: wrap;
-      }
+
       h1 {
         margin: 0;
-        font-size: 20px;
-        letter-spacing: 0.2px;
+        font-size: 22px;
+        letter-spacing: 0.3px;
+        font-weight: 800;
       }
+
+      .env {
+        font-size: 11px;
+        color: var(--muted);
+        margin-top: 6px;
+      }
+
       .sub {
         color: var(--muted);
         font-size: 13px;
         margin-top: 6px;
-        line-height: 1.35;
+        line-height: 1.45;
       }
-      .panel {
-        background: rgba(16, 24, 38, 0.88);
-        border: 1px solid var(--line);
-        border-radius: 14px;
-        padding: 16px;
-        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
-      }
+
       .grid {
         display: grid;
         gap: 14px;
@@ -72,100 +77,312 @@
           grid-template-columns: 1.12fr 0.88fr;
         }
       }
-      label {
-        display: block;
-        font-size: 12px;
-        color: var(--muted);
-        margin: 10px 0 6px;
-      }
-      input,
-      textarea,
-      select {
-        width: 100%;
-        padding: 10px 12px;
-        border-radius: 10px;
+
+      .card {
+        background: rgba(16, 24, 38, 0.88);
         border: 1px solid var(--line);
-        background: rgba(11, 18, 32, 0.9);
-        color: var(--txt);
-        outline: none;
+        border-radius: 14px;
+        padding: 16px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+        overflow: hidden;
       }
-      textarea {
-        min-height: 92px;
-        font-family: var(--mono);
-        font-size: 12px;
+
+      .section {
+        margin-top: 14px;
       }
-      .row {
+      .section:first-of-type {
+        opacity: 0.92;
+      }
+
+      h2 {
+        margin: 0 0 12px;
+        font-size: 14px;
+        letter-spacing: 0.2px;
         display: flex;
+        align-items: center;
+        justify-content: space-between;
         gap: 10px;
-        flex-wrap: wrap;
-      }
-      .btn {
-        padding: 10px 12px;
-        border-radius: 12px;
-        border: 1px solid var(--line);
-        background: linear-gradient(180deg, #111c2d, #0b1220);
-        color: var(--txt);
-        cursor: pointer;
         font-weight: 700;
-        font-size: 13px;
       }
-      .btn:hover {
-        border-color: #2b3a52;
-      }
-      .btn.ok {
-        border-color: rgba(34, 197, 94, 0.35);
-      }
-      .btn.bad {
-        border-color: rgba(239, 68, 68, 0.35);
-      }
-      .btn.primary {
-        border-color: rgba(96, 165, 250, 0.45);
-      }
-      .btn.ghost {
-        background: transparent;
-      }
+
       .chip {
         display: inline-flex;
         align-items: center;
         gap: 8px;
         padding: 6px 10px;
+        letter-spacing: 0.4px;
         border-radius: 999px;
         border: 1px solid var(--line);
         background: rgba(11, 18, 32, 0.7);
         font-size: 12px;
         color: var(--muted);
+        white-space: nowrap;
+        max-width: 100%;
+        overflow: hidden;
+        text-overflow: ellipsis;
       }
-      .dot {
-        width: 9px;
-        height: 9px;
-        border-radius: 99px;
-        background: var(--info);
-        display: inline-block;
-      }
-      .dot.ok {
-        background: var(--ok);
-      }
-      .dot.bad {
-        background: var(--bad);
-      }
-      .dot.warn {
-        background: var(--warn);
-      }
-      .kvs {
+
+      .two {
         display: grid;
-        grid-template-columns: 140px 1fr;
-        gap: 8px 10px;
-        font-size: 13px;
-        margin-top: 12px;
+        gap: 12px;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        align-items: stretch;
       }
-      .k {
-        color: var(--muted);
+      @media (max-width: 980px) {
+        .two {
+          grid-template-columns: 1fr;
+        }
       }
-      .v {
+      .two > div {
+        min-width: 0;
+        display: flex;
+        flex-direction: column;
+      }
+      .two > div .chip {
+        width: 100%;
+        max-width: 100%;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+
+      textarea {
+        width: 100%;
+        min-height: 160px;
+        padding: 10px 12px;
+        margin-top: 10px;
+        border-radius: 12px;
+        border: 1px solid var(--line);
+        background: rgba(11, 18, 32, 0.55);
+        color: var(--txt);
+        outline: none;
         font-family: var(--mono);
-        font-size: 12.5px;
+        font-size: 12px;
+        line-height: 1.35;
+
+        white-space: pre-wrap;
+        overflow-x: hidden;
+        overflow-y: auto;
+        word-break: normal;
+        overflow-wrap: normal;
+
+        resize: none;
+        scrollbar-width: thin;
+        scrollbar-color: rgba(156, 163, 175, 0.35) rgba(11, 18, 32, 0.35);
+      }
+
+      textarea::-webkit-scrollbar {
+        width: 10px;
+        height: 10px;
+      }
+      textarea::-webkit-scrollbar-track {
+        background: rgba(11, 18, 32, 0.35);
+        border-radius: 999px;
+      }
+      textarea::-webkit-scrollbar-thumb {
+        background: rgba(156, 163, 175, 0.28);
+        border: 1px solid rgba(31, 42, 58, 0.75);
+        border-radius: 999px;
+      }
+      textarea::-webkit-scrollbar-thumb:hover {
+        background: rgba(156, 163, 175, 0.38);
+      }
+
+      .row {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+        margin-top: 10px;
+        align-items: center;
+      }
+
+      button {
+        padding: 10px 14px;
+        border-radius: 12px;
+        border: 1px solid rgba(96, 165, 250, 0.25);
+        background: linear-gradient(
+          180deg,
+          rgba(17, 28, 45, 0.95),
+          rgba(11, 18, 32, 0.95)
+        );
+        color: var(--txt);
+        cursor: pointer;
+        font-weight: 800;
+        font-size: 13px;
+        font-family: var(--sans);
+        letter-spacing: 0.1px;
+        box-shadow: 0 10px 24px rgba(0, 0, 0, 0.25);
+      }
+      button:hover {
+        border-color: rgba(96, 165, 250, 0.45);
+        box-shadow: 0 12px 28px rgba(0, 0, 0, 0.32);
+      }
+      button:active {
+        transform: translateY(1px);
+      }
+
+      #btnLimpar {
+        border-color: rgba(156, 163, 175, 0.22);
+        background: linear-gradient(
+          180deg,
+          rgba(15, 23, 42, 0.75),
+          rgba(11, 18, 32, 0.85)
+        );
+      }
+      #btnLimpar:hover {
+        border-color: rgba(156, 163, 175, 0.4);
+      }
+
+      /* Entrada com leve destaque */
+      #cardEntrada {
+        background: rgba(16, 24, 38, 0.92);
+        border-color: rgba(31, 42, 58, 0.7);
+      }
+      #cardEntrada .two > div {
+        min-height: 220px !important;
+        justify-content: space-between;
+      }
+      #cardEntrada textarea {
+        flex-grow: 1 !important;
+        min-height: 140px !important;
+        margin-top: 8px !important;
+        scrollbar-width: thin;
+        background: linear-gradient(
+          180deg,
+          rgba(15, 31, 53, 0.92),
+          rgba(11, 22, 39, 0.92)
+        );
+        border-color: rgba(31, 42, 58, 0.9);
+        opacity: 0.95;
+      }
+
+      .legenda {
+        font-size: 11px;
+        color: var(--muted);
+        margin-top: 10px;
+        line-height: 1.4;
+      }
+
+      /* Pills */
+      .pill {
+        display: inline-flex;
+        align-items: center;
+        padding: 5px 10px;
+        border-radius: 999px;
+        font-size: 12px;
+        font-weight: 900;
+        border: 1px solid var(--line);
+        background: var(--chip);
+        white-space: nowrap;
+      }
+      .p-ok {
+        color: var(--ok);
+        border-color: rgba(34, 197, 94, 0.35);
+      }
+      .p-warn {
+        color: var(--warn);
+        border-color: rgba(245, 158, 11, 0.35);
+      }
+      .p-bad {
+        color: var(--bad);
+        border-color: rgba(239, 68, 68, 0.35);
+      }
+      .p-info {
+        color: var(--info);
+        border-color: rgba(96, 165, 250, 0.35);
+      }
+
+      /* ===== KPIs (limpo e consistente) ===== */
+      .kpis {
+        display: grid;
+        gap: 10px;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        align-items: stretch;
+      }
+      @media (max-width: 900px) {
+        .kpis {
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+      }
+
+      .kpi {
+        border: 1px solid rgba(31, 42, 58, 0.9);
+        background: rgba(11, 18, 32, 0.62);
+        border-radius: 14px;
+        padding: 14px;
+
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        gap: 8px;
+        min-height: 128px;
+        overflow: hidden;
+        min-width: 0;
+      }
+
+      .kpi .label {
+        color: var(--muted);
+        font-size: 12px;
+        line-height: 1.2;
+      }
+
+      .kpi .val {
+        margin: 0;
+        flex-grow: 1; /* Isso faz o container do botão ocupar todo o centro */
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .kpi .val .pill {
+        max-width: 100%;
+        white-space: nowrap;
+        font-size: 11px;
+        padding: 6px 12px;
+      }
+
+      .kpi .hint {
+        color: var(--muted);
+        font-size: 10px;
+        font-family: var(--mono);
+        line-height: 1;
+      }
+
+      /* ===== Tabela ===== */
+      .table-wrap {
+        overflow: auto;
+        border-radius: 14px;
+        border: 1px solid var(--line);
+      }
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        background: rgba(11, 18, 32, 0.35);
+      }
+      th,
+      td {
+        border-bottom: 1px solid rgba(31, 42, 58, 0.75);
+        padding: 10px 12px;
+        text-align: left;
+        font-size: 12px;
+        vertical-align: top;
+        overflow-wrap: anywhere;
         word-break: break-word;
       }
+      th {
+        color: #cbd5e1;
+        font-weight: 800;
+        background: rgba(15, 23, 42, 0.65);
+        position: sticky;
+        top: 0;
+      }
+      tbody tr:hover {
+        background: rgba(255, 255, 255, 0.04);
+      }
+      .muted {
+        color: var(--muted);
+      }
+
       details {
         border: 1px solid var(--line);
         border-radius: 12px;
@@ -176,709 +393,1143 @@
         cursor: pointer;
         color: var(--muted);
         font-size: 12px;
-      }
-      pre {
-        margin: 10px 0 0;
-        font-family: var(--mono);
-        font-size: 12px;
-        white-space: pre-wrap;
-        word-break: break-word;
-      }
-      .statusBadge {
-        display: inline-flex;
-        align-items: center;
-        gap: 8px;
-        padding: 6px 10px;
-        border-radius: 10px;
-        font-size: 12px;
-        border: 1px solid var(--line);
-        background: var(--chip);
-      }
-      .statusBadge.ok {
-        border-color: rgba(34, 197, 94, 0.35);
-      }
-      .statusBadge.bad {
-        border-color: rgba(239, 68, 68, 0.35);
-      }
-      .statusBadge.warn {
-        border-color: rgba(245, 158, 11, 0.35);
-      }
-      .divider {
-        height: 1px;
-        background: var(--line);
-        margin: 14px 0;
-      }
-      table {
-        width: 100%;
-        border-collapse: collapse;
-        margin-top: 8px;
-      }
-      th,
-      td {
-        border-bottom: 1px solid rgba(31, 42, 58, 0.75);
-        padding: 8px 6px;
-        text-align: left;
-        font-size: 12px;
-      }
-      th {
-        color: #cbd5e1;
         font-weight: 700;
-      }
-      .rightTop {
-        display: flex;
-        gap: 10px;
-        align-items: center;
-        justify-content: space-between;
-        flex-wrap: wrap;
-      }
-      .mini {
-        font-size: 12px;
-        color: var(--muted);
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
       }
 
-      /* Modal */
-      .modalBack {
-        position: fixed;
-        inset: 0;
-        background: rgba(0, 0, 0, 0.55);
-        display: none;
-        align-items: center;
-        justify-content: center;
-        padding: 18px;
+      #secResultados .two {
+        align-items: stretch;
       }
-      .modal {
-        width: min(860px, 100%);
-        background: rgba(16, 24, 38, 0.95);
+      #secResultados .two > div {
+        min-height: 400px !important; /* Altura idêntica para todos os blocos */
+        max-height: 400px !important;
+        display: flex !important;
+        flex-direction: column !important;
+        justify-content: flex-start !important;
+        margin-bottom: 20px;
+      }
+      #secResultados .sub {
+        min-height: 34px;
+        max-height: 34px;
+        overflow: hidden;
+        margin-bottom: 6px;
+        display: -webkit-box;
+        -webkit-box-orient: vertical;
+        -webkit-line-clamp: 2;
+      }
+
+      #secResultados details {
+        flex: 1 !important; /* Faz o campo do JSON ocupar o resto do card */
+        display: flex !important;
+        flex-direction: column !important;
+        overflow: hidden !important; /* Previne que o card estique */
+        background: rgba(11, 18, 32, 0.45);
         border: 1px solid var(--line);
-        border-radius: 16px;
-        padding: 16px;
-        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.55);
       }
-      .modalHead {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        gap: 10px;
+      /* Estilização da barra de rolagem para Chrome/Edge */
+      #secResultados pre::-webkit-scrollbar {
+        width: 6px;
       }
-      .modalTitle {
-        font-weight: 900;
-      }
-      .close {
-        background: transparent;
-        border: 1px solid var(--line);
-        color: var(--txt);
+      #secResultados pre::-webkit-scrollbar-thumb {
+        background: var(--line);
         border-radius: 10px;
-        padding: 6px 10px;
-        cursor: pointer;
-      }
-      .smallInput {
-        font-family: var(--mono);
-        font-size: 12px;
       }
 
+      #secResultados pre {
+        flex: 1 !important;
+        overflow-y: auto !important; /* Ativa scroll interno para JSONs longos */
+        margin-top: 10px;
+        padding: 12px;
+        background: rgba(0, 0, 0, 0.2);
+        max-height: 280px; /* Limite para o scroll aparecer */
+        scrollbar-width: thin;
+        scrollbar-color: var(--line) transparent;
+      }
+
+      /* ===== Print ===== */
       @media print {
-        .topbar,
-        .divider,
-        .grid {
+        header,
+        button {
+          display: none !important;
+        }
+
+        .wrap {
+          max-width: 100% !important;
+          padding: 0 !important;
+        }
+
+        .card {
           box-shadow: none !important;
         }
+
         details {
           page-break-inside: avoid;
         }
-        .modalBack {
-          position: static;
-          display: flex !important;
-          background: transparent !important;
-          padding: 0 !important;
+
+        textarea {
+          display: block !important;
+          height: auto !important;
+          max-height: none !important;
+          overflow: visible !important;
+          white-space: pre-wrap !important;
+          word-break: break-word !important;
+          overflow-wrap: anywhere !important;
         }
-        .modal {
-          width: 100% !important;
-          box-shadow: none !important;
+
+        .table-wrap {
+          page-break-inside: avoid;
         }
-        button,
-        input,
-        select,
-        textarea#obs {
-          display: none !important;
+      }
+
+      .kpis {
+        align-items: stretch;
+      }
+
+      .kpis .kpi {
+        display: flex !important;
+        flex-direction: column !important;
+        justify-content: space-between !important;
+        align-items: center !important;
+        text-align: center !important;
+        min-height: 128px !important;
+        padding: 14px !important;
+        border: 1px solid rgba(31, 42, 58, 0.9);
+        background: rgba(11, 18, 32, 0.62);
+        border-radius: 14px;
+      }
+
+      /* label pode quebrar 2 linhas, mas SEM mudar altura do card */
+      .kpis .kpi .label {
+        font-size: 12px;
+        color: var(--muted);
+        line-height: 1.2;
+        margin-bottom: 8px;
+        min-height: 30px;
+      }
+
+      /* valor sempre centralizado  */
+      .kpis .kpi .val {
+        flex-grow: 1;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        width: 100%;
+      }
+
+      /* hint sempre no “rodapé” */
+      .kpis .kpi .hint {
+        font-size: 10px;
+        color: var(--muted);
+        font-family: var(--mono);
+        margin-top: 8px;
+      }
+      .kpis .kpi .val .pill {
+        margin: 0 auto !important;
+        padding: 6px 16px !important;
+      }
+      /* ===== KPIs - VERSÃO FINAL */
+      .kpis {
+        display: grid !important;
+        gap: 12px !important;
+        grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+        align-items: stretch !important;
+        margin-bottom: 20px;
+      }
+
+      @media (max-width: 900px) {
+        .kpis {
+          grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
         }
+      }
+
+      .kpi {
+        border: 1px solid rgba(31, 42, 58, 0.9) !important;
+        background: rgba(11, 18, 32, 0.62) !important;
+        border-radius: 14px !important;
+        padding: 16px !important;
+        min-height: 135px !important;
+        display: flex !important;
+        flex-direction: column !important;
+        justify-content: space-between !important;
+        align-items: center !important;
+        text-align: center !important;
+        overflow: visible !important;
+        min-width: 0;
+      }
+
+      /* Título do Card */
+      .kpi .label {
+        color: var(--muted) !important;
+        font-size: 11px !important;
+        line-height: 1.3 !important;
+        text-transform: uppercase !important;
+        letter-spacing: 0.5px !important;
+        margin-bottom: 8px !important;
+        min-height: 32px !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+      }
+
+      .kpi .val {
+        margin: 0 !important;
+        flex-grow: 1 !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        width: 100% !important;
+      }
+
+      /* Estilo da Pill/Botão dentro do Valor */
+      .kpi .val .pill {
+        font-size: 11px !important;
+        font-weight: 800 !important;
+        padding: 8px 16px !important;
+        margin: 0 auto !important;
+        display: inline-flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+      }
+
+      /* Rodapé do Card */
+      .kpi .hint {
+        color: var(--muted) !important;
+        font-size: 10px !important;
+        font-family: var(--mono) !important;
+        line-height: 1 !important;
+        margin-top: 8px !important;
+        opacity: 0.8 !important;
+      }
+
+      /* Força as colunas a terem exatamente o mesmo tamanho */
+      #secResultados .two > div {
+        height: 420px !important;
+        display: flex !important;
+        flex-direction: column !important;
+        margin-bottom: 24px;
+      }
+
+      /* Garante que o resumo de texto ocupe sempre o mesmo espaço */
+      #secResultados .sub {
+        height: 40px !important;
+        min-height: 40px !important;
+        margin-bottom: 8px !important;
+        display: flex !important;
+        align-items: center;
+      }
+
+      /*  Details e Pre com alturas calculadas */
+      #secResultados details {
+        flex: 1 !important;
+        display: flex !important;
+        flex-direction: column !important;
+        border: 1px solid var(--line);
+        background: rgba(11, 18, 32, 0.45);
+        overflow: hidden !important;
+      }
+
+      /* Força o código JSON a rolar dentro de um espaço fixo */
+      #secResultados pre {
+        height: 280px !important;
+        overflow-y: auto !important;
+        background: rgba(0, 0, 0, 0.25);
+        margin: 10px 0 0 0 !important;
+        padding: 12px;
+        font-size: 11px;
+        scrollbar-width: thin;
+      }
+
+      /* Scrollbar discreta para não poluir o visual */
+      #secResultados pre::-webkit-scrollbar {
+        width: 5px;
+      }
+      #secResultados pre::-webkit-scrollbar-thumb {
+        background: var(--line);
+        border-radius: 10px;
+      }
+      /* CORREÇÃO DO TEXTO SOBREPOSTO NOS RESULTADOS */
+      #secResultados .sub {
+        min-height: 48px !important;
+        height: auto !important;
+        margin-bottom: 12px !important;
+        display: flex !important;
+        align-items: center !important;
+        line-height: 1.4 !important;
+        font-size: 13px !important;
+        overflow: visible !important;
+      }
+      /*CORREÇÃO DO TEXTO ENCAVALADO (RESUMOS) */
+      #secResultados .sub {
+        display: block !important;
+        height: auto !important;
+        min-height: 55px !important;
+        max-height: none !important;
+        line-height: 1.5 !important;
+        margin-bottom: 12px !important;
+        font-size: 13px !important;
+        color: var(--txt) !important;
+        overflow: visible !important;
+        white-space: normal !important;
+        -webkit-line-clamp: unset !important;
+        -webkit-box-orient: unset !important;
+      }
+
+      /* ALINHAMENTO DOS CARDS DE RESULTADO */
+      #secResultados .two > div {
+        height: auto !important;
+        min-height: 500px !important;
+        display: flex !important;
+        flex-direction: column !important;
+        justify-content: flex-start !important;
+      }
+
+      /*AJUSTE DO BLOCO JSON (DETAILS) */
+      #secResultados details {
+        flex: 1 !important;
+        display: flex !important;
+        flex-direction: column !important;
+        margin-top: auto !important;
+      }
+
+      #secResultados pre {
+        height: 300px !important;
+        overflow-y: auto !important;
+        background: rgba(0, 0, 0, 0.3) !important;
+        padding: 12px !important;
+        border-radius: 8px !important;
       }
     </style>
   </head>
 
   <body>
+    <header>
+      <div class="wrap">
+        <h1>VarejoSync • Evidência PDV — Perfil Vendedora</h1>
+        <div class="env">
+          Ambiente: Desenvolvimento • Teste de regras de negócio
+        </div>
+        <div class="sub"></div>
+      </div>
+    </header>
+
     <div class="wrap">
-      <div class="topbar">
-        <div>
-          <h1>Evidência — PDV (Venda OK e Bloqueio por Estoque)</h1>
-          <div class="sub">
-            Objetivo: gerar evidências de <b>validação de estoque</b> e
-            <b>criação de venda</b>. A tela registra <b>ação</b>,
-            <b>payload</b>, <b>endpoint</b>, <b>HTTP</b> e <b>JSON</b>.
-          </div>
-        </div>
-        <div class="chip">
-          <span class="dot" id="apiDot"></span>
-          <span id="apiStatus">API não testada</span>
-        </div>
-      </div>
-
-      <div class="divider"></div>
-
       <div class="grid">
-        <!-- CONTROLES -->
-        <div class="panel">
-          <div class="row">
-            <button
-              type="button"
-              class="btn primary"
-              id="btnPing"
-              type="button"
-            >
-              Testar API (/)
-            </button>
-            <button
-              type="button"
-              class="btn primary"
-              id="btnLogin"
-              type="button"
-            >
-              Gerar token (Vendedora)
-            </button>
-            <button
-              type="button"
-              class="btn bad"
-              id="btnBloqueio"
-              type="button"
-            >
-              BLOQUEIO: estoque insuficiente
-            </button>
-            <button type="button" class="btn ok" id="btnVendaOk" type="button">
-              VENDA OK: criar venda
-            </button>
-            <button
-              type="button"
-              class="btn ghost"
-              id="btnAbrirModal"
-              type="button"
-            >
-              Ver última execução (modal)
-            </button>
-          </div>
+        <!-- ENTRADA -->
+        <div class="card" id="cardEntrada">
+          <h2>Entrada de dados (JSON do Postman)</h2>
 
-          <label>Base URL da API</label>
-          <input id="baseUrl" value="http://localhost:3000" />
-
-          <label>Token (Authorization: Bearer ...)</label>
-          <input
-            id="token"
-            class="smallInput"
-            placeholder="Cole o token da Vendedora (/auth/login)"
-          />
-
-          <div class="row">
-            <div style="flex: 1; min-width: 240px">
-              <label>Pagamento</label>
-              <select id="pagamento">
-                <option value="CREDITO" selected>CREDITO</option>
-                <option value="DEBITO">DEBITO</option>
-                <option value="PIX">PIX</option>
-                <option value="DINHEIRO">DINHEIRO</option>
-                <option value="OUTRO">OUTRO</option>
-              </select>
+          <div class="two">
+            <div>
+              <div class="chip">05.01 • POST /registrar-venda</div>
+              <textarea
+                id="jsonVendaRegistro_0501"
+                spellcheck="false"
+                autocapitalize="off"
+                autocomplete="off"
+                autocorrect="off"
+                placeholder="Cole aqui a resposta do registro da venda (05.01) — ex.: { id_venda, total, itens: [...] }"
+              ></textarea>
             </div>
 
-            <div style="flex: 1; min-width: 240px">
-              <label> ID variação (Item 2) para VENDA OK </label>
-              <input
-                id="idOk2"
-                class="smallInput"
-                value=""
-                placeholder="Ex.: 25 ou 6"
-              />
-            </div>
-            <div style="flex: 1; min-width: 240px">
-              <label>Desconto (%)</label>
-              <input id="descPercent" class="smallInput" value="10" />
-            </div>
-
-            <div style="flex: 1; min-width: 240px">
-              <label>Motivo do desconto</label>
-              <input
-                id="motivoDesc"
-                value="Promoção"
-              />
+            <div>
+              <div class="chip">05.02 • POST /aplicar-desconto-item</div>
+              <textarea
+                id="jsonDesconto_0502"
+                spellcheck="false"
+                autocapitalize="off"
+                autocomplete="off"
+                autocorrect="off"
+                placeholder="Cole aqui a resposta do desconto (05.02) — ex.: { id_venda, itens: [...], total }"
+              ></textarea>
             </div>
           </div>
 
-          <label>Catálogo (apenas para evidência visual)</label>
-          <textarea readonly>
-Itens do teste:
-Itens do teste:
-- 25 → Calça jeans → 99,90
-- 6  → Camiseta   → 59,90
-- 19 → Vestido    → 129,90
+          <div class="two section">
+            <div>
+              <div class="chip">05.03 • POST / devolver-venda</div>
+              <textarea
+                id="jsonDevolucao_0503"
+                spellcheck="false"
+                autocapitalize="off"
+                autocomplete="off"
+                autocorrect="off"
+                placeholder="Cole aqui a resposta da devolução (05.03)"
+              ></textarea>
+            </div>
 
-Cenários:
-- Bloqueio por estoque insuficiente
-- Venda concluída
-- Desconto autorizado (até 10%)
-- Bloqueio de desconto acima do limite</textarea
-          >
+            <div>
+              <div class="chip">05.04 • PUT /vendas/{id}/cancelar</div>
+              <textarea
+                id="jsonCancelamento_0504"
+                spellcheck="false"
+                autocapitalize="off"
+                autocomplete="off"
+                autocorrect="off"
+                placeholder="Cole aqui a resposta do cancelamento (05.04) — esperado 403 sem gerente"
+              ></textarea>
+            </div>
+          </div>
 
-          <label>Log / Observações</label>
-          <textarea
-            id="obs"
-            placeholder=
-          ></textarea>
+          <div class="row">
+            <button id="btnRender">Renderizar evidência</button>
+            <button id="btnLimpar">Limpar</button>
+            <div class="legenda">
+              Evidência de execução dos testes do módulo PDV demonstrando regras
+              de negócio, controle de perfil e validação de operações de venda.
+            </div>
+          </div>
         </div>
 
-        <!-- RESULTADOS -->
-        <div class="panel">
-          <div class="rightTop">
-            <div class="statusBadge" id="badgeStatus">
-              <span class="dot" id="badgeDot"></span>
-              <span id="badgeText">Aguardando ação</span>
+        <!-- KPIs -->
+        <div class="card">
+          <h2>KPIs rápidos (derivados)</h2>
+
+          <div class="kpis">
+            <div class="kpi">
+              <div class="label">Venda registrada (05.01)</div>
+              <div class="val" id="kpiVendaRegistro_0501">—</div>
+              <div class="hint">id_venda</div>
             </div>
-            <div class="chip">
-              <span class="k">Última ação:</span>
-              <span class="v" id="lastAction">—</span>
+
+            <div class="kpi">
+              <div class="label">Desconto aplicado (05.02)</div>
+              <div class="val" id="kpiDesconto_0502">—</div>
+              <div class="hint">desconto</div>
+            </div>
+
+            <div class="kpi">
+              <div class="label">Total (05.02)</div>
+              <div class="val" id="kpiTotal_0502">—</div>
+              <div class="hint">total</div>
+            </div>
+
+            <div class="kpi">
+              <div class="label">Devolução da venda (05.03)</div>
+              <div class="val" id="kpiDevolucao_0503">—</div>
+              <div class="hint">status</div>
             </div>
           </div>
 
-          <div class="kvs">
-            <div class="k">HTTP</div>
-            <div class="v" id="httpStatus">—</div>
-            <div class="k">Endpoint</div>
-            <div class="v" id="httpUrl">—</div>
-            <div class="k">Horário</div>
-            <div class="v" id="httpTime">—</div>
-            <div class="k">Resumo</div>
-            <div class="v" id="httpSummary">—</div>
+          <div class="section">
+            <div class="chip">Resumo Registro (05.01)</div>
+            <div class="sub" id="kpiResumoRegistro_0501">—</div>
           </div>
 
-          <div class="divider"></div>
+          <div class="section">
+            <div class="chip">Resumo Desconto (05.02)</div>
+            <div class="sub" id="kpiResumoDesconto_0502">—</div>
+          </div>
 
-          <details open>
-            <summary>Payload enviado</summary>
-            <pre id="payloadOut">{}</pre>
-          </details>
+          <div class="section">
+            <div class="chip">Resumo Devolução (05.03)</div>
+            <div class="sub" id="kpiResumoDevolucao_0503">—</div>
+          </div>
 
-          <div class="divider"></div>
-
-          <details open>
-            <summary>Resposta JSON</summary>
-            <pre id="jsonOut">{}</pre>
-          </details>
-
-          <div class="divider"></div>
-
-          <details open>
-            <summary>Itens da venda (tabela — aparece quando VENDA OK)</summary>
-            <table>
-              <thead>
-                <tr>
-                  <th>id_variacao</th>
-                  <th>qtd</th>
-                  <th>preço</th>
-                  <th>subtotal</th>
-                  <th>desconto</th>
-                </tr>
-              </thead>
-              <tbody id="tbodyItens">
-                <tr>
-                  <td colspan="5" style="color: var(--muted)">—</td>
-                </tr>
-              </tbody>
-            </table>
-          </details>
+          <div class="section">
+            <div class="chip">Resumo Cancelamento (05.04)</div>
+            <div class="sub" id="kpiResumoCancelamento_0504">—</div>
+          </div>
         </div>
       </div>
-    </div>
 
-    <!-- MODAL -->
-    <div class="modalBack" id="modalBack">
-      <div class="modal">
-        <div class="modalHead">
-          <div>
-            <div class="modalTitle">Última execução (para print)</div>
-            <div class="mini">
-              Inclui payload + resposta. Deixe aberto para o print.
-            </div>
-          </div>
-          <button type="button" class="close" id="btnClose" type="button">
-            Fechar
-          </button>
+      <!-- ITENS DA VENDA -->
+      <div class="card section">
+        <h2>
+          Itens da venda (05.02)
+          <span class="chip"
+            >tabela derivada de itens (05.02) — fallback 05.01</span
+          >
+        </h2>
+
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>id_variacao</th>
+                <th>Qtd</th>
+                <th>Preço unit</th>
+                <th>Subtotal</th>
+                <th>Desconto</th>
+                <th>Motivo</th>
+              </tr>
+            </thead>
+            <tbody id="tblItensVenda"></tbody>
+          </table>
         </div>
-        <div class="divider"></div>
-        <details open>
-          <summary>Payload</summary>
-          <pre id="modalPayload">{}</pre>
-        </details>
-        <div class="divider"></div>
-        <details open>
-          <summary>Resposta</summary>
-          <pre id="modalJson">{}</pre>
-        </details>
+      </div>
+
+      <!-- RESULTADOS JSON -->
+      <div class="card section" id="secResultados">
+        <h2>
+          Resultados (JSON completo)
+          <!-- <span class="chip">prints da PI</span> -->
+        </h2>
+
+        <div class="two">
+          <div>
+            <div class="chip">05.01 • Registrar venda (JSON completo)</div>
+            <div class="sub" id="r0501Resumo">—</div>
+            <details class="section">
+              <summary>JSON completo (05.01)</summary>
+              <pre id="r0501Json">—</pre>
+            </details>
+          </div>
+
+          <div>
+            <div class="chip">
+              05.02 • Aplicar desconto item (JSON completo)
+            </div>
+            <div class="sub" id="r0502Resumo">—</div>
+            <details class="section">
+              <summary>JSON completo (05.02)</summary>
+              <pre id="r0502Json">—</pre>
+            </details>
+          </div>
+        </div>
+
+        <div class="two section">
+          <div>
+            <div class="chip">05.03 • Devolver venda (JSON completo)</div>
+            <div class="sub" id="r0503Resumo">—</div>
+            <details class="section">
+              <summary>JSON completo (05.03)</summary>
+              <pre id="r0503Json">—</pre>
+            </details>
+          </div>
+
+          <div>
+            <div class="chip">
+              05.04 • Cancelamento da venda (JSON completo)
+            </div>
+            <div class="sub" id="r0504Resumo">—</div>
+            <details class="section">
+              <summary>JSON completo (05.04)</summary>
+              <pre id="r0504Json">—</pre>
+            </details>
+          </div>
+        </div>
       </div>
     </div>
 
     <script>
-      (function () {
-        const el = (id) => document.getElementById(id);
-
-        el("btnLogin").addEventListener("click", async () => {
-          const url = base() + "/auth/login";
-          const payload = { email: "vendas@varejosync.com" };
-
-          const opt = {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(payload),
-          };
-
-          setLoading(true);
-          try {
-            const r = await fetch(url, opt);
-            const json = await safeParseResponse(r);
-
-            if (r.ok && json.token) {
-              el("token").value = json.token; // preenche o campo token
-              fillResult({
-                action: "AUTH — Login POC (gerar token)",
-                method: "POST",
-                url,
-                status: r.status,
-                payload,
-                json,
-              });
-            } else {
-              fillResult({
-                action: "AUTH — Falha no login",
-                method: "POST",
-                url,
-                status: r.status,
-                payload,
-                json,
-              });
-            }
-          } catch (e) {
-            fillResult({
-              action: "AUTH — Erro de rede no login",
-              method: "POST",
-              url,
-              status: 0,
-              payload,
-              json: { erro: "Falha no fetch (rede/CORS).", detalhe: String(e) },
-            });
-          } finally {
-            setLoading(false);
-          }
-        });
-
-        function setApiStatus(ok, txt) {
-          el("apiStatus").textContent = txt;
-          el("apiDot").className = "dot " + (ok ? "ok" : "bad");
+      // ===== Utils =====
+      function safeParse(text) {
+        const t = (text || "").trim();
+        if (!t) return null;
+        try {
+          return JSON.parse(t);
+        } catch (e) {
+          return { __erro: e.message, __raw: t };
         }
+      }
 
-        function setBadge(kind, txt) {
-          el("badgeText").textContent = txt;
-          el("badgeDot").className = "dot " + kind;
-          el("badgeStatus").className =
-            "statusBadge " +
-            (kind === "ok" ? "ok" : kind === "bad" ? "bad" : "warn");
-        }
+      function prettyTextarea(textarea) {
+        const raw = (textarea.value || "").trim();
+        if (!raw) return;
+        const obj = safeParse(raw);
+        if (obj && obj.__erro) return;
+        try {
+          textarea.value = JSON.stringify(obj, null, 2);
+        } catch {}
+      }
 
-        function now() {
-          return new Date().toLocaleString("pt-BR");
-        }
+      function money(n) {
+        const x = Number(n);
+        return Number.isFinite(x) ? x.toFixed(2).replace(".", ",") : "—";
+      }
 
-        function base() {
-          return el("baseUrl").value.trim().replace(/\/+$/, "");
-        }
+      function pill(kind, txt) {
+        const k =
+          kind === "ok"
+            ? "p-ok"
+            : kind === "bad"
+              ? "p-bad"
+              : kind === "warn"
+                ? "p-warn"
+                : "p-info";
+        return `<span class="pill ${k}">${txt}</span>`;
+      }
 
-        function sanitizeToken(raw) {
-          let t = String(raw || "").trim();
-          t = t.replace(/^Bearer\s+/i, ""); // remove "Bearer " se colarem
-          t = t.replace(/\s+/g, ""); // remove quebras de linha
-          return t;
-        }
-
-        function authHeader() {
-          const token = sanitizeToken(el("token").value);
-          // já monta "Bearer <token>" certinho
-          return token ? { Authorization: "Bearer " + token } : {};
-        }
-
-        function pretty(obj) {
-          try {
-            return JSON.stringify(obj, null, 2);
-          } catch {
-            return String(obj);
-          }
-        }
-
-        async function safeParseResponse(r) {
-          const ct = (r.headers.get("content-type") || "").toLowerCase();
-          const text = await r.text();
-          if (ct.includes("application/json")) {
-            try {
-              return text ? JSON.parse(text) : {};
-            } catch {
-              return { raw: text };
-            }
-          }
-          return { raw: text };
-        }
-
-        function fillItensTable(json) {
-          const tbody = el("tbodyItens");
-          const itens = Array.isArray(json?.itens) ? json.itens : [];
-          if (!itens.length) {
-            tbody.innerHTML = `<tr><td colspan="5" style="color:var(--muted)">—</td></tr>`;
-            return;
-          }
-          tbody.innerHTML = itens
-            .map((i) => {
-              const desc =
-                i.desconto_percent && i.desconto_percent > 0
-                  ? i.desconto_percent + "%"
-                  : i.desconto_valor && i.desconto_valor > 0
-                    ? "R$ " + i.desconto_valor
-                    : "0";
-              return `
-        <tr>
-          <td>${i.id_variacao ?? ""}</td>
-          <td>${i.quantidade ?? ""}</td>
-          <td>${i.preco_unit ?? ""}</td>
-          <td>${i.subtotal ?? ""}</td>
-          <td>${desc}</td>
-        </tr>
-      `;
-            })
-            .join("");
-        }
-
-        function fillResult({ action, method, url, status, payload, json }) {
-          el("lastAction").textContent = action;
-          el("httpStatus").textContent = status;
-          el("httpUrl").textContent = method + " " + url;
-          el("httpTime").textContent = now();
-          el("payloadOut").textContent = pretty(payload);
-          el("jsonOut").textContent = pretty(json);
-          el("modalPayload").textContent = pretty(payload);
-          el("modalJson").textContent = pretty(json);
-
-          let summary = "";
-          if (status === 401)
-            summary += "401 Unauthorized — token inválido/ausente. ";
-          if (json?.id_venda) summary += `id_venda=${json.id_venda} `;
-          if (json?.forma_pagamento)
-            summary += `pagamento=${json.forma_pagamento} `;
-          if (json?.total !== undefined) summary += `total=${json.total} `;
-          if (json?.erro) summary += `erro=${json.erro} `;
-          if (json?.estoque_atual !== undefined)
-            summary += `estoque_atual=${json.estoque_atual} `;
-          if (json?.solicitado !== undefined)
-            summary += `solicitado=${json.solicitado} `;
-          el("httpSummary").textContent = summary.trim() || "—";
-
-          if (status >= 200 && status < 300) {
-            setBadge("ok", "VENDA OK (2xx)");
-          } else if (
-            status === 400 &&
-            json?.erro &&
-            String(json.erro).toLowerCase().includes("estoque")
+      function getFirst(obj, keys) {
+        for (const k of keys) {
+          if (
+            obj &&
+            Object.prototype.hasOwnProperty.call(obj, k) &&
+            obj[k] !== undefined &&
+            obj[k] !== null
           ) {
-            setBadge("bad", "BLOQUEIO_ESTOQUE (400)");
-          } else if (status === 401) {
-            setBadge("warn", "401 — Unauthorized (token)");
+            return obj[k];
+          }
+        }
+        return null;
+      }
+
+      function normalizeItens(obj) {
+        if (!obj || obj.__erro) return [];
+        const itens = getFirst(obj, ["itens", "items", "produtos", "linhas"]);
+        return Array.isArray(itens) ? itens : [];
+      }
+
+      function normalizeIdVenda(obj) {
+        if (!obj || obj.__erro) return null;
+        return getFirst(obj, [
+          "id_venda",
+          "idVenda",
+          "id",
+          "venda_id",
+          "vendaId",
+        ]);
+      }
+
+      function normalizeTotal(obj) {
+        if (!obj || obj.__erro) return null;
+        return getFirst(obj, [
+          "total",
+          "valor_total",
+          "total_venda",
+          "totalFinal",
+          "total_final",
+        ]);
+      }
+
+      function normalizePagamento(obj) {
+        if (!obj || obj.__erro) return null;
+        return getFirst(obj, [
+          "forma_pagamento",
+          "pagamento",
+          "formaPagamento",
+        ]);
+      }
+
+      function normalizeErro(obj) {
+        if (!obj || obj.__erro) return "";
+        return String(
+          getFirst(obj, ["erro", "error", "message", "mensagem"]) || "",
+        );
+      }
+
+      // regra objetiva de sucesso/erro
+      function hasErro(obj) {
+        if (!obj || obj.__erro) return false;
+        return (
+          obj.erro !== undefined ||
+          obj.error !== undefined ||
+          obj.message !== undefined ||
+          obj.mensagem !== undefined
+        );
+      }
+
+      function isOk(obj) {
+        if (!obj || obj.__erro) return false;
+        return obj.ok === true;
+      }
+
+      function normalizeDescontoInfo(obj) {
+        if (!obj || obj.__erro) return { tipo: null, valor: null };
+
+        const dv = getFirst(obj, [
+          "desconto_percent",
+          "descontoPercent",
+          "percentual_desconto",
+        ]);
+        if (dv !== null) return { tipo: "percent", valor: dv };
+
+        const vv = getFirst(obj, [
+          "desconto_valor",
+          "descontoValor",
+          "valor_desconto",
+          "desconto_total",
+        ]);
+        if (vv !== null) return { tipo: "valor", valor: vv };
+
+        const itens = normalizeItens(obj);
+        for (const it of itens) {
+          const p = getFirst(it, [
+            "desconto_percent",
+            "descontoPercent",
+            "percentual_desconto",
+          ]);
+          if (p !== null) return { tipo: "percent", valor: p };
+
+          const v = getFirst(it, [
+            "desconto_valor",
+            "descontoValor",
+            "valor_desconto",
+            "desconto",
+          ]);
+          if (v !== null) return { tipo: "valor", valor: v };
+        }
+
+        return { tipo: null, valor: null };
+      }
+
+      // total do KPI 05.02 com fallback para 05.01 quando 05.02 for erro
+      function total0502WithFallback(descObj0502, regObj0501) {
+        const ok = isOk(descObj0502);
+        const total2 = ok ? normalizeTotal(descObj0502) : null;
+        if (total2 !== null) return { total: total2, source: "05.02" };
+
+        const total1 = normalizeTotal(regObj0501);
+        if (total1 !== null) return { total: total1, source: "05.01" };
+
+        return { total: null, source: null };
+      }
+
+      // ===== KPIs =====
+      function renderKPIs(regObj0501, descObj0502, devObj0503, canObj0504) {
+        // 05.01
+        const id0501 = normalizeIdVenda(regObj0501);
+        document.getElementById("kpiVendaRegistro_0501").innerHTML = id0501
+          ? pill("ok", "#" + id0501)
+          : "—";
+
+        // 05.02 (aplicado/negado coerente)
+        const descOk = isOk(descObj0502);
+        const descNegado = hasErro(descObj0502) && !descOk;
+        const d = normalizeDescontoInfo(descObj0502);
+
+        if (descOk) {
+          if (d.tipo === "percent") {
+            document.getElementById("kpiDesconto_0502").innerHTML = pill(
+              "ok",
+              String(d.valor) + "%",
+            );
+          } else if (d.tipo === "valor") {
+            document.getElementById("kpiDesconto_0502").innerHTML = pill(
+              "ok",
+              "R$ " + money(d.valor),
+            );
           } else {
-            setBadge("warn", "Falha/Validação (" + status + ")");
-          }
-
-          fillItensTable(json || {});
-          el("modalBack").style.display = "flex";
-        }
-
-        function setLoading(isLoading) {
-          // trava TODOS os botões enquanto a requisição estiver em andamento
-          document.querySelectorAll("button").forEach((b) => {
-            b.disabled = isLoading;
-            b.style.opacity = isLoading ? "0.75" : "";
-            b.style.cursor = isLoading ? "not-allowed" : "";
-          });
-        }
-
-        async function doFetch(method, path, payload) {
-          const url = base() + path;
-
-          const headers = {
-            "Content-Type": "application/json",
-            ...authHeader(),
-          };
-
-          // monta options sem body se não tiver payload
-          const opt = { method, headers };
-          if (payload !== undefined && payload !== null) {
-            opt.body = JSON.stringify(payload);
-          }
-
-          setLoading(true);
-
-          try {
-            const r = await fetch(url, opt);
-            const json = await safeParseResponse(r);
-            return { url, status: r.status, json };
-          } catch (err) {
-            // padroniza erro de rede/para evidência
-            return {
-              url,
-              status: 0,
-              json: {
-                erro: "Falha no fetch (rede/CORS).",
-                detalhe: String(err?.message || err),
-              },
-            };
-          } finally {
-            setLoading(false);
-          }
-        }
-
-        function payloadBloqueio() {
-          return {
-            forma_pagamento: el("pagamento").value,
-            itens: [
-              { id_variacao: 25, quantidade: 1, preco_unit: 99.9 },
-              { id_variacao: 13, quantidade: 999, preco_unit: 129.9 }, // bloqueio por estoque
-              { id_variacao: 6, quantidade: 1, preco_unit: 59.9 },
-            ],
-          };
-        }
-
-        function payloadVendaOk() {
-          const desc = Math.max(0, Number(el("descPercent").value || 0));
-          const motivo = String(el("motivoDesc").value || "").trim();
-
-          return {
-            forma_pagamento: el("pagamento").value,
-            itens: [
-              { id_variacao: 25, quantidade: 1, preco_unit: 99.9 },
-
-              { id_variacao: 6, quantidade: 1, preco_unit: 59.9 },
-
-              {
-                id_variacao: 19,
-                quantidade: 1,
-                preco_unit: 129.9, // PREÇO ORIGINAL (obrigatório e deve bater com o cadastro)
-                desconto_percent: desc, // ex.: 10
-                motivo_desconto: motivo, // ex.: "Promoção  (desconto autorizado)"
-              },
-            ],
-          };
-        }
-
-        function payloadVendaDesconto() {
-          const d = aplicaDesconto(129.9, el("descPercent").value);
-
-          return {
-            forma_pagamento: el("pagamento").value,
-            itens: [
-              {
-                id_variacao: 19,
-                quantidade: 1,
-                preco_unit: d.original,
-                desconto_percent: d.percent,
-                motivo_desconto: el("motivoDesc").value,
-              },
-            ],
-          };
-        }
-
-        // Eventos
-        el("btnPing").addEventListener("click", async () => {
-          try {
-            const r = await fetch(base() + "/");
-            const ct = r.headers.get("content-type") || "";
-            setApiStatus(
-              r.ok && ct.includes("application/json"),
-              `GET / -> ${r.status} (${ct})`,
+            document.getElementById("kpiDesconto_0502").innerHTML = pill(
+              "ok",
+              "APLICADO",
             );
-          } catch (e) {
-            setApiStatus(false, "Falha ao acessar API");
           }
+        } else if (descNegado) {
+          document.getElementById("kpiDesconto_0502").innerHTML = pill(
+            "bad",
+            "NEGADO",
+          );
+        } else if (descObj0502 && !descObj0502.__erro) {
+          document.getElementById("kpiDesconto_0502").innerHTML = pill(
+            "warn",
+            "SEM OK",
+          );
+        } else {
+          document.getElementById("kpiDesconto_0502").textContent = "—";
+        }
+
+        // Total 05.02 com fallback
+        const t = total0502WithFallback(descObj0502, regObj0501);
+        document.getElementById("kpiTotal_0502").textContent =
+          t.total !== null ? "R$ " + money(t.total) : "—";
+
+        // 05.03 devolução (ok/atenção)
+        const devOk =
+          isOk(devObj0503) || (!hasErro(devObj0503) && !!devObj0503);
+        if (devObj0503 && !devObj0503.__erro) {
+          document.getElementById("kpiDevolucao_0503").innerHTML = devOk
+            ? pill("ok", "OK")
+            : pill("warn", "ATENÇÃO");
+        } else {
+          document.getElementById("kpiDevolucao_0503").textContent = "—";
+        }
+
+        // ===== Resumos (curtos e profissionais) =====
+
+        // Resumo 05.01
+        const total0501 = normalizeTotal(regObj0501);
+        const pg0501 = normalizePagamento(regObj0501);
+        const itens0501 = normalizeItens(regObj0501);
+        document.getElementById("kpiResumoRegistro_0501").innerHTML = id0501
+          ? `Venda <b>#${id0501}</b> • Pgto: <b>${pg0501 || "—"}</b> • Total: <b>R$ ${
+              total0501 !== null ? money(total0501) : "—"
+            }</b> • Itens: <b>${itens0501.length}</b>`
+          : "—";
+
+        // Resumo 05.02
+        const id0502 = normalizeIdVenda(descObj0502) || id0501;
+        const msgErro0502 = normalizeErro(descObj0502);
+        const descTxt =
+          d.tipo === "percent"
+            ? `<b>${d.valor}%</b>`
+            : d.tipo === "valor"
+              ? `<b>R$ ${money(d.valor)}</b>`
+              : `<span class="muted">—</span>`;
+
+        const totalTxt =
+          t.total !== null
+            ? ` • Total: <b>R$ ${money(t.total)}</b>${
+                t.source === "05.01"
+                  ? ` <span class="muted">(fallback 05.01)</span>`
+                  : ``
+              }`
+            : ``;
+
+        document.getElementById("kpiResumoDesconto_0502").innerHTML =
+          descObj0502 && !descObj0502.__erro
+            ? descOk
+              ? `Venda <b>#${id0502 ?? "—"}</b> • ${pill("ok", "Desconto aplicado")} • Total: <b>R$ ${money(t.total)}</b>`
+              : descNegado
+                ? `Venda <b>#${id0502 ?? "—"}</b> • ${pill("bad", "Desconto bloqueado")} • Regra: >10% exige Gerente • Total: <b>R$ ${money(t.total)}</b>`
+                : `Venda <b>#${id0502 ?? "—"}</b> • ${pill("warn", "Status indefinido")}`
+            : "—";
+
+        // Resumo 05.03 (devolução)
+        const id0503 = normalizeIdVenda(devObj0503) || id0502 || id0501;
+        const statusDev = getFirst(devObj0503, ["status"]) || "";
+        const msgDev =
+          normalizeErro(devObj0503) ||
+          getFirst(devObj0503, ["msg", "message", "mensagem"]) ||
+          "";
+
+        document.getElementById("kpiResumoDevolucao_0503").innerHTML =
+          devObj0503 && !devObj0503.__erro
+            ? `Venda <b>#${id0503 ?? "—"}</b> • ${pill("ok", "Devolvida")} ${
+                statusDev ? `• Status: <b>${statusDev}</b>` : ""
+              }`
+            : "—";
+
+        // Resumo 05.04 cancelamento (esperado bloqueio por perfil)
+        const id0504 =
+          normalizeIdVenda(canObj0504) || id0503 || id0502 || id0501;
+
+        const perfilAtual =
+          getFirst(canObj0504, ["perfil_atual", "perfilAtual"]) || null;
+
+        const permitido =
+          getFirst(canObj0504, ["permitido", "perfis_permitidos"]) || null;
+        const exigidoTxt = Array.isArray(permitido)
+          ? permitido.join(", ")
+          : permitido;
+
+        const msgCan =
+          normalizeErro(canObj0504) ||
+          getFirst(canObj0504, ["msg", "message", "mensagem", "status"]) ||
+          "";
+
+        const canHasErro = hasErro(canObj0504);
+
+        document.getElementById("kpiResumoCancelamento_0504").innerHTML =
+          canObj0504 && !canObj0504.__erro
+            ? `<b>Venda #${id0504 ?? "—"}</b> • ${
+                canHasErro ? pill("bad", "BLOQUEADO") : pill("ok", "OK")
+              }` +
+              (perfilAtual ? ` • Perfil atual: <b>${perfilAtual}</b>` : ``) +
+              (exigidoTxt ? ` • Exigido: <b>${exigidoTxt}</b>` : ``)
+            : "—";
+      }
+
+      // ===== Tabela itens (05.02 ok -> itens 05.02, senão fallback 05.01) =====
+      function renderItensTable(regObj0501, descObj0502) {
+        const tbody = document.getElementById("tblItensVenda");
+        tbody.innerHTML = "";
+
+        const itens0502 = isOk(descObj0502) ? normalizeItens(descObj0502) : [];
+        const itens0501 = normalizeItens(regObj0501);
+        const itens = itens0502.length ? itens0502 : itens0501;
+
+        if (!itens.length) {
+          tbody.innerHTML = `<tr><td colspan="6" class="muted">Cole o JSON 05.02 (desconto) ou 05.01 (registro) para renderizar a tabela de itens.</td></tr>`;
+          return;
+        }
+
+        for (const i of itens) {
+          const idVar =
+            getFirst(i, [
+              "id_variacao",
+              "idVariacao",
+              "variacao_id",
+              "id_variation",
+            ]) ?? "—";
+          const qtd = Number(getFirst(i, ["quantidade", "qtd", "qty"]) ?? 0);
+          const preco =
+            getFirst(i, [
+              "preco_unit",
+              "preco_unitario",
+              "preco",
+              "valor_unit",
+              "precoUnit",
+            ]) ?? 0;
+          const subtotal =
+            getFirst(i, ["subtotal", "valor_subtotal", "sub_total"]) ?? null;
+
+          const descPercent = getFirst(i, [
+            "desconto_percent",
+            "descontoPercent",
+            "percentual_desconto",
+          ]);
+          const descValor = getFirst(i, [
+            "desconto_valor",
+            "descontoValor",
+            "valor_desconto",
+            "desconto",
+          ]);
+          const motivo =
+            getFirst(i, ["motivo_desconto", "motivo", "justificativa"]) ?? "—";
+
+          const descText =
+            descPercent !== null &&
+            descPercent !== undefined &&
+            Number(descPercent) > 0
+              ? String(descPercent) + "%"
+              : descValor !== null &&
+                  descValor !== undefined &&
+                  Number(descValor) > 0
+                ? "R$ " + money(descValor)
+                : "0";
+
+          tbody.insertAdjacentHTML(
+            "beforeend",
+            `
+        <tr>
+          <td class="muted">Variação #${idVar}</td>
+          <td><b>${qtd}</b></td>
+          <td>R$ ${money(preco)}</td>
+          <td>${subtotal !== null ? "R$ " + money(subtotal) : `<span class="muted">—</span>`}</td>
+          <td>${descText}</td>
+          <td class="muted">${motivo}</td>
+        </tr>
+        `,
+          );
+        }
+      }
+
+      // ===== Resultados (JSON completo) =====
+      function renderResultados(
+        regObj0501,
+        descObj0502,
+        devObj0503,
+        canObj0504,
+      ) {
+        // 05.01
+        if (regObj0501 && !regObj0501.__erro) {
+          const id = normalizeIdVenda(regObj0501) ?? "—";
+          const total = normalizeTotal(regObj0501);
+
+          document.getElementById("r0501Resumo").innerHTML =
+            `<b>OK</b> • id_venda: <b>${id}</b>` +
+            (total !== null ? ` • total: <b>R$ ${money(total)}</b>` : ``);
+
+          document.getElementById("r0501Json").textContent = JSON.stringify(
+            regObj0501,
+            null,
+            2,
+          );
+        } else {
+          document.getElementById("r0501Resumo").textContent =
+            "Cole o JSON da resposta 05.01 (registrar venda).";
+          document.getElementById("r0501Json").textContent = "—";
+        }
+
+        // 05.02
+        if (descObj0502 && !descObj0502.__erro) {
+          const id =
+            normalizeIdVenda(descObj0502) ??
+            normalizeIdVenda(regObj0501) ??
+            "—";
+
+          const ok = isOk(descObj0502);
+          const msgErro = normalizeErro(descObj0502);
+          const t = total0502WithFallback(descObj0502, regObj0501);
+
+          document.getElementById("r0502Resumo").innerHTML = ok
+            ? `<b>OK</b> • id_venda: <b>${id}</b>` +
+              (t.total !== null ? ` • total: <b>R$ ${money(t.total)}</b>` : ``)
+            : `<b>ERRO</b> • id_venda: <b>${id}</b>` +
+              (msgErro ? ` • <span class="muted">${msgErro}</span>` : ``) +
+              (t.total !== null
+                ? ` • total: <b>R$ ${money(t.total)}</b> <span class="muted">(fallback 05.01)</span>`
+                : ``);
+
+          document.getElementById("r0502Json").textContent = JSON.stringify(
+            descObj0502,
+            null,
+            2,
+          );
+        } else {
+          document.getElementById("r0502Resumo").textContent =
+            "Cole o JSON da resposta 05.02 (aplicar desconto item).";
+          document.getElementById("r0502Json").textContent = "—";
+        }
+
+        // 05.03
+        if (devObj0503 && !devObj0503.__erro) {
+          const id =
+            normalizeIdVenda(devObj0503) ??
+            normalizeIdVenda(descObj0502) ??
+            normalizeIdVenda(regObj0501) ??
+            "—";
+
+          const ok = isOk(devObj0503) || (!hasErro(devObj0503) && !!devObj0503);
+          const msg =
+            normalizeErro(devObj0503) ||
+            getFirst(devObj0503, ["msg", "message", "mensagem", "status"]) ||
+            "";
+
+          document.getElementById("r0503Resumo").innerHTML =
+            `<b>${ok ? "OK" : "ATENÇÃO"}</b> • id_venda: <b>${id}</b>` +
+            (msg ? ` • <span class="muted">${msg}</span>` : ``);
+
+          document.getElementById("r0503Json").textContent = JSON.stringify(
+            devObj0503,
+            null,
+            2,
+          );
+        } else {
+          document.getElementById("r0503Resumo").textContent =
+            "Cole o JSON da resposta 05.03 (devolução).";
+          document.getElementById("r0503Json").textContent = "—";
+        }
+
+        // 05.04
+        if (canObj0504 && !canObj0504.__erro) {
+          const id =
+            normalizeIdVenda(canObj0504) ??
+            normalizeIdVenda(descObj0502) ??
+            normalizeIdVenda(regObj0501) ??
+            "—";
+
+          const msg =
+            normalizeErro(canObj0504) ||
+            getFirst(canObj0504, ["msg", "message", "mensagem", "status"]) ||
+            "";
+
+          const bloqueado = hasErro(canObj0504);
+
+          document.getElementById("r0504Resumo").innerHTML =
+            `<b>${bloqueado ? "BLOQUEADO" : "OK"}</b> • id_venda: <b>${id}</b>` +
+            (msg ? ` • <span class="muted">${msg}</span>` : ``);
+
+          document.getElementById("r0504Json").textContent = JSON.stringify(
+            canObj0504,
+            null,
+            2,
+          );
+        } else {
+          document.getElementById("r0504Resumo").textContent =
+            "Cole o JSON da resposta 05.04 (cancelar venda).";
+          document.getElementById("r0504Json").textContent = "—";
+        }
+      }
+
+      // ===== AUTO EXPAND TEXTAREA PARA PRINT =====
+      function autoGrow(el) {
+        if (!el) return;
+        el.style.height = "auto";
+        el.style.height = el.scrollHeight + 2 + "px";
+      }
+
+      function autoGrowAllTextareas() {
+        document.querySelectorAll("textarea").forEach(autoGrow);
+      }
+
+      // ===== Orquestração =====
+      function renderAll() {
+        const ids = [
+          "jsonVendaRegistro_0501",
+          "jsonDesconto_0502",
+          "jsonDevolucao_0503",
+          "jsonCancelamento_0504",
+        ];
+
+        ids.forEach((id) => {
+          const el = document.getElementById(id);
+          if (el) prettyTextarea(el);
         });
 
-        el("btnBloqueio").addEventListener("click", async () => {
-          const payload = payloadBloqueio();
-          try {
-            const { url, status, json } = await doFetch(
-              "POST",
-              "/vendas",
-              payload,
-            );
-            fillResult({
-              action: "PDV — BLOQUEIO de estoque (tentativa de venda)",
-              method: "POST",
-              url,
-              status,
-              payload,
-              json,
-            });
-          } catch (e) {
-            fillResult({
-              action: "PDV — BLOQUEIO de estoque (erro de rede)",
-              method: "POST",
-              url: base() + "/vendas",
-              status: 0,
-              payload,
-              json: { erro: "Falha no fetch.", detalhe: String(e) },
-            });
-          }
-        });
-
-        el("btnVendaOk").addEventListener("click", async () => {
-          const payload = payloadVendaOk();
-          try {
-            const { url, status, json } = await doFetch(
-              "POST",
-              "/vendas",
-              payload,
-            );
-            fillResult({
-              action: "PDV — VENDA OK (criação de venda)",
-              method: "POST",
-              url,
-              status,
-              payload,
-              json,
-            });
-          } catch (e) {
-            fillResult({
-              action: "PDV — VENDA OK (erro de rede)",
-              method: "POST",
-              url: base() + "/vendas",
-              status: 0,
-              payload,
-              json: { erro: "Falha no fetch.", detalhe: String(e) },
-            });
-          }
-        });
-
-        el("btnAbrirModal").addEventListener(
-          "click",
-          () => (el("modalBack").style.display = "flex"),
+        const reg0501 = safeParse(
+          document.getElementById("jsonVendaRegistro_0501").value,
         );
-        el("btnClose").addEventListener(
-          "click",
-          () => (el("modalBack").style.display = "none"),
+        const desc0502 = safeParse(
+          document.getElementById("jsonDesconto_0502").value,
         );
-        el("modalBack").addEventListener("click", (e) => {
-          if (e.target.id === "modalBack")
-            el("modalBack").style.display = "none";
+        const dev0503 = safeParse(
+          document.getElementById("jsonDevolucao_0503").value,
+        );
+        const can0504 = safeParse(
+          document.getElementById("jsonCancelamento_0504").value,
+        );
+
+        if (reg0501 && reg0501.__erro)
+          alert("JSON 05.01 inválido: " + reg0501.__erro);
+        if (desc0502 && desc0502.__erro)
+          alert("JSON 05.02 inválido: " + desc0502.__erro);
+        if (dev0503 && dev0503.__erro)
+          alert("JSON 05.03 inválido: " + dev0503.__erro);
+        if (can0504 && can0504.__erro)
+          alert("JSON 05.04 inválido: " + can0504.__erro);
+
+        renderKPIs(reg0501, desc0502, dev0503, can0504);
+        renderItensTable(reg0501, desc0502);
+
+        renderResultados(reg0501, desc0502, dev0503, can0504);
+
+        autoGrowAllTextareas();
+      }
+
+      function limpar() {
+        [
+          "jsonVendaRegistro_0501",
+          "jsonDesconto_0502",
+          "jsonDevolucao_0503",
+          "jsonCancelamento_0504",
+        ].forEach((id) => {
+          const el = document.getElementById(id);
+          if (el) el.value = "";
         });
 
-        setBadge("warn", "Aguardando ação");
-      })();
+        document.getElementById("tblItensVenda").innerHTML = "";
+
+        document.getElementById("kpiVendaRegistro_0501").textContent = "—";
+        document.getElementById("kpiDesconto_0502").textContent = "—";
+        document.getElementById("kpiTotal_0502").textContent = "—";
+        document.getElementById("kpiDevolucao_0503").textContent = "—";
+
+        document.getElementById("kpiResumoRegistro_0501").textContent = "—";
+        document.getElementById("kpiResumoDesconto_0502").textContent = "—";
+        document.getElementById("kpiResumoDevolucao_0503").textContent = "—";
+        document.getElementById("kpiResumoCancelamento_0504").textContent = "—";
+
+        document.getElementById("r0501Resumo").textContent = "—";
+        document.getElementById("r0501Json").textContent = "—";
+        document.getElementById("r0502Resumo").textContent = "—";
+        document.getElementById("r0502Json").textContent = "—";
+        document.getElementById("r0503Resumo").textContent = "—";
+        document.getElementById("r0503Json").textContent = "—";
+        document.getElementById("r0504Resumo").textContent = "—";
+        document.getElementById("r0504Json").textContent = "—";
+
+        autoGrowAllTextareas();
+      }
+
+      document.getElementById("btnRender").addEventListener("click", renderAll);
+      document.getElementById("btnLimpar").addEventListener("click", limpar);
+
+      [
+        "jsonVendaRegistro_0501",
+        "jsonDesconto_0502",
+        "jsonDevolucao_0503",
+        "jsonCancelamento_0504",
+      ].forEach((id) => {
+        const el = document.getElementById(id);
+        if (!el) return;
+        el.addEventListener("blur", () => {
+          prettyTextarea(el);
+          autoGrow(el);
+        });
+        el.addEventListener("paste", () =>
+          setTimeout(() => {
+            prettyTextarea(el);
+            autoGrowAllTextareas();
+          }, 0),
+        );
+        el.addEventListener("input", () => autoGrow(el));
+      });
+
+      window.addEventListener("beforeprint", autoGrowAllTextareas);
     </script>
   </body>
 </html>
