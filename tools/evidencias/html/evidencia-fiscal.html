@@ -4,7 +4,6 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width,initial-scale=1" />
     <title>Evidência — Fiscal | VarejoSync</title>
-
     <style>
       :root {
         --bg: #0b0f14;
@@ -408,7 +407,6 @@
         font-size: 12px;
       }
 
-      /* JSON: scroll interno discreto + altura fixa para não desalinha */
       #secResultados details {
         flex: 1;
         overflow: auto;
@@ -431,7 +429,6 @@
       }
 
       #secResultados .three > div {
-        /* garante “corpo” consistente em cada coluna */
         min-height: 460px;
       }
 
@@ -504,7 +501,7 @@
           white-space: nowrap;
         }
 
-        /* 4) Período (06.02): permite 2 linhas */
+        /*Período (06.02): permite 2 linhas */
         #kpiPeriodo_0602 {
           white-space: normal !important;
           flex-direction: column;
@@ -524,7 +521,7 @@
           line-height: 1;
         }
 
-        /* 5) Status docs (06.02) menor e proporcional */
+        /*Status docs (06.02) menor e proporcional */
         #kpiStatusPeriodo .pill {
           font-size: 10px;
           padding: 4px 8px;
@@ -544,17 +541,33 @@
       #entradaDados {
         opacity: 0.92;
       }
+
+      .two > div {
+        min-width: 0;
+        display: flex;
+        flex-direction: column;
+        min-height: 250px;
+      }
+
+      #entradaDados textarea {
+        flex-grow: 1;
+        min-height: 180px;
+        margin-top: 10px;
+      }
+      .env {
+        font-size: 11px;
+        color: var(--muted);
+        margin-top: 6px;
+      }
     </style>
   </head>
 
   <body>
     <header>
       <div class="wrap">
-        <h1>VarejoSync • Evidência Fiscal</h1>
-        <div class="sub">
-          Escopo: <b>05.10</b> (Criar venda fiscal) • <b>06.01</b> (Emitir
-          documento fiscal) • <b>06.02</b> (Fiscal por período)
-          <span class="chip">Perfil: Gerente de Operações</span>
+        <h1>VarejoSync • Evidência Fiscal - Perfil Gerente</h1>
+        <div class="env">
+          Ambiente: Desenvolvimento • Teste de regras de negócio
         </div>
       </div>
     </header>
