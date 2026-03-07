@@ -45,7 +45,18 @@ function emitirDocumento(req, res) {
 
         // já existe documento?
         db.get(
-          `SELECT id_documento, status FROM documento_fiscal WHERE id_venda = ?`,
+          `SELECT 
+          id_documento,
+          id_venda,
+          numero,
+          serie,
+          status,
+          chave_acesso,
+          valor_total,
+          emitido_em,
+          cancelado_em,
+          motivo_cancelamento
+          FROM documento_fiscal WHERE id_venda = ?`,
           [id_venda],
           (err2, doc) => {
             if (err2) {
@@ -82,32 +93,66 @@ function emitirDocumento(req, res) {
                 function (err4) {
                   if (err4) {
                     db.run("ROLLBACK");
-                    console.error(err4);
-                    return res
-                      .status(500)
-                      .json({ erro: "Erro ao emitir documento fiscal." });
-                  }
 
-                  db.run("COMMIT", (errC) => {
-                    if (errC) {
-                      db.run("ROLLBACK");
-                      console.error(errC);
-                      return res
-                        .status(500)
-                        .json({ erro: "Falha ao finalizar emissão." });
+                    const msg = String(err4.message || "");
+
+                    if (msg.includes("uq_docfiscal_numero")) {
+                      // regra de negócio 
+                      return res.status(409).json({
+                        erro: "Número fiscal já utilizado. Tente novamente.",
+                      });
                     }
 
-                    return res.status(201).json({
-                      ok: true,
-                      id_documento: this.lastID,
-                      id_venda,
-                      numero,
-                      serie: "1",
-                      status: "EMITIDA",
-                      chave_acesso: chave,
-                      valor_total: venda.total,
+                    // erro técnico real — loga
+                    console.error("[FISCAL_EMITIR] erro inesperado:", err4);
+
+                    return res.status(500).json({
+                      erro: "Erro ao emitir documento fiscal.",
                     });
-                  });
+                  }
+
+                  const id_documento = this.lastID;
+
+                  //PEGA o emitido_em gravado pelo DEFAULT do SQLite
+                  db.get(
+                    `SELECT emitido_em FROM documento_fiscal WHERE id_documento = ?`,
+                    [id_documento],
+                    (err5, row) => {
+                      if (err5) {
+                        db.run("ROLLBACK");
+                        console.error(err5);
+                        return res.status(500).json({
+                          erro: "Erro ao consultar emitido_em do documento.",
+                        });
+                      }
+
+                      const emitido_em = row?.emitido_em || null;
+
+                      db.run("COMMIT", (errC) => {
+                        if (errC) {
+                          db.run("ROLLBACK");
+                          console.error(errC);
+                          return res
+                            .status(500)
+                            .json({ erro: "Falha ao finalizar emissão." });
+                        }
+
+                        return res.status(201).json({
+                          ok: true,
+                          id_documento,
+                          id_venda,
+                          numero,
+                          serie: "1",
+                          status: "EMITIDA",
+                          chave_acesso: chave,
+                          valor_total: venda.total,
+
+                          // evidência de data/hora
+                          emitido_em,
+                        });
+                      });
+                    },
+                  );
                 },
               );
             });
