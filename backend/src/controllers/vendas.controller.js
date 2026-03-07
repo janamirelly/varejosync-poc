@@ -273,14 +273,28 @@ function registrarVenda(req, res) {
                       .json({ erro: "Falha ao finalizar transação." });
                   }
 
-                  return res.status(201).json({
-                    id_venda,
-                    forma_pagamento: fp,
-                    total,
-                    total_bruto,
-                    desconto_total,
-                    itens: itensCompletos,
-                  });
+                  // puxa id_usuario
+                  db.get(
+                    `SELECT id_venda, id_usuario, status, forma_pagamento,
+                            total, total_bruto, desconto_total, criado_em
+                     FROM venda
+                     WHERE id_venda = ?`,
+                    [id_venda],
+                    (errGet, vendaRow) => {
+                      if (errGet) {
+                        console.error(errGet);
+                        return res
+                          .status(500)
+                          .json({ erro: "Erro ao carregar venda registrada." });
+                      }
+
+                      return res.status(201).json({
+                        ok: true,
+                        ...vendaRow,
+                        itens: itensCompletos,
+                      });
+                    },
+                  );
                 });
               }
 
@@ -491,7 +505,8 @@ function cancelarVenda(req, res) {
             db.run(
               `UPDATE venda
                SET status = 'CANCELADA',
-                   motivo_cancelamento = ?
+                   motivo_cancelamento = ?,
+                   cancelado_em = datetime('now','localtime')
                WHERE id_venda = ? AND status = 'CONCLUIDA'`,
               [motivoTxt, id_venda],
               function (err3) {
@@ -522,14 +537,26 @@ function cancelarVenda(req, res) {
                           erro: "Falha ao finalizar cancelamento.",
                         });
                       }
+                      db.get(
+                        `SELECT cancelado_em FROM venda WHERE id_venda = ? LIMIT 1`,
+                        [id_venda],
+                        (errSel, row) => {
+                          const cancelado_em = errSel
+                            ? null
+                            : (row?.cancelado_em ?? null);
 
-                      return res.json({
-                        ok: true,
-                        id_venda,
-                        status: "CANCELADA",
-                        motivo: motivoTxt,
-                        estorno_itens: itens.length,
-                      });
+                          if (errSel) console.error(errSel);
+
+                          return res.json({
+                            ok: true,
+                            id_venda,
+                            id_usuario,
+                            status: "CANCELADA",
+                            motivo_cancelamento: motivoTxt,
+                            cancelado_em,
+                          });
+                        },
+                      );
                     });
                   }
 
@@ -639,10 +666,8 @@ function devolverVenda(req, res) {
           });
         }
 
-        // Prazo (assumindo criado_em como UTC "YYYY-MM-DD HH:MM:SS")
-        const createdMs = Date.parse(
-          String(venda.criado_em).replace(" ", "T") + "Z",
-        );
+        // Prazo criado
+        const createdMs = Date.parse(String(venda.criado_em).replace(" ", "T"));
         if (!Number.isFinite(createdMs)) {
           db.run("ROLLBACK");
           return res
@@ -707,7 +732,7 @@ function devolverVenda(req, res) {
                   `UPDATE venda
                    SET status='DEVOLVIDA',
                        motivo_devolucao=?,
-                       devolvido_em=datetime('now')
+                       devolvido_em = datetime('now','localtime')
                    WHERE id_venda=? AND status='CONCLUIDA'`,
                   [motivoTxt, id_venda],
                   function (err3) {
@@ -738,13 +763,25 @@ function devolverVenda(req, res) {
                               .json({ erro: "Falha ao finalizar devolução." });
                           }
 
-                          return res.json({
-                            ok: true,
-                            id_venda,
-                            status: "DEVOLVIDA",
-                            motivo: motivoTxt,
-                            estorno_itens: itens.length,
-                          });
+                          db.get(
+                            `SELECT devolvido_em FROM venda WHERE id_venda = ? LIMIT 1`,
+                            [id_venda],
+                            (errSel, row) => {
+                              const devolvido_em = errSel
+                                ? null
+                                : (row?.devolvido_em ?? null);
+                              if (errSel) console.error(errSel);
+
+                              return res.json({
+                                ok: true,
+                                id_venda,
+                                id_usuario,
+                                status: "DEVOLVIDA",
+                                motivo_devolucao: motivoTxt,
+                                devolvido_em,
+                              });
+                            },
+                          );
                         });
                       }
 
@@ -771,7 +808,7 @@ function devolverVenda(req, res) {
 
                           db.run(
                             `UPDATE estoque
-                             SET quantidade = quantidade + ?, atualizado_em = datetime('now')
+                             SET quantidade = quantidade + ?, atualizado_em = datetime('now','localtime')
                              WHERE id_variacao = ?`,
                             [it.quantidade, it.id_variacao],
                             function (errUpd) {
@@ -1003,9 +1040,116 @@ async function aplicarDescontoItem(req, res) {
   }
 }
 
+// =========================
+// LISTAR VENDAS (HISTÓRICO)
+// GET /vendas
+// =========================
+function listarVendas(req, res) {
+  const sql = `
+    SELECT
+      id_venda,
+      id_usuario,
+      status,
+      forma_pagamento,
+      total,
+      total_bruto,
+      desconto_total,
+      criado_em,
+      cancelado_em,
+      devolvido_em
+    FROM venda
+    ORDER BY id_venda DESC
+    LIMIT 20
+  `;
+
+  db.all(sql, [], (err, rows) => {
+    if (err) {
+      console.error(err);
+      return res.status(500).json({ erro: "Erro ao listar vendas." });
+    }
+
+    return res.json({
+      ok: true,
+      total_registros: rows.length,
+      vendas: rows,
+    });
+  });
+}
+
+// =========================
+// BUSCAR VENDA (DETALHE)
+// GET /vendas/:id_venda
+// =========================
+function buscarVenda(req, res) {
+  const id_venda = Number(req.params.id_venda);
+
+  if (!Number.isFinite(id_venda) || id_venda <= 0) {
+    return res.status(400).json({ erro: "id_venda inválido." });
+  }
+
+  const sqlVenda = `
+    SELECT
+      id_venda,
+      id_usuario,
+      status,
+      forma_pagamento,
+      total,
+      total_bruto,
+      desconto_total,
+      motivo_cancelamento,
+      motivo_devolucao,
+      criado_em,
+      cancelado_em,
+      devolvido_em
+    FROM venda
+    WHERE id_venda = ?
+    LIMIT 1
+  `;
+
+  db.get(sqlVenda, [id_venda], (err, venda) => {
+    if (err) {
+      console.error(err);
+      return res.status(500).json({ erro: "Erro ao buscar venda." });
+    }
+    if (!venda) {
+      return res.status(404).json({ erro: "Venda não encontrada." });
+    }
+
+    const sqlItens = `
+      SELECT
+        id_item,
+        id_variacao,
+        quantidade,
+        preco_unit,
+        preco_unit_original,
+        desconto_valor,
+        desconto_percent,
+        motivo_desconto,
+        subtotal
+      FROM item_venda
+      WHERE id_venda = ?
+      ORDER BY id_item ASC
+    `;
+
+    db.all(sqlItens, [id_venda], (err2, itens) => {
+      if (err2) {
+        console.error(err2);
+        return res.status(500).json({ erro: "Erro ao buscar itens da venda." });
+      }
+
+      return res.json({
+        ok: true,
+        venda: { ...venda, itens },
+      });
+    });
+  });
+}
+
 module.exports = {
   registrarVenda,
   cancelarVenda,
   devolverVenda,
   aplicarDescontoItem,
+  listarVendas,
+  buscarVenda,
 };
