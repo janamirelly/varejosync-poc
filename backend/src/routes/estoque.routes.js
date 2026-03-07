@@ -5,13 +5,13 @@ const { authMiddleware } = require("../middlewares/auth.middleware"); // se já 
 const { audit } = require("../middlewares/audit.middleware");
 const { authorizeRoles } = require("../middlewares/authorize.middleware");
 
-
 const {
   consultarEstoque,
   registrarMovimentacao,
   atualizarEstoqueMinimo,
   listarEstoqueDetalhado,
   listarEstoquePorProduto,
+  listarAbaixoMinimoPorVariacao,
 } = require("../controllers/estoque.controller");
 
 // GET /dashboard
@@ -33,16 +33,23 @@ router.get(
   listarEstoquePorProduto,
 );
 
-// GET /estoque/detalhado 
+// GET /estoque/detalhado
 router.get(
   "/estoque/detalhado",
   authMiddleware,
   audit("CONSULTA_ESTOQUE_LISTA"),
   listarEstoqueDetalhado,
 );
+// GET /estoque/abaixo-minimo
+router.get(
+  "/estoque/abaixo-minimo",
+  authMiddleware,
+  authorizeRoles("Estoquista", "Gerente de Operações"),
+  audit("CONSULTA_ESTOQUE_ABAIXO_MINIMO"),
+  listarAbaixoMinimoPorVariacao,
+);
 
 // GET /estoque/:id_variacao
-
 router.get(
   "/estoque/:id_variacao",
   authMiddleware,
