@@ -21,6 +21,25 @@ function all(sql, params = []) {
 async function obterDashboard(req, res) {
   try {
     const cards = (await get(`SELECT * FROM vw_dashboard_resumo`)) || {};
+    const resumo_0701 = await all(`
+      SELECT
+       p.id_produto AS id_produto,
+       p.nome AS produto,
+       SUM(iv.quantidade) AS unidades,
+       ROUND(SUM(iv.subtotal), 2) AS receita
+     FROM item_venda iv
+     JOIN variacao_produto vp
+     ON vp.id_variacao = iv.id_variacao
+     JOIN produto p
+     ON p.id_produto = vp.id_produto
+     JOIN venda v
+    ON v.id_venda = iv.id_venda
+    WHERE v.status = 'CONCLUIDA'
+      AND datetime(v.criado_em) >= datetime('now', '-7 day', 'localtime')
+   GROUP BY p.id_produto, p.nome
+   ORDER BY unidades DESC, receita DESC
+   LIMIT 5;
+`);
 
     const estoque_por_produto = await all(`
       SELECT * FROM vw_dashboard_estoque_por_produto
@@ -58,6 +77,7 @@ async function obterDashboard(req, res) {
         ultima_sincronizacao: cards.ultima_sincronizacao || null,
       },
       breakdowns: {
+        resumo_0701,
         estoque_por_produto,
         criticos_por_produto,
         abaixo_min_por_produto,
@@ -67,6 +87,7 @@ async function obterDashboard(req, res) {
     });
   } catch (err) {
     console.error("[DASHBOARD] erro:", err);
+    console.error(err);
     return res.status(500).json({ erro: "Erro ao montar dashboard" });
   }
 }
