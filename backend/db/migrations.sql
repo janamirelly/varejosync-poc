@@ -453,3 +453,5 @@ WHERE total_bruto = 0;
 UPDATE venda
 SET desconto_total = 0
 WHERE desconto_total IS NULL;
+
+--ALTER TABLE venda ADD COLUMN cancelado_em TEXT;
