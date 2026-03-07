@@ -191,7 +191,9 @@ function atualizarEstoqueMinimo(req, res) {
     }
 
     db.run(
-      `UPDATE estoque SET estoque_min = ?, atualizado_em = datetime('now') WHERE id_variacao = ?`,
+      `UPDATE estoque
+       SET estoque_min = ?, atualizado_em = datetime('now')
+       WHERE id_variacao = ?`,
       [min, id_variacao],
       function (err2) {
         if (err2) {
@@ -201,10 +203,31 @@ function atualizarEstoqueMinimo(req, res) {
             .json({ erro: "Erro ao atualizar estoque mínimo" });
         }
 
-        return res.json({
-          id_variacao: Number(id_variacao),
-          estoque_min: min,
-        });
+        if (this.changes === 0) {
+          return res.status(404).json({
+            erro: "Nenhum registro de estoque encontrado para a variação informada.",
+          });
+        }
+
+        db.get(
+          `SELECT id_variacao, estoque_min
+           FROM estoque
+           WHERE id_variacao = ?`,
+          [id_variacao],
+          (err3, row) => {
+            if (err3) {
+              console.error(err3);
+              return res.status(500).json({
+                erro: "Estoque mínimo atualizado, mas falhou ao consultar retorno.",
+              });
+            }
+
+            return res.json({
+              id_variacao: Number(row.id_variacao),
+              estoque_min: Number(row.estoque_min),
+            });
+          },
+        );
       },
     );
   });
@@ -272,6 +295,69 @@ function listarEstoqueDetalhado(req, res) {
   });
 }
 
+function listarAbaixoMinimoPorVariacao(req, res) {
+  const sql = `
+    SELECT
+      id_variacao,
+      id_produto,
+      produto,
+      cor,
+      tamanho,
+      quantidade AS estoque_atual,
+      estoque_min AS estoque_minimo,
+      (estoque_min - quantidade) AS faltam,
+      status
+    FROM vw_estoque_detalhado
+    WHERE quantidade < estoque_min
+    ORDER BY
+      faltam DESC,
+      produto,
+      cor,
+      CASE tamanho
+        WHEN 'PP' THEN 0
+        WHEN 'P'  THEN 1
+        WHEN 'M'  THEN 2
+        WHEN 'G'  THEN 3
+        WHEN 'GG' THEN 4
+        WHEN 'XG' THEN 5
+        ELSE 99
+      END
+  `;
+
+  db.all(sql, [], (err, rows) => {
+    if (err) {
+      console.error("[SQLITE]", err.message, err);
+      return res
+        .status(500)
+        .json({ erro: "Erro ao listar variações abaixo do mínimo" });
+    }
+
+    const resultado = rows.map((r) => ({
+      id_variacao: r.id_variacao,
+      id_produto: r.id_produto,
+      produto: r.produto,
+      cor: r.cor,
+      tamanho: r.tamanho,
+      variacao: [r.cor, r.tamanho].filter(Boolean).join(" / ") || "—",
+      estoque_atual: Number(r.estoque_atual ?? 0),
+      estoque_minimo: Number(r.estoque_minimo ?? 0),
+      faltam: Number(r.faltam ?? 0),
+      status: r.status,
+    }));
+
+    registrarAuditoria({
+      id_usuario: req.user?.id_usuario ?? null,
+      acao: "CONSULTAR_ESTOQUE_ABAIXO_MINIMO",
+      recurso: req.originalUrl,
+      detalhes: JSON.stringify({ total: resultado.length }),
+      ip: req.ip,
+      user_agent: req.headers["user-agent"] ?? null,
+    }).catch((e) => console.error("[AUDITORIA] falhou:", e.message));
+
+    return res.json(resultado);
+  });
+}
+
 // GET /produtos/:id/estoque  (estoque por produto)
 // GET /produtos/:id/estoque
 function listarEstoquePorProduto(req, res) {
@@ -320,4 +406,5 @@ module.exports = {
   atualizarEstoqueMinimo,
   listarEstoqueDetalhado,
   listarEstoquePorProduto,
+  listarAbaixoMinimoPorVariacao,
 };
