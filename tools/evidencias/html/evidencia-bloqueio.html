@@ -8,16 +8,21 @@
     <style>
       :root {
         --bg: #0b0f14;
+        --bg2: #09111d;
         --panel: #101826;
-        --panel2: #0f172a;
+        --panel-soft: #0d1522;
+        --panel-2: #0f172a;
         --txt: #e5e7eb;
-        --muted: #9ca3af;
+        --muted: #94a3b8;
+        --muted-2: #64748b;
         --line: #1f2a3a;
+        --line-soft: #182334;
         --ok: #22c55e;
         --warn: #f59e0b;
         --bad: #ef4444;
         --info: #60a5fa;
         --chip: #0b1220;
+        --shadow: 0 12px 28px rgba(0, 0, 0, 0.28);
         --mono:
           ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas,
           "Liberation Mono", "Courier New", monospace;
@@ -25,65 +30,126 @@
           ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial,
           "Helvetica Neue", "Noto Sans", "Liberation Sans", sans-serif;
       }
+
       * {
         box-sizing: border-box;
       }
+
+      html {
+        scroll-behavior: smooth;
+      }
+
       body {
         margin: 0;
-        background: linear-gradient(180deg, #070a0f 0%, var(--bg) 100%);
+        background: linear-gradient(
+          180deg,
+          #070a0f 0%,
+          var(--bg) 42%,
+          var(--bg2) 100%
+        );
         color: var(--txt);
         font-family: var(--sans);
       }
+
       header {
         border-bottom: 1px solid var(--line);
-        background: rgba(15, 23, 42, 0.4);
+        background: rgba(15, 23, 42, 0.34);
+        backdrop-filter: blur(6px);
       }
+
       .wrap {
-        max-width: 1120px;
+        max-width: 1160px;
         margin: 0 auto;
         padding: 24px;
       }
+
       h1 {
         margin: 0;
         font-size: 20px;
         letter-spacing: 0.2px;
       }
+
       .sub {
+        margin-top: 6px;
         color: var(--muted);
         font-size: 13px;
-        margin-top: 6px;
-        line-height: 1.35;
+        line-height: 1.4;
       }
 
       .grid {
         display: grid;
-        gap: 14px;
+        gap: 16px;
+        align-items: stretch;
       }
+
+      .grid > .card:first-child {
+        display: flex;
+        flex-direction: column;
+      }
+
+      .grid > .card:first-child .two:last-of-type {
+        margin-bottom: 0;
+      }
+
+      .grid > .card:first-child .title-stack,
+      .grid > .card:first-child .two {
+        flex-shrink: 0;
+      }
+
       @media (min-width: 980px) {
         .grid {
-          grid-template-columns: 1.12fr 0.88fr;
+          grid-template-columns: 0.98fr 1.02fr;
+          align-items: stretch;
         }
       }
 
       .card {
-        background: rgba(16, 24, 38, 0.88);
+        background: rgba(16, 24, 38, 0.9);
         border: 1px solid var(--line);
-        border-radius: 14px;
+        border-radius: 16px;
         padding: 16px;
-        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+        box-shadow: var(--shadow);
+        height: 100%;
       }
+
+      .grid > .card:last-child {
+        border: 1px solid rgba(96, 165, 250, 0.22);
+        box-shadow:
+          0 14px 34px rgba(0, 0, 0, 0.3),
+          inset 0 0 0 1px rgba(96, 165, 250, 0.05);
+      }
+
+      .card-soft {
+        background: rgba(13, 21, 34, 0.82);
+        border: 1px solid var(--line-soft);
+        border-radius: 14px;
+        padding: 14px;
+      }
+
       .section {
-        margin-top: 14px;
+        margin-top: 12px;
       }
 
       h2 {
         margin: 0 0 12px;
-        font-size: 14px;
+        font-size: 15px;
         letter-spacing: 0.2px;
         display: flex;
         align-items: center;
         justify-content: space-between;
         gap: 10px;
+      }
+
+      .title-stack {
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+      }
+
+      .title-note {
+        color: var(--muted);
+        font-size: 12px;
+        font-weight: 500;
       }
 
       .chip {
@@ -92,9 +158,9 @@
         gap: 8px;
         padding: 6px 10px;
         border-radius: 999px;
-        border: 1px solid var(--line);
-        background: rgba(11, 18, 32, 0.7);
-        font-size: 12px;
+        border: 1px solid var(--line-soft);
+        background: rgba(10, 16, 28, 0.72);
+        font-size: 11px;
         color: var(--muted);
         white-space: nowrap;
       }
@@ -105,37 +171,60 @@
         grid-template-columns: repeat(2, minmax(0, 1fr));
         align-items: stretch;
       }
+
       .two > div {
         min-width: 0;
+      }
+
+      /* LABELS DOS JSONS NO PADRÃO DO ESTOQUISTA */
+      .json-group {
         display: flex;
         flex-direction: column;
+        min-width: 0;
       }
-      .two > div .chip {
+
+      .json-label {
+        display: block;
         width: 100%;
-        max-width: 100%;
+        margin: 0 0 8px;
+        padding: 7px 12px;
+        border-radius: 999px;
+        border: 1px solid rgba(96, 165, 250, 0.16);
+        background: rgba(10, 16, 28, 0.72);
+        color: #b6c2d1;
+        font-size: 12px;
+        line-height: 1.2;
+        white-space: nowrap;
         overflow: hidden;
         text-overflow: ellipsis;
-        white-space: nowrap;
       }
-      .two > div textarea {
-        flex: 1;
-        min-height: 170px;
-        width: 100%;
+
+      .json-input-card {
+        padding: 0;
+        border: 1px solid var(--line-soft);
+        border-radius: 14px;
+        overflow: hidden;
+        background: rgba(10, 16, 28, 0.5);
+        display: flex;
+        flex-direction: column;
+        min-width: 0;
+      }
+
+      .json-input-head {
+        display: none;
       }
 
       textarea {
         width: 100%;
-        min-height: 140px;
+        height: 150px;
         padding: 10px 12px;
-        margin-top: 10px;
-        border-radius: 12px;
-        border: 1px solid var(--line);
-        background: rgba(11, 18, 32, 0.9);
-        color: var(--txt);
+        border: 0;
         outline: none;
+        background: rgba(8, 14, 24, 0.9);
+        color: var(--txt);
         font-family: var(--mono);
         font-size: 12px;
-        line-height: 1.35;
+        line-height: 1.45;
         white-space: pre-wrap;
         overflow-y: auto;
         overflow-x: auto;
@@ -143,20 +232,25 @@
         word-break: break-word;
         resize: none;
         scrollbar-width: thin;
-        scrollbar-color: rgba(156, 163, 175, 0.35) rgba(11, 18, 32, 0.35);
+        scrollbar-color: rgba(148, 163, 184, 0.28) rgba(11, 18, 32, 0.18);
+      }
+
+      textarea::placeholder {
+        color: #6f8298;
       }
 
       .row {
         display: flex;
         gap: 10px;
         flex-wrap: wrap;
-        margin-top: 10px;
+        margin-top: auto;
+        padding-top: 12px;
       }
 
       button {
-        padding: 10px 14px;
+        padding: 11px 15px;
         border-radius: 12px;
-        border: 1px solid rgba(96, 165, 250, 0.25);
+        border: 1px solid rgba(96, 165, 250, 0.22);
         background: linear-gradient(
           180deg,
           rgba(17, 28, 45, 0.95),
@@ -168,71 +262,159 @@
         font-size: 13px;
         font-family: var(--sans);
         letter-spacing: 0.1px;
-        box-shadow: 0 10px 24px rgba(0, 0, 0, 0.25);
+        box-shadow: 0 8px 18px rgba(0, 0, 0, 0.22);
       }
+
       button:hover {
-        border-color: rgba(96, 165, 250, 0.45);
-        box-shadow: 0 12px 28px rgba(0, 0, 0, 0.32);
+        border-color: rgba(96, 165, 250, 0.42);
+        box-shadow: 0 10px 22px rgba(0, 0, 0, 0.28);
       }
+
       button:active {
         transform: translateY(1px);
       }
 
       #btnLimpar {
-        border-color: rgba(156, 163, 175, 0.22);
+        border-color: rgba(156, 163, 175, 0.2);
         background: linear-gradient(
           180deg,
-          rgba(15, 23, 42, 0.75),
-          rgba(11, 18, 32, 0.85)
+          rgba(15, 23, 42, 0.74),
+          rgba(11, 18, 32, 0.84)
         );
+      }
+
+      /* BLOCO DE DESTAQUE DOS KPIs */
+      .kpi-hero {
+        border: 1px solid rgba(96, 165, 250, 0.24);
+        background:
+          radial-gradient(
+            circle at top right,
+            rgba(96, 165, 250, 0.08),
+            transparent 32%
+          ),
+          linear-gradient(180deg, rgba(9, 17, 30, 0.96), rgba(11, 18, 32, 0.92));
+        border-radius: 16px;
+        padding: 14px 14px 12px;
+        margin-bottom: 14px;
+        box-shadow:
+          inset 0 0 0 1px rgba(96, 165, 250, 0.04),
+          0 10px 22px rgba(0, 0, 0, 0.18);
+      }
+
+      .kpi-hero-top {
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        gap: 12px;
+        flex-wrap: wrap;
+      }
+
+      .kpi-hero-title {
+        font-size: 15px;
+        font-weight: 800;
+        letter-spacing: 0.2px;
+      }
+
+      .kpi-hero-sub {
+        margin-top: 4px;
+        color: var(--muted);
+        font-size: 12px;
+        line-height: 1.35;
+      }
+
+      .hero-badge {
+        display: inline-flex;
+        align-items: center;
+        padding: 6px 10px;
+        border-radius: 999px;
+        border: 1px solid rgba(239, 68, 68, 0.28);
+        background: rgba(127, 29, 29, 0.14);
+        color: #fca5a5;
+        font-size: 11px;
+        font-weight: 900;
+        letter-spacing: 0.3px;
+      }
+
+      .hero-meta {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 10px;
+        margin-top: 12px;
+      }
+
+      .hero-stat {
+        border: 1px solid var(--line-soft);
+        border-radius: 12px;
+        background: rgba(8, 14, 24, 0.72);
+        padding: 10px 12px;
+      }
+
+      .hero-stat .meta-label {
+        color: var(--muted);
+        font-size: 11px;
+      }
+
+      .hero-stat .meta-val {
+        margin-top: 6px;
+        font-size: 18px;
+        font-weight: 900;
+        line-height: 1;
       }
 
       .kpis {
         display: grid;
-        gap: 10px;
+        gap: 12px;
         grid-template-columns: repeat(2, minmax(0, 1fr));
       }
+
       @media (max-width: 900px) {
-        .kpis {
+        .kpis,
+        .hero-meta,
+        .two,
+        .result-grid {
           grid-template-columns: 1fr;
         }
       }
 
       .kpi {
-        border: 1px solid var(--line);
-        background: rgba(11, 18, 32, 0.55);
-        border-radius: 14px;
+        border: 1px solid rgba(96, 165, 250, 0.14);
+        background: linear-gradient(
+          180deg,
+          rgba(10, 16, 28, 0.94),
+          rgba(9, 15, 26, 0.76)
+        );
+        border-radius: 16px;
         padding: 12px;
-
+        min-height: 88px;
         display: flex;
         flex-direction: column;
         justify-content: space-between;
-        min-height: 108px;
+        box-shadow: inset 0 0 0 1px rgba(96, 165, 250, 0.03);
       }
 
-      .label {
-        color: var(--muted);
-        font-size: 12px;
-        min-height: 34px;
+      .kpi .label {
+        color: #b6c2d1;
+        font-size: 11px;
+        line-height: 1.35;
+        min-height: 24px;
       }
 
-      .val {
+      .kpi .val {
         font-size: 18px;
         font-weight: 900;
-        margin-top: 8px;
-        min-height: 34px;
+        margin-top: 6px;
+        min-height: 28px;
         display: flex;
-        align-items: flex-end;
+        align-items: center;
         line-height: 1.05;
       }
 
-      .hint {
-        color: var(--muted);
+      .kpi .hint {
+        color: var(--muted-2);
         font-size: 10px;
-        margin-top: 8px;
+        margin-top: 6px;
         font-family: var(--mono);
-        min-height: 16px;
-        line-height: 1;
+        line-height: 1.2;
       }
 
       .pill {
@@ -246,67 +428,142 @@
         background: var(--chip);
         white-space: nowrap;
       }
+
       .p-ok {
         color: var(--ok);
         border-color: rgba(34, 197, 94, 0.35);
       }
+
       .p-warn {
         color: var(--warn);
         border-color: rgba(245, 158, 11, 0.35);
       }
+
       .p-bad {
         color: var(--bad);
         border-color: rgba(239, 68, 68, 0.35);
       }
+
       .p-info {
         color: var(--info);
         border-color: rgba(96, 165, 250, 0.35);
       }
 
-      /* Resumos */
-      .resumo-box {
-        border: 1px solid var(--line);
-        border-radius: 12px;
-        padding: 10px 12px;
-        background: rgba(11, 18, 32, 0.55);
-        margin-top: 10px;
+      /* RESULTADO JSON */
+      .result-grid {
+        display: grid;
+        gap: 12px;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
       }
+
+      .result-card {
+        border: 1px solid var(--line-soft);
+        background: rgba(8, 14, 24, 0.78);
+        border-radius: 14px;
+        overflow: hidden;
+        min-width: 0;
+      }
+
+      .result-head {
+        padding: 10px 12px;
+        border-bottom: 1px solid var(--line-soft);
+        background: rgba(9, 15, 26, 0.88);
+        color: #b6c2d1;
+        font-size: 12px;
+        font-weight: 700;
+      }
+
+      .result-body {
+        padding: 0;
+      }
+
+      pre.json-view {
+        margin: 0;
+        min-height: 160px;
+        max-height: 240px;
+        overflow: auto;
+        padding: 12px 13px;
+        background: rgba(8, 14, 24, 0.96);
+        color: #dbe7f3;
+        font-family: var(--mono);
+        font-size: 12px;
+        line-height: 1.45;
+        white-space: pre-wrap;
+        word-break: break-word;
+        overflow-wrap: anywhere;
+        scrollbar-width: thin;
+        scrollbar-color: rgba(148, 163, 184, 0.28) rgba(11, 18, 32, 0.18);
+      }
+
+      /* RESUMOS */
+      .resumo-wrap {
+        margin-top: 10px;
+        display: grid;
+        gap: 8px;
+      }
+
+      .resumo-box {
+        border: 1px solid rgba(96, 165, 250, 0.12);
+        border-radius: 14px;
+        padding: 10px 12px;
+        background: rgba(10, 16, 28, 0.65);
+      }
+
       .resumo-title {
         display: inline-flex;
         align-items: center;
         gap: 8px;
-        padding: 6px 10px;
+        padding: 5px 10px;
         border-radius: 999px;
-        border: 1px solid var(--line);
+        border: 1px solid rgba(96, 165, 250, 0.14);
         background: rgba(11, 18, 32, 0.7);
-        font-size: 12px;
+        font-size: 11px;
         color: var(--muted);
         white-space: nowrap;
       }
+
       .resumo-text {
-        margin-top: 10px;
+        margin-top: 8px;
         color: var(--txt);
-        font-size: 13px;
+        font-size: 12px;
         line-height: 1.35;
       }
+
       .muted {
         color: var(--muted);
       }
 
-      /* Print */
       @media print {
         header,
+        .row,
         button {
           display: none !important;
         }
+
+        body {
+          background: #fff !important;
+          color: #000 !important;
+        }
+
         .wrap {
           max-width: 100% !important;
           padding: 0 !important;
         }
-        .card {
+
+        .card,
+        .card-soft,
+        .kpi,
+        .resumo-box,
+        .result-card,
+        .hero-stat,
+        .kpi-hero {
           box-shadow: none !important;
+          background: #fff !important;
+          color: #000 !important;
         }
-        textarea {
+
+        textarea,
+        pre.json-view {
           display: block !important;
           height: auto !important;
           max-height: none !important;
@@ -314,33 +571,24 @@
           white-space: pre-wrap !important;
           word-break: break-word !important;
           overflow-wrap: anywhere !important;
+          background: #fff !important;
+          color: #000 !important;
+        }
+
+        .pill,
+        .hero-badge,
+        .chip,
+        .json-label,
+        .resumo-title {
+          color: #000 !important;
+          border-color: #999 !important;
+          background: #fff !important;
         }
       }
-      /* melhora leitura do JSON */
-      pre {
-        background: #0b1220;
-        border: 1px solid #1f2a44;
-        border-radius: 8px;
-        padding: 14px;
-        overflow-x: auto;
-        font-size: 13px;
-        line-height: 1.5;
-      }
-
-      /* melhora tabela */
-      table {
-        border-collapse: collapse;
-        width: 100%;
-      }
-
-      table td,
-      table th {
-        padding: 10px 12px;
-      }
-
-      /* hover linha */
-      tbody tr:hover {
-        background: rgba(255, 255, 255, 0.04);
+      .env {
+        font-size: 11px;
+        color: var(--muted);
+        margin-top: 6px;
       }
     </style>
   </head>
@@ -349,70 +597,82 @@
     <header>
       <div class="wrap">
         <h1>VarejoSync • Evidência Bloqueios</h1>
-        <!-- <div class="sub">
-          Testes negativos (regras e segurança). Cole os JSONs do Postman e gere
-          os resumos.
-        </div> -->
+        <div class="env">
+          Ambiente: Desenvolvimento • Teste de regras de negócio
+        </div>
       </div>
     </header>
 
     <div class="wrap">
       <div class="grid">
-        <!-- ENTRADA -->
+        <!-- COLUNA ESQUERDA -->
         <div class="card">
-          <h2>Entrada de dados (JSON do Postman)</h2>
+          <div class="title-stack">
+            <h2>Entrada de dados (Payload da API / Postman)</h2>
+            <!-- <div class="title-note">
+              Cole os retornos negativos e renderize a evidência consolidada.
+            </div> -->
+          </div>
 
-          <div class="two">
-            <div>
-              <div class="chip">10.01 • Cancelar venda com Fiscal emitida</div>
-              <textarea
-                id="json_1001"
-                spellcheck="false"
-                autocapitalize="off"
-                autocomplete="off"
-                autocorrect="off"
-                placeholder="Cole aqui a resposta do 10.01 — esperado BLOQUEIO por regra fiscal/estado"
-              ></textarea>
+          <div class="two section">
+            <div class="json-group">
+              <div class="json-label">
+                10.01 • PUT / /vendas/{{id_venda_fiscal}}/cancelar
+              </div>
+              <div class="json-input-card">
+                <textarea
+                  id="json_1001"
+                  spellcheck="false"
+                  autocapitalize="off"
+                  autocomplete="off"
+                  autocorrect="off"
+                  placeholder="Cole aqui a resposta do 10.01"
+                ></textarea>
+              </div>
             </div>
 
-            <div>
-              <div class="chip">10.03 • Preço divergente (PDV)</div>
-              <textarea
-                id="json_1003"
-                spellcheck="false"
-                autocapitalize="off"
-                autocomplete="off"
-                autocorrect="off"
-                placeholder="Cole aqui a resposta do 10.03 — esperado BLOQUEIO por divergência de preço"
-              ></textarea>
+            <div class="json-group">
+              <div class="json-label">10.03 • POST / vendas</div>
+              <div class="json-input-card">
+                <textarea
+                  id="json_1003"
+                  spellcheck="false"
+                  autocapitalize="off"
+                  autocomplete="off"
+                  autocorrect="off"
+                  placeholder="Cole aqui a resposta do 10.03"
+                ></textarea>
+              </div>
             </div>
           </div>
 
           <div class="two section">
-            <div>
-              <div class="chip">10.04 • Dashboard sem perfil Gerente (403)</div>
-              <textarea
-                id="json_1004"
-                spellcheck="false"
-                autocapitalize="off"
-                autocomplete="off"
-                autocorrect="off"
-                placeholder="Cole aqui a resposta do 10.04 — esperado 403 (RBAC)"
-              ></textarea>
+            <div class="json-group">
+              <div class="json-label">10.04 • GET / dashboard</div>
+              <div class="json-input-card">
+                <textarea
+                  id="json_1004"
+                  spellcheck="false"
+                  autocapitalize="off"
+                  autocomplete="off"
+                  autocorrect="off"
+                  placeholder="Cole aqui a resposta do 10.04"
+                ></textarea>
+              </div>
             </div>
 
-            <div>
-              <div class="chip">
-                10.05 • Venda com estoque insuficiente (PDV)
+            <div class="json-group">
+              <div class="json-label">10.05 • POST / vendas</div>
+              <div class="json-input-card">
+                <textarea
+                  id="json_1005"
+                  spellcheck="false"
+                  autocapitalize="off"
+                  autocomplete="off"
+                  autocorrect="off"
+                  placeholder="Cole aqui a resposta do 10.05"
+                ></textarea>
               </div>
-              <textarea
-                id="json_1005"
-                spellcheck="false"
-                autocapitalize="off"
-                autocomplete="off"
-                autocorrect="off"
-                placeholder="Cole aqui a resposta do 10.05 — esperado BLOQUEIO por estoque insuficiente"
-              ></textarea>
             </div>
           </div>
 
@@ -422,9 +682,31 @@
           </div>
         </div>
 
-        <!-- KPIs -->
+        <!-- COLUNA DIREITA -->
         <div class="card">
-          <h2>KPIs rápidos (derivados)</h2>
+          <div class="kpi-hero">
+            <div class="kpi-hero-top">
+              <div>
+                <div class="kpi-hero-title">KPIs rápidos (derivados)</div>
+                <div class="kpi-hero-sub">
+                  Evidência de bloqueios críticos do fluxo: fiscal, preço, RBAC
+                  e estoque.
+                </div>
+              </div>
+              <div class="hero-badge">REGRAS DE BLOQUEIO</div>
+            </div>
+
+            <div class="hero-meta">
+              <div class="hero-stat">
+                <div class="meta-label">Casos monitorados</div>
+                <div class="meta-val">4</div>
+              </div>
+              <div class="hero-stat">
+                <div class="meta-label">Natureza da evidência</div>
+                <div class="meta-val">Negativa</div>
+              </div>
+            </div>
+          </div>
 
           <div class="kpis">
             <div class="kpi">
@@ -436,47 +718,88 @@
             <div class="kpi">
               <div class="label">10.03 • Preço divergente</div>
               <div class="val" id="kpi_1003">—</div>
-              <div class="hint">validação preço</div>
+              <div class="hint">validação de preço</div>
             </div>
 
             <div class="kpi">
               <div class="label">10.04 • RBAC (perfil)</div>
               <div class="val" id="kpi_1004">—</div>
-              <div class="hint">HTTP 403</div>
+              <div class="hint">controle de acesso</div>
             </div>
 
             <div class="kpi">
               <div class="label">10.05 • Estoque insuficiente</div>
               <div class="val" id="kpi_1005">—</div>
-              <div class="hint">validação estoque</div>
+              <div class="hint">validação de estoque</div>
             </div>
           </div>
 
-          <div class="resumo-box">
-            <div class="resumo-title">Resumo 10.01</div>
-            <div class="resumo-text" id="res_1001">—</div>
+          <div class="resumo-wrap">
+            <div class="resumo-box">
+              <div class="resumo-title">10.01 • Fiscal emitida</div>
+              <div class="resumo-text" id="res_1001">—</div>
+            </div>
+
+            <div class="resumo-box">
+              <div class="resumo-title">10.03 • Preço divergente</div>
+              <div class="resumo-text" id="res_1003">—</div>
+            </div>
+
+            <div class="resumo-box">
+              <div class="resumo-title">10.04 • RBAC / perfil</div>
+              <div class="resumo-text" id="res_1004">—</div>
+            </div>
+
+            <div class="resumo-box">
+              <div class="resumo-title">10.05 • Estoque insuficiente</div>
+              <div class="resumo-text" id="res_1005">—</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- RESULTADO JSON ABAIXO DAS DUAS COLUNAS -->
+      <div class="card section">
+        <div class="title-stack">
+          <h2>Resultado da API (JSON)</h2>
+          <div class="title-note">
+            Visualização padronizada dos retornos processados.
+          </div>
+        </div>
+
+        <div class="result-grid section">
+          <div class="result-card">
+            <div class="result-head">10.01 • Resultado JSON</div>
+            <div class="result-body">
+              <pre class="json-view" id="out_1001">—</pre>
+            </div>
           </div>
 
-          <div class="resumo-box">
-            <div class="resumo-title">Resumo 10.03</div>
-            <div class="resumo-text" id="res_1003">—</div>
+          <div class="result-card">
+            <div class="result-head">10.03 • Resultado JSON</div>
+            <div class="result-body">
+              <pre class="json-view" id="out_1003">—</pre>
+            </div>
           </div>
 
-          <div class="resumo-box">
-            <div class="resumo-title">Resumo 10.04</div>
-            <div class="resumo-text" id="res_1004">—</div>
+          <div class="result-card">
+            <div class="result-head">10.04 • Resultado JSON</div>
+            <div class="result-body">
+              <pre class="json-view" id="out_1004">—</pre>
+            </div>
           </div>
 
-          <div class="resumo-box">
-            <div class="resumo-title">Resumo 10.05</div>
-            <div class="resumo-text" id="res_1005">—</div>
+          <div class="result-card">
+            <div class="result-head">10.05 • Resultado JSON</div>
+            <div class="result-body">
+              <pre class="json-view" id="out_1005">—</pre>
+            </div>
           </div>
         </div>
       </div>
     </div>
 
     <script>
-      // ===== Utils =====
       function safeParse(text) {
         const t = (text || "").trim();
         if (!t) return null;
@@ -484,6 +807,15 @@
           return JSON.parse(t);
         } catch (e) {
           return { __erro: e.message, __raw: t };
+        }
+      }
+
+      function prettyStringify(value) {
+        if (value == null) return "—";
+        try {
+          return JSON.stringify(value, null, 2);
+        } catch {
+          return String(value);
         }
       }
 
@@ -515,8 +847,9 @@
             obj &&
             Object.prototype.hasOwnProperty.call(obj, k) &&
             obj[k] != null
-          )
+          ) {
             return obj[k];
+          }
         }
         return null;
       }
@@ -560,24 +893,41 @@
         ]);
       }
 
-      // Formata dinheiro pt-BR
       function money(n) {
         const x = Number(n);
         return Number.isFinite(x) ? x.toFixed(2).replace(".", ",") : "—";
       }
 
-      // ===== AutoGrow para print =====
       function autoGrow(el) {
         if (!el) return;
-        el.style.height = "auto";
-        el.style.height = el.scrollHeight + 2 + "px";
+        el.style.height = "";
       }
 
       function autoGrowAllTextareas() {
         document.querySelectorAll("textarea").forEach(autoGrow);
       }
 
-      // ===== KPI/Resumo por caso =====
+      function renderJsonOutput(code, obj) {
+        const outEl = document.getElementById("out_" + code);
+        if (!outEl) return;
+
+        if (!obj) {
+          outEl.textContent = "—";
+          return;
+        }
+
+        if (obj.__erro) {
+          outEl.textContent =
+            "JSON inválido\n\n" +
+            "Erro: " +
+            obj.__erro +
+            (obj.__raw ? "\n\nConteúdo bruto:\n" + obj.__raw : "");
+          return;
+        }
+
+        outEl.textContent = prettyStringify(obj);
+      }
+
       function renderCase10xx(code, obj) {
         const kpiEl = document.getElementById("kpi_" + code);
         const resEl = document.getElementById("res_" + code);
@@ -597,13 +947,8 @@
         }
 
         const temErro = hasErro(obj);
-
-        // Regra geral: se tem "erro" -> BLOQUEADO. Se não tem -> OK.
         kpiEl.innerHTML = temErro ? pill("bad", "BLOQUEADO") : pill("ok", "OK");
 
-        // =========================
-        // 10.04 — RBAC (perfil)
-        // =========================
         if (code === "1004") {
           const perfil = normalizePerfil(obj);
           const permitido = normalizePermitido(obj);
@@ -611,19 +956,18 @@
           const perfilTxt = perfil
             ? `<b>${perfil}</b>`
             : `<span class="muted">—</span>`;
+
           const permitidoTxt = permitido.length
             ? `<b>${permitido.join(", ")}</b>`
             : `<span class="muted">—</span>`;
 
           resEl.innerHTML =
             `RBAC • ${temErro ? pill("bad", "BLOQUEADO") : pill("ok", "OK")}` +
-            ` • Perfil atual: ${perfilTxt} • Exigido: ${permitidoTxt}`;
+            ` • Perfil: ${perfilTxt}` +
+            ` • Exigido: ${permitidoTxt}`;
           return;
         }
 
-        // =========================
-        // 10.05 — Estoque insuficiente
-        // =========================
         if (code === "1005") {
           const estoqueAtual = getFirst(obj, ["estoque_atual", "estoqueAtual"]);
           const solicitado = getFirst(obj, [
@@ -633,26 +977,19 @@
           ]);
           const msg = normalizeErro(obj) || "Estoque insuficiente.";
 
-          // 🔎 extrai número da variação da mensagem (ex: "variação 20")
           let variacao = null;
           const match = msg.match(/varia(?:ç|c)(?:a|ã)o\s*#?\s*(\d+)/i);
-          if (match && match[1]) {
-            variacao = match[1];
-          }
+          if (match && match[1]) variacao = match[1];
 
           resEl.innerHTML =
-            `Venda` +
-            (variacao ? ` • Variação <b>#${variacao}</b>` : "") +
+            (variacao ? `Variação <b>#${variacao}</b>` : `Venda`) +
             ` • ${temErro ? pill("bad", "BLOQUEADO") : pill("ok", "OK")}` +
-            (estoqueAtual != null ? ` • Atual: <b>${estoqueAtual}</b>` : "") +
-            (solicitado != null ? ` • Solicitado: <b>${solicitado}</b>` : "");
+            (estoqueAtual != null ? ` • Atual <b>${estoqueAtual}</b>` : "") +
+            (solicitado != null ? ` • Solicitado <b>${solicitado}</b>` : "");
 
           return;
         }
 
-        // =========================
-        // 10.01 — Fiscal emitida
-        // =========================
         if (code === "1001") {
           const idVenda = normalizeIdVenda(obj) ?? "—";
           const doc =
@@ -661,21 +998,14 @@
           const numero = getFirst(doc, ["numero", "num"]);
           const chave = getFirst(doc, ["chave_acesso", "chave", "chaveAcesso"]);
 
-          // Sem redundância: não repetir "Acesso negado..." etc. Aqui é regra fiscal.
           resEl.innerHTML =
-            `Cancelamento • Venda <b>#${idVenda}</b> • ${temErro ? pill("bad", "BLOQUEADO") : pill("ok", "OK")}` +
-            ` • Documento fiscal <b>${status}</b>` +
-            (numero != null ? ` • Nº <b>${numero}</b>` : "") +
-            (chave
-              ? ` • <span class="muted">chave:</span> <span class="muted">${String(chave)}</span>`
-              : "");
+            `Venda <b>#${idVenda}</b> • ${temErro ? pill("bad", "BLOQUEADO") : pill("ok", "OK")}` +
+            ` • Fiscal <b>${status}</b>` +
+            (numero != null ? ` • Nº <b>${numero}</b>` : "");
 
           return;
         }
 
-        // =========================
-        // 10.03 — Preço divergente
-        // =========================
         if (code === "1003") {
           const idVar =
             getFirst(obj, ["id_variacao", "idVariacao", "variacao_id"]) ?? "—";
@@ -684,17 +1014,13 @@
           const msg = normalizeErro(obj);
 
           resEl.innerHTML =
-            `Preço • Variação <b>#${idVar}</b> • ${temErro ? pill("bad", "BLOQUEADO") : pill("ok", "OK")}` +
-            (pc != null ? ` • Cadastro: <b>R$ ${money(pc)}</b>` : "") +
-            (pi != null ? ` • Informado: <b>R$ ${money(pi)}</b>` : "") +
-            (msg ? ` • <span class="muted">${msg}</span>` : "");
+            `Variação <b>#${idVar}</b> • ${temErro ? pill("bad", "BLOQUEADO") : pill("ok", "OK")}` +
+            (pc != null ? ` • Cadastro. <b>R$ ${money(pc)}</b>` : "") +
+            (pi != null ? ` • Informado. <b>R$ ${money(pi)}</b>` : "");
 
           return;
         }
 
-        // =========================
-        // Fallback (se surgir outro no futuro)
-        // =========================
         const idVenda = normalizeIdVenda(obj);
         const msg = normalizeErro(obj);
 
@@ -730,6 +1056,11 @@
         renderCase10xx("1004", o1004);
         renderCase10xx("1005", o1005);
 
+        renderJsonOutput("1001", o1001);
+        renderJsonOutput("1003", o1003);
+        renderJsonOutput("1004", o1004);
+        renderJsonOutput("1005", o1005);
+
         autoGrowAllTextareas();
       }
 
@@ -749,6 +1080,11 @@
           if (el) el.textContent = "—";
         });
 
+        ["out_1001", "out_1003", "out_1004", "out_1005"].forEach((id) => {
+          const el = document.getElementById(id);
+          if (el) el.textContent = "—";
+        });
+
         autoGrowAllTextareas();
       }
 
@@ -758,17 +1094,16 @@
       ["json_1001", "json_1003", "json_1004", "json_1005"].forEach((id) => {
         const el = document.getElementById(id);
         if (!el) return;
+
         el.addEventListener("blur", () => {
           prettyTextarea(el);
-          autoGrow(el);
         });
+
         el.addEventListener("paste", () =>
           setTimeout(() => {
             prettyTextarea(el);
-            autoGrow(el);
           }, 0),
         );
-        el.addEventListener("input", () => autoGrow(el));
       });
 
       window.addEventListener("beforeprint", autoGrowAllTextareas);
