@@ -25,29 +25,35 @@
           ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial,
           "Helvetica Neue", "Noto Sans", "Liberation Sans", sans-serif;
       }
+
       * {
         box-sizing: border-box;
       }
+
       body {
         margin: 0;
         background: linear-gradient(180deg, #070a0f 0%, var(--bg) 100%);
         color: var(--txt);
         font-family: var(--sans);
       }
+
       header {
         border-bottom: 1px solid var(--line);
         background: rgba(15, 23, 42, 0.4);
       }
+
       .wrap {
         max-width: 1120px;
         margin: 0 auto;
         padding: 24px;
       }
+
       h1 {
         margin: 0;
         font-size: 20px;
         letter-spacing: 0.2px;
       }
+
       .sub {
         color: var(--muted);
         font-size: 13px;
@@ -59,6 +65,7 @@
         display: grid;
         gap: 14px;
       }
+
       @media (min-width: 980px) {
         .grid {
           grid-template-columns: 1.12fr 0.88fr;
@@ -72,6 +79,7 @@
         padding: 16px;
         box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
       }
+
       .section {
         margin-top: 14px;
       }
@@ -103,16 +111,18 @@
         display: grid;
         gap: 12px;
       }
+
       @media (min-width: 980px) {
         .two {
           grid-template-columns: 1fr 1fr;
         }
       }
 
-      /* ===== Textareas: scroll discreto (vertical + horizontal) ===== */
+      /* ===== Textareas ===== */
       textarea {
         width: 100%;
-        min-height: 140px;
+        min-height: 180px;
+        height: 180px;
         padding: 10px 12px;
         border-radius: 12px;
         border: 1px solid var(--line);
@@ -122,40 +132,32 @@
         font-family: var(--mono);
         font-size: 12px;
         line-height: 1.35;
-
-        /* JSON “bonito” */
         white-space: pre;
-
-        /* scroll vertical e horizontal */
         overflow-y: auto;
         overflow-x: auto;
-
-        /* permite quebrar quando o texto for “colado” sem indentação */
         overflow-wrap: anywhere;
         word-break: break-word;
-
-        /* remove cantinho/resize */
         resize: none;
-
-        /* Firefox scrollbar */
         scrollbar-width: thin;
         scrollbar-color: rgba(156, 163, 175, 0.35) rgba(11, 18, 32, 0.35);
       }
 
-      /* Scrollbar: WebKit (Chrome/Edge) */
       textarea::-webkit-scrollbar {
         width: 10px;
         height: 10px;
       }
+
       textarea::-webkit-scrollbar-track {
         background: rgba(11, 18, 32, 0.35);
         border-radius: 999px;
       }
+
       textarea::-webkit-scrollbar-thumb {
         background: rgba(156, 163, 175, 0.28);
         border: 1px solid rgba(31, 42, 58, 0.75);
         border-radius: 999px;
       }
+
       textarea::-webkit-scrollbar-thumb:hover {
         background: rgba(156, 163, 175, 0.38);
       }
@@ -167,7 +169,6 @@
         margin-top: 10px;
       }
 
-      /* ===== Botões com leve destaque ===== */
       button {
         padding: 10px 14px;
         border-radius: 12px;
@@ -185,10 +186,12 @@
         letter-spacing: 0.1px;
         box-shadow: 0 10px 24px rgba(0, 0, 0, 0.25);
       }
+
       button:hover {
         border-color: rgba(96, 165, 250, 0.45);
         box-shadow: 0 12px 28px rgba(0, 0, 0, 0.32);
       }
+
       button:active {
         transform: translateY(1px);
       }
@@ -201,6 +204,7 @@
           rgba(11, 18, 32, 0.85)
         );
       }
+
       #btnLimpar:hover {
         border-color: rgba(156, 163, 175, 0.4);
       }
@@ -217,6 +221,7 @@
         gap: 10px;
         grid-template-columns: repeat(4, minmax(0, 1fr));
       }
+
       @media (max-width: 900px) {
         .kpis {
           grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -225,24 +230,37 @@
 
       .kpi {
         border: 1px solid var(--line);
-        background: rgba(11, 18, 32, 0.55);
+        background: rgba(2, 6, 23, 0.55);
         border-radius: 14px;
         padding: 12px;
+        min-height: 116px;
       }
-      .label {
-        color: var(--muted);
+
+      .label,
+      .kpi .label {
+        color: rgba(203, 213, 225, 0.78);
         font-size: 12px;
       }
-      .val {
-        font-size: 20px;
+
+      .val,
+      .kpi .val {
+        font-size: 22px;
         font-weight: 900;
         margin-top: 6px;
+        color: #f8fafc;
+        letter-spacing: 0.2px;
       }
-      .hint {
-        color: var(--muted);
+
+      .hint,
+      .kpi .hint {
+        color: rgba(148, 163, 184, 0.78);
         font-size: 10px;
-        margin-top: 6px;
+        margin-top: 8px;
         font-family: var(--mono);
+        line-height: 1.3;
+        white-space: normal;
+        word-break: normal;
+        overflow-wrap: normal;
       }
 
       .table-wrap {
@@ -250,27 +268,34 @@
         border-radius: 14px;
         border: 1px solid var(--line);
       }
+
       table {
         width: 100%;
         border-collapse: collapse;
         background: rgba(11, 18, 32, 0.35);
       }
+
       th,
       td {
         border-bottom: 1px solid rgba(31, 42, 58, 0.75);
-        padding: 10px 8px;
+        padding: 10px 12px;
         text-align: left;
         font-size: 12px;
         vertical-align: top;
         overflow-wrap: anywhere;
         word-break: break-word;
       }
+
       th {
         color: #cbd5e1;
         font-weight: 800;
         background: rgba(15, 23, 42, 0.65);
         position: sticky;
         top: 0;
+      }
+
+      tbody tr:hover {
+        background: rgba(255, 255, 255, 0.04);
       }
 
       .muted {
@@ -288,18 +313,22 @@
         background: var(--chip);
         white-space: nowrap;
       }
+
       .p-ok {
         color: var(--ok);
         border-color: rgba(34, 197, 94, 0.35);
       }
+
       .p-warn {
         color: var(--warn);
         border-color: rgba(245, 158, 11, 0.35);
       }
+
       .p-bad {
         color: var(--bad);
         border-color: rgba(239, 68, 68, 0.35);
       }
+
       .p-info {
         color: var(--info);
         border-color: rgba(96, 165, 250, 0.35);
@@ -311,33 +340,170 @@
         padding: 10px 12px;
         background: rgba(11, 18, 32, 0.55);
       }
+
       summary {
         cursor: pointer;
         color: var(--muted);
         font-size: 12px;
       }
+
       pre {
         margin: 10px 0 0;
         font-family: var(--mono);
-        font-size: 12px;
+        font-size: 13px;
         white-space: pre-wrap;
         word-break: break-word;
         overflow-wrap: anywhere;
+        background: #0b1220;
+        border: 1px solid #1f2a44;
+        border-radius: 8px;
+        padding: 14px;
+        overflow-x: auto;
+        line-height: 1.5;
       }
 
+      /* ===== Resultados JSON: cards com mesma altura ===== */
       #secResultados .two {
+        display: grid;
+        gap: 12px;
         align-items: stretch;
       }
 
+      @media (min-width: 980px) {
+        #secResultados .two {
+          grid-template-columns: 1fr 1fr;
+        }
+      }
+
       #secResultados .two > div {
+        display: grid;
+        grid-template-rows: auto 40px 1fr;
+        height: 100%;
+      }
+
+      #secResultados .small {
+        min-height: 40px;
+        margin-top: 10px;
+        display: flex;
+        align-items: flex-start;
+      }
+
+      #secResultados details {
+        height: 255px;
+        min-height: 255px;
+        overflow: hidden;
         display: flex;
         flex-direction: column;
       }
 
-      #secResultados details {
+      #secResultados pre {
         flex: 1;
+        min-height: 0;
         overflow: auto;
-        max-height: 260px;
+      }
+
+      /* ===== Hierarquia visual ===== */
+      .grid > .card:first-child {
+        background: rgba(16, 24, 38, 0.68);
+        border-color: rgba(71, 85, 105, 0.28);
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.22);
+      }
+
+      .grid > .card:first-child textarea,
+      #secResultados pre {
+        background: rgba(2, 6, 23, 0.72);
+        border-color: rgba(71, 85, 105, 0.28);
+      }
+
+      .grid > .card:last-child {
+        background: linear-gradient(
+          180deg,
+          rgba(15, 23, 42, 0.97),
+          rgba(15, 23, 42, 0.9)
+        );
+        border: 1px solid rgba(96, 165, 250, 0.32);
+        box-shadow:
+          0 18px 40px rgba(0, 0, 0, 0.42),
+          inset 0 0 0 1px rgba(96, 165, 250, 0.06);
+      }
+
+      .grid > .card:last-child .kpis {
+        margin-bottom: 14px;
+        padding-bottom: 12px;
+        border-bottom: 1px solid rgba(148, 163, 184, 0.12);
+      }
+
+      .grid > .card:last-child .section {
+        margin-top: 16px;
+        padding-top: 10px;
+        border-top: 1px solid rgba(148, 163, 184, 0.08);
+      }
+
+      .grid > .card:last-child .chip {
+        background: rgba(30, 41, 59, 0.48);
+        border-color: rgba(96, 165, 250, 0.24);
+        color: rgba(226, 232, 240, 0.88);
+      }
+
+      .grid > .card:last-child .small {
+        color: rgba(226, 232, 240, 0.9);
+        line-height: 1.55;
+        margin-top: 10px;
+        font-size: 13px;
+      }
+
+      /* Destaques */
+      .hl-ok {
+        color: #34d399;
+        font-weight: 800;
+      }
+
+      .hl-warn {
+        color: #fbbf24;
+        font-weight: 800;
+      }
+
+      .hl-bad {
+        color: #fb7185;
+        font-weight: 800;
+      }
+
+      .hl-info {
+        color: #60a5fa;
+        font-weight: 800;
+      }
+
+      .hl-money {
+        color: #34d399;
+        font-weight: 900;
+      }
+
+      .hl-neutral {
+        color: #e5e7eb;
+        font-weight: 700;
+      }
+
+      /* KPIs coloridos */
+      #kpiTotalItens {
+        color: #60a5fa;
+      }
+
+      #kpiCritico {
+        color: #ef4444;
+      }
+
+      #kpiAtencao {
+        color: #fbbf24;
+      }
+
+      #kpiEsgotado {
+        color: #ef4444;
+      }
+
+      .env {
+        font-size: 11px;
+        color: var(--muted);
+        margin-top: 6px;
       }
 
       @media print {
@@ -346,13 +512,16 @@
         textarea {
           display: none !important;
         }
+
         .wrap {
           max-width: 100% !important;
           padding: 0 !important;
         }
+
         .card {
           box-shadow: none !important;
         }
+
         details {
           page-break-inside: avoid;
         }
@@ -363,18 +532,17 @@
   <body>
     <header>
       <div class="wrap">
-        <h1>VarejoSync • Evidência Estoquista</h1>
-        <!-- <div class="sub">
-          Cole os JSONs do Postman (08.01 /estoque/detalhado, 08.02 /movimentacoes, 08.03 ajuste manual, 08.04 ajuste mínimo).<br/>
-          Esta página não chama backend — é evidência visual para prints.
-        </div> -->
+        <h1>VarejoSync • Evidência - Perfil Estoquista</h1>
+        <div class="env">
+          Ambiente: Desenvolvimento • Teste de regras de negócio
+        </div>
       </div>
     </header>
 
     <div class="wrap">
       <div class="grid">
         <div class="card">
-          <h2>Entrada de dados (JSON do Postman)</h2>
+          <h2>Entrada de dados (Payload da API / Postman)</h2>
 
           <div class="two">
             <div>
@@ -432,10 +600,6 @@
             <button id="btnRender">Renderizar evidência</button>
             <button id="btnLimpar">Limpar</button>
           </div>
-
-          <!-- <div class="small">
-            Dica PI: prints por partes ✅ (1) KPIs • (2) Estoque com status • (3) Movimentações com origem • (4) Resultados 08.03/08.04
-          </div> -->
         </div>
 
         <div class="card">
@@ -463,9 +627,13 @@
               <div class="hint">status=ESGOTADO</div>
             </div>
           </div>
+          <div class="section">
+            <div class="chip">Estoque detalhado (08.01)</div>
+            <div class="small" id="kpiResumoEstoque">—</div>
+          </div>
 
           <div class="section">
-            <div class="chip">Última movimentação</div>
+            <div class="chip">Última movimentação (08.02)</div>
             <div class="small" id="kpiUltMov">—</div>
           </div>
 
@@ -535,7 +703,7 @@
 
       <div class="card section" id="secResultados">
         <h2>
-          Resultados (08.03 e 08.04)
+          Resultados da API (JSON)
           <span class="chip">respostas do Postman</span>
         </h2>
 
@@ -604,6 +772,29 @@
         return Number.isFinite(x) ? x.toFixed(2).replace(".", ",") : "0,00";
       }
 
+      function moneySpan(v) {
+        return `<span class="hl-money">R$ ${money(v)}</span>`;
+      }
+
+      function textSpan(cls, txt) {
+        return `<span class="${cls}">${txt}</span>`;
+      }
+
+      function countTipo(rows, tipo) {
+        return rows.filter(
+          (r) =>
+            String(r.tipo || "").toUpperCase() === String(tipo).toUpperCase(),
+        ).length;
+      }
+
+      function countOrigem(rows, origem) {
+        return rows.filter(
+          (r) =>
+            String(r.origem || "").toUpperCase() ===
+            String(origem).toUpperCase(),
+        ).length;
+      }
+
       function renderKPIs(estoqueArr, movArr, ajusteObj, minimoObj) {
         const total = estoqueArr.length;
         const crit = estoqueArr.filter(
@@ -621,15 +812,95 @@
         document.getElementById("kpiAtencao").textContent = aten;
         document.getElementById("kpiEsgotado").textContent = esg;
 
-        const ult = movArr && movArr.length ? movArr[0] : null;
+        const qtdTotal = estoqueArr.reduce(
+          (acc, item) => acc + Number(item.quantidade ?? 0),
+          0,
+        );
+
+        const abaixoMin = estoqueArr.filter(
+          (x) => Number(x.quantidade ?? 0) < Number(x.estoque_min ?? 0),
+        ).length;
+
+        const atualizados = estoqueArr
+          .map((x) => x.atualizado_em)
+          .filter(Boolean)
+          .sort((a, b) => String(b).localeCompare(String(a)));
+
+        document.getElementById("kpiResumoEstoque").innerHTML =
+          `Variações: <span class="hl-info">${total}</span>` +
+          ` • Qtd total: <span class="hl-neutral">${qtdTotal}</span>` +
+          ` • Abaixo do mínimo: <span class="hl-warn">${abaixoMin}</span>` +
+          (atualizados.length
+            ? ` • Última atualização: <span class="hl-neutral">${atualizados[0]}</span>`
+            : "");
+
+        const entradas = countTipo(movArr, "ENTRADA");
+        const saidas = countTipo(movArr, "SAIDA");
+        const ajustes = countTipo(movArr, "AJUSTE");
+        const origemSistema = countOrigem(movArr, "SISTEMA");
+        const origemUsuario = countOrigem(movArr, "USUARIO");
+
+        const ult =
+          movArr && movArr.length
+            ? [...movArr].sort((a, b) =>
+                String(b.criado_em || "").localeCompare(
+                  String(a.criado_em || ""),
+                ),
+              )[0]
+            : null;
+
         document.getElementById("kpiUltMov").innerHTML = ult
-          ? `<span class="muted">${ult.criado_em}</span> • ${ult.tipo} • qtd ${ult.quantidade} • <span class="muted">${ult.origem || "—"}</span>`
+          ? `<span class="hl-neutral">${ult.criado_em || "—"}</span>` +
+            ` • <span class="hl-neutral">${ult.tipo || "—"}</span>` +
+            ` • qtd <span class="hl-info">${ult.quantidade ?? "—"}</span>` +
+            ` • origem <span class="hl-neutral">${ult.origem || "—"}</span>` +
+            `<br>Movimentações: <span class="hl-info">${movArr.length}</span>` +
+            ` • Entradas: <span class="hl-ok">${entradas}</span>` +
+            ` • Saídas: <span class="hl-warn">${saidas}</span>` +
+            ` • Ajustes: <span class="hl-neutral">${ajustes}</span>` +
+            ` • Sistema: <span class="hl-info">${origemSistema}</span>` +
+            ` • Usuário: <span class="hl-ok">${origemUsuario}</span>`
           : "—";
 
-        document.getElementById("kpiAjuste").textContent =
-          ajusteObj && !ajusteObj.__erro ? "OK (08.03)" : "—";
-        document.getElementById("kpiMinimo").textContent =
-          minimoObj && !minimoObj.__erro ? "OK (08.04)" : "—";
+        document.getElementById("kpiUltMov").innerHTML = ult
+          ? `<span class="hl-neutral">${ult.criado_em || "—"}</span>` +
+            ` • <span class="hl-neutral">${ult.tipo || "—"}</span>` +
+            ` • qtd <span class="hl-info">${ult.quantidade ?? "—"}</span>` +
+            ` • origem <span class="hl-neutral">${ult.origem || "—"}</span>`
+          : "—";
+
+        if (ajusteObj && !ajusteObj.__erro) {
+          const tipo = ajusteObj.tipo || "—";
+          const qtd = ajusteObj.quantidade ?? "—";
+          const idVar = ajusteObj.id_variacao ?? "—";
+          const obs = ajusteObj.observacao || "—";
+
+          document.getElementById("kpiAjuste").innerHTML =
+            `Status: <span class="hl-ok">OK</span>` +
+            ` • Tipo: <span class="hl-neutral">${tipo}</span>` +
+            ` • Qtd: <span class="hl-info">${qtd}</span>` +
+            ` • Variação: <span class="hl-info">#${idVar}</span>` +
+            (obs ? ` • Obs: <span class="hl-neutral">${obs}</span>` : "");
+        } else {
+          document.getElementById("kpiAjuste").textContent = "—";
+        }
+
+        if (minimoObj && !minimoObj.__erro) {
+          const idVar = minimoObj.id_variacao ?? "—";
+          const minimo =
+            minimoObj.estoque_min ??
+            minimoObj.minimo ??
+            minimoObj.novo_minimo ??
+            minimoObj.valor ??
+            "—";
+
+          document.getElementById("kpiMinimo").innerHTML =
+            `Status: <span class="hl-ok">OK</span>` +
+            ` • Variação: <span class="hl-info">#${idVar}</span>` +
+            ` • Novo mínimo: <span class="hl-neutral">${minimo}</span>`;
+        } else {
+          document.getElementById("kpiMinimo").textContent = "—";
+        }
       }
 
       function renderEstoque(rows) {
@@ -781,8 +1052,11 @@
         ["kpiTotalItens", "kpiCritico", "kpiAtencao", "kpiEsgotado"].forEach(
           (id) => (document.getElementById(id).textContent = "—"),
         );
-        ["kpiUltMov", "kpiAjuste", "kpiMinimo"].forEach(
-          (id) => (document.getElementById(id).textContent = "—"),
+        ["kpiResumoEstoque", "kpiUltMov", "kpiAjuste", "kpiMinimo"].forEach(
+          (id) => {
+            const el = document.getElementById(id);
+            if (el) el.textContent = "—";
+          },
         );
 
         document.getElementById("r083Resumo").textContent = "—";
