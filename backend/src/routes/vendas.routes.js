@@ -5,6 +5,8 @@ const {
   registrarVenda,
   cancelarVenda,
   devolverVenda,
+  listarVendas,
+  buscarVenda,
 } = require("../controllers/vendas.controller");
 
 const { authMiddleware } = require("../middlewares/auth.middleware");
@@ -15,6 +17,23 @@ const {
   blockIfFiscalEmitida,
 } = require("../middlewares/fiscalBlock.middleware");
 
+// GET /vendas (listar)
+router.get(
+  "/vendas",
+  authMiddleware,
+  authorizeRoles("Gerente de Operações"),
+  audit("VENDA_LISTADA"),
+  listarVendas,
+);
+
+// GET /vendas/:id_venda (detalhar)
+router.get(
+  "/vendas/:id_venda",
+  authMiddleware,
+  authorizeRoles("Gerente de Operações"),
+  audit("VENDA_DETALHADA"),
+  buscarVenda,
+);
 router.put(
   "/vendas/:id_venda/cancelar",
   authMiddleware,
