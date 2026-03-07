@@ -3,8 +3,17 @@ const fs = require("fs");
 const path = require("path");
 
 // Caminho do banco (fica na raiz do backend)
-const dbPath = path.resolve(__dirname, "../../varejosync_pi.db");
+const projectRoot = path.resolve(__dirname, "..", "..");
+
+const defaultDbPath = path.resolve(projectRoot, "db", "varejosync_pi.db");
+const dbPath = process.env.DB_PATH
+  ? path.resolve(process.env.DB_PATH)
+  : defaultDbPath;
+
+console.log("[PROJECT ROOT]", projectRoot);
 console.log("[DB PATH]", dbPath);
+
+
 
 // Cria ou abre o banco
 const db = new sqlite3.Database(dbPath, (err) => {
@@ -132,12 +141,11 @@ async function applyPatches() {
 // -------------------------------
 // Execução: schema -> migrations -> patches
 // -------------------------------
-const schemaPath = path.resolve(__dirname, "schema.sql");
-const migrationsPath = path.resolve(__dirname, "migrations.sql");
+const schemaPath = path.resolve(projectRoot, "db", "schema.sql");
+const migrationsPath = path.resolve(projectRoot, "db", "migrations.sql");
 
 console.log("[SCHEMA PATH]", schemaPath);
 console.log("[MIGRATIONS PATH]", migrationsPath);
-
 
 const schema = fs.readFileSync(schemaPath, "utf-8");
 const migrations = fs.existsSync(migrationsPath)
