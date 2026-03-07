@@ -15,7 +15,7 @@ CREATE TABLE IF NOT EXISTS usuario (
   email      TEXT UNIQUE,
   id_perfil  INTEGER NOT NULL,
   ativo      INTEGER NOT NULL DEFAULT 1 CHECK (ativo IN (0,1)),
-  criado_em  TEXT NOT NULL DEFAULT (datetime('now')),
+  criado_em   TEXT NOT NULL DEFAULT (datetime('now','localtime')),
   FOREIGN KEY (id_perfil) REFERENCES perfil(id_perfil)
 );
 
@@ -27,7 +27,7 @@ CREATE TABLE IF NOT EXISTS produto (
   nome       TEXT NOT NULL,
   descricao  TEXT,
   ativo      INTEGER NOT NULL DEFAULT 1 CHECK (ativo IN (0,1)),
-  criado_em  TEXT NOT NULL DEFAULT (datetime('now'))
+  criado_em   TEXT NOT NULL DEFAULT (datetime('now','localtime'))
 );
 
 CREATE TABLE IF NOT EXISTS variacao_produto (
@@ -38,7 +38,7 @@ CREATE TABLE IF NOT EXISTS variacao_produto (
   sku         TEXT NOT NULL UNIQUE,
   preco       REAL NOT NULL DEFAULT 0 CHECK (preco >= 0),
   ativo       INTEGER NOT NULL DEFAULT 1 CHECK (ativo IN (0,1)),
-  criado_em   TEXT NOT NULL DEFAULT (datetime('now')),
+  criado_em   TEXT NOT NULL DEFAULT (datetime('now','localtime')),
   FOREIGN KEY (id_produto) REFERENCES produto(id_produto)
 );
 
@@ -50,7 +50,7 @@ CREATE TABLE IF NOT EXISTS estoque (
   id_variacao   INTEGER NOT NULL UNIQUE,
   quantidade    INTEGER NOT NULL DEFAULT 0 CHECK (quantidade >= 0),
   estoque_min   INTEGER NOT NULL DEFAULT 10 CHECK (estoque_min >= 0),
-  atualizado_em TEXT NOT NULL DEFAULT (datetime('now')),
+  atualizado_em TEXT NOT NULL DEFAULT (datetime('now','localtime')),
   FOREIGN KEY (id_variacao) REFERENCES variacao_produto(id_variacao)
 );
 
@@ -60,7 +60,7 @@ CREATE TABLE IF NOT EXISTS movimentacao_estoque (
   tipo             TEXT NOT NULL CHECK (tipo IN ('ENTRADA','SAIDA','AJUSTE')),
   quantidade       INTEGER NOT NULL CHECK (quantidade > 0),
   observacao       TEXT,
-  criado_em        TEXT NOT NULL DEFAULT (datetime('now')),
+  criado_em   TEXT NOT NULL DEFAULT (datetime('now','localtime')),
   id_usuario       INTEGER NOT NULL,
   FOREIGN KEY (id_variacao) REFERENCES variacao_produto(id_variacao),
   FOREIGN KEY (id_usuario)  REFERENCES usuario(id_usuario)
@@ -84,7 +84,8 @@ CREATE TABLE IF NOT EXISTS venda (
   motivo_cancelamento TEXT,
   motivo_devolucao    TEXT,
   devolvido_em        TEXT,
-  criado_em           TEXT NOT NULL DEFAULT (datetime('now')),
+  cancelado_em        TEXT,
+  criado_em   TEXT NOT NULL DEFAULT (datetime('now','localtime')),
   FOREIGN KEY (id_usuario) REFERENCES usuario(id_usuario)
 );
 
