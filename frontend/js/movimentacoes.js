@@ -1,36 +1,6 @@
 let produtoSelecionado = null;
 
 (function () {
-  const produtosMock = [
-    {
-      nome: "Camiseta Básica",
-      sku: "CAM-001-PB",
-      categoria: "Moda Feminina",
-      cor: "Preto",
-      tamanho: "M",
-      estoqueAtual: 1,
-      estoqueMinimo: 10,
-    },
-    {
-      nome: "Calça Jeans",
-      sku: "CAJ-AZUL-M",
-      categoria: "Moda Feminina",
-      cor: "Azul",
-      tamanho: "M",
-      estoqueAtual: 11,
-      estoqueMinimo: 4,
-    },
-    {
-      nome: "Camiseta Básica",
-      sku: "CAM-BRANCO-P",
-      categoria: "Moda Feminina",
-      cor: "Branco",
-      tamanho: "P",
-      estoqueAtual: 9,
-      estoqueMinimo: 4,
-    },
-  ];
-
   function setText(id, value) {
     const el = document.getElementById(id);
     if (el) el.textContent = value;
@@ -40,6 +10,21 @@ let produtoSelecionado = null;
     const box = document.getElementById("movProdutoInfo");
     if (!box) return;
     box.classList.toggle("hidden", !mostrar);
+  }
+
+  function normalizarProduto(item) {
+    return {
+      idVariacao: item.id_variacao ?? item.id ?? null,
+      nome: item.nome_produto ?? item.produto ?? "—",
+      sku: item.sku ?? "—",
+      categoria: item.categoria ?? "Sem categoria",
+      cor: item.cor ?? "—",
+      tamanho: item.tamanho ?? "—",
+      estoqueAtual: Number(item.quantidade_atual ?? item.quantidade ?? 0),
+      estoqueMinimo: Number(
+        item.estoque_min ?? item.estoque_minimo ?? item.minimo ?? 0,
+      ),
+    };
   }
 
   function preencherProduto(produto) {
@@ -149,32 +134,79 @@ let produtoSelecionado = null;
     limparProduto();
   }
 
-  function buscarProduto() {
+  async function buscarProduto() {
     const campoBusca = document.getElementById("movBuscaProduto");
     if (!campoBusca) return;
 
     const termo = campoBusca.value.trim().toLowerCase();
+
     if (!termo) {
-      alert("Digite um produto, SKU ou variação para buscar.");
+      alert("Digite nome, SKU ou variação para buscar.");
       return;
     }
 
-    const encontrado = produtosMock.find((item) => {
-      return (
-        item.nome.toLowerCase().includes(termo) ||
-        item.sku.toLowerCase().includes(termo) ||
-        item.cor.toLowerCase().includes(termo) ||
-        item.tamanho.toLowerCase().includes(termo)
-      );
-    });
+    try {
+      const token =
+        (localStorage.getItem("token") || "").trim() ||
+        "Mjplc3RvcXVlQHZhcmVqb3N5bmMuY29t";
 
-    if (!encontrado) {
-      alert("Produto não encontrado na simulação.");
+      const response = await fetch("http://localhost:3000/estoque", {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      const texto = await response.text();
+      let resultado = [];
+
+      try {
+        resultado = texto ? JSON.parse(texto) : [];
+      } catch {
+        throw new Error("Resposta inválida da API.");
+      }
+
+      if (!response.ok) {
+        throw new Error(`Erro HTTP ${response.status}`);
+      }
+
+      const lista = Array.isArray(resultado)
+        ? resultado
+        : Array.isArray(resultado.itens)
+          ? resultado.itens
+          : [];
+
+      const encontrado = lista.find((item) => {
+        const nome = String(
+          item.nome_produto ?? item.produto ?? "",
+        ).toLowerCase();
+        const sku = String(item.sku ?? "").toLowerCase();
+        const cor = String(item.cor ?? "").toLowerCase();
+        const tamanho = String(item.tamanho ?? "").toLowerCase();
+        const variacao = `${cor} ${tamanho}`.trim();
+
+        return (
+          nome.includes(termo) ||
+          sku.includes(termo) ||
+          cor.includes(termo) ||
+          tamanho.includes(termo) ||
+          variacao.includes(termo)
+        );
+      });
+
+      if (!encontrado) {
+        alert("Nenhum produto encontrado para a busca informada.");
+        limparProduto();
+        return;
+      }
+
+      preencherProduto(normalizarProduto(encontrado));
+    } catch (error) {
+      console.error("[MOVIMENTACOES] erro ao buscar produto:", error);
+      alert(`Erro ao buscar produto: ${error.message}`);
       limparProduto();
-      return;
     }
-
-    preencherProduto(encontrado);
   }
 
   window.inicializarTelaMovimentacoes = function () {
