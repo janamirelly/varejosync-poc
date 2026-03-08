@@ -487,14 +487,90 @@
 
 /* SUCESSO */
 
-.mov-modal-icon.success {
-  background: var(--color-success);
+.mov-modal {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.38);
+  backdrop-filter: blur(3px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  z-index: 999;
+  animation: fadeOverlay 0.18s ease;
 }
 
-/* CANCELADO */
+.mov-modal.hidden {
+  display: none;
+}
+
+.mov-modal-card {
+  width: 100%;
+  max-width: 430px;
+  background: var(--color-card);
+  border-radius: 22px;
+  padding: 34px 28px 28px;
+  text-align: center;
+  box-shadow: 0 20px 50px rgba(15, 23, 42, 0.22);
+  animation: scaleModal 0.2s ease;
+}
+
+.mov-modal-icon {
+  width: 68px;
+  height: 68px;
+  margin: 0 auto 18px;
+  border-radius: 999px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 32px;
+  font-weight: 700;
+  color: var(--color-text-on-primary);
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.12);
+}
+
+.mov-modal-icon.success {
+  background: linear-gradient(135deg, #22c55e, var(--color-success));
+}
 
 .mov-modal-icon.cancel {
-  background: var(--color-danger);
+  background: linear-gradient(135deg, #ef4444, var(--color-danger));
+}
+
+.mov-modal-card h3 {
+  margin: 0 0 10px;
+  font-size: 18px;
+  color: var(--color-text);
+}
+
+.mov-modal-card p {
+  margin: 0 0 22px;
+  color: var(--color-text-soft);
+  line-height: 1.5;
+}
+
+.mov-modal-card .btn-primary {
+  min-width: 210px;
+}
+
+@keyframes fadeOverlay {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes scaleModal {
+  from {
+    opacity: 0;
+    transform: translateY(8px) scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
 }
 #resumoNovoEstoque {
   color: var(--color-primary);

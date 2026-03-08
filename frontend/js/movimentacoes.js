@@ -178,6 +178,9 @@ let produtoSelecionado = null;
           : [];
 
       const encontrado = lista.find((item) => {
+        const idVariacao = String(
+          item.id_variacao ?? item.id ?? "",
+        ).toLowerCase();
         const nome = String(
           item.nome_produto ?? item.produto ?? "",
         ).toLowerCase();
@@ -185,13 +188,17 @@ let produtoSelecionado = null;
         const cor = String(item.cor ?? "").toLowerCase();
         const tamanho = String(item.tamanho ?? "").toLowerCase();
         const variacao = `${cor} ${tamanho}`.trim();
+        const produtoCompleto =
+          `${nome} ${cor} ${tamanho} ${sku} ${idVariacao}`.trim();
 
         return (
+          idVariacao === termo ||
           nome.includes(termo) ||
           sku.includes(termo) ||
           cor.includes(termo) ||
           tamanho.includes(termo) ||
-          variacao.includes(termo)
+          variacao.includes(termo) ||
+          produtoCompleto.includes(termo)
         );
       });
 
@@ -261,12 +268,23 @@ let produtoSelecionado = null;
           return;
         }
 
+        const textoModal = document.getElementById("movModalSucessoTexto");
+        if (textoModal) {
+          textoModal.textContent = `${formatarTipo(tipo)} de ${quantidade} unidade(s) registrada para ${produtoSelecionado.nome} — ${produtoSelecionado.cor} — ${produtoSelecionado.tamanho}.`;
+        }
+
         abrirModal("modalMovSucesso");
       };
     }
 
     if (btnCancelar) {
       btnCancelar.onclick = function () {
+        const textoCancelada = document.getElementById(
+          "movModalCanceladaTexto",
+        );
+        if (textoCancelada && produtoSelecionado) {
+          textoCancelada.textContent = `Nenhuma alteração foi aplicada ao item ${produtoSelecionado.nome} — ${produtoSelecionado.cor} — ${produtoSelecionado.tamanho}.`;
+        }
         abrirModal("modalMovCancelada");
       };
     }
