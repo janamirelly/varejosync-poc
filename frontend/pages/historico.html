@@ -1,0 +1,75 @@
+<section class="page-section">
+  <div class="page-header">
+    <div>
+      <h2>Histórico de Movimentações</h2>
+      <p>Visualize e filtre as operações já realizadas no estoque.</p>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="historico-filtros">
+      <div class="field">
+        <label>Data inicial</label>
+        <input type="date" id="histDataInicial" />
+      </div>
+
+      <div class="field">
+        <label>Data final</label>
+        <input type="date" id="histDataFinal" />
+      </div>
+
+      <div class="field">
+        <label>Tipo de movimentação</label>
+        <select id="histTipo">
+          <option value="">Todos</option>
+          <option value="ENTRADA">Entrada</option>
+          <option value="SAIDA">Saída</option>
+          <option value="AJUSTE">Ajuste</option>
+        </select>
+      </div>
+
+      <div class="field historico-busca">
+        <label>Produto</label>
+        <input
+          type="text"
+          id="histBuscaProduto"
+          placeholder="Buscar por nome, SKU ou categoria"
+        />
+      </div>
+    </div>
+
+    <div class="historico-actions">
+      <button id="btnLimparHistorico" class="btn-secondary">Limpar</button>
+      <button id="btnFiltrarHistorico" class="btn-primary">Filtrar</button>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="table-header">
+      <h3>Movimentações encontradas</h3>
+      <span id="historicoStatus" class="status-text">Carregando dados...</span>
+    </div>
+
+    <div class="table-wrapper">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>Data</th>
+            <th>Tipo</th>
+            <th>Produto</th>
+            <th>SKU</th>
+            <th>Categoria</th>
+            <th>Quantidade</th>
+            <th>Motivo</th>
+            <th>Usuário</th>
+          </tr>
+        </thead>
+        <tbody id="historicoTabelaBody">
+          <tr>
+            <td colspan="8" class="empty-state">Nenhum dado carregado.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
