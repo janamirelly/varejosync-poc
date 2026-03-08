@@ -42,6 +42,25 @@ let produtoSelecionado = null;
 
     mostrarProdutoInfo(true);
     atualizarResumo();
+    if (movTipo)
+      movTipo.onchange = () => {
+        atualizarResumo();
+        atualizarEstadoCancelar();
+      };
+
+    if (movQuantidade)
+      movQuantidade.oninput = () => {
+        atualizarResumo();
+        atualizarEstadoCancelar();
+      };
+
+    if (movMotivo)
+      movMotivo.onchange = () => {
+        atualizarResumo();
+        atualizarEstadoCancelar();
+      };
+
+    atualizarEstadoCancelar();
   }
 
   function limparProduto() {
@@ -132,6 +151,25 @@ let produtoSelecionado = null;
     if (motivo) motivo.value = "";
 
     limparProduto();
+  }
+
+  function atualizarEstadoCancelar() {
+    const btnCancelar = document.getElementById("btnCancelarMov");
+    const busca =
+      document.getElementById("movBuscaProduto")?.value.trim() || "";
+    const tipo = document.getElementById("movTipo")?.value || "";
+    const quantidade = Number(
+      document.getElementById("movQuantidade")?.value || 0,
+    );
+    const motivo = document.getElementById("movMotivo")?.value || "";
+
+    const existeContexto =
+      !!produtoSelecionado || !!busca || !!tipo || !!motivo || quantidade > 0;
+
+    if (btnCancelar) {
+      btnCancelar.disabled = !existeContexto;
+      btnCancelar.classList.toggle("is-disabled", !existeContexto);
+    }
   }
 
   async function buscarProduto() {
@@ -228,6 +266,7 @@ let produtoSelecionado = null;
     const btnVoltarCancelada = document.getElementById("btnVoltarMovCancelada");
 
     limparProduto();
+    atualizarEstadoCancelar();
 
     if (campoBusca) {
       campoBusca.onkeydown = function (e) {
@@ -244,9 +283,23 @@ let produtoSelecionado = null;
       };
     }
 
-    if (movTipo) movTipo.onchange = atualizarResumo;
-    if (movQuantidade) movQuantidade.oninput = atualizarResumo;
-    if (movMotivo) movMotivo.onchange = atualizarResumo;
+    if (movTipo)
+      movTipo.onchange = () => {
+        atualizarResumo();
+        atualizarEstadoCancelar();
+      };
+
+    if (movQuantidade)
+      movQuantidade.oninput = () => {
+        atualizarResumo();
+        atualizarEstadoCancelar();
+      };
+
+    if (movMotivo)
+      movMotivo.onchange = () => {
+        atualizarResumo();
+        atualizarEstadoCancelar();
+      };
 
     if (btnConfirmar) {
       btnConfirmar.onclick = function () {
