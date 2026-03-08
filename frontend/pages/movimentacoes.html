@@ -1,0 +1,137 @@
+<section class="page-section">
+  <div class="page-header">
+    <div>
+      <h2>Movimentação de Estoque</h2>
+      <p>
+        Registre entradas, saídas ou ajustes no estoque, selecionando o produto
+        e informando os detalhes da movimentação.
+      </p>
+    </div>
+  </div>
+
+  <div class="card movimentacao-card">
+    <h3>Selecionar Produto</h3>
+    <p class="section-helper">
+      Busque por nome, SKU ou variação para iniciar a movimentação.
+    </p>
+
+    <div class="field field-busca">
+      <label for="movBuscaProduto">Buscar produto</label>
+      <div class="mov-busca-row">
+        <input
+          type="text"
+          id="movBuscaProduto"
+          placeholder="Busca por nome, código ou SKU"
+        />
+        <button type="button" id="btnBuscarMov" class="btn-primary">
+          Buscar
+        </button>
+      </div>
+    </div>
+
+    <div id="movProdutoInfo" class="mov-produto-info hidden">
+      <h4>Informações do produto</h4>
+      <p class="section-helper">
+        Dados do produto selecionado para movimentação.
+      </p>
+
+      <div class="mov-produto-grid">
+        <div>
+          <span>Nome do produto</span><strong id="movProdutoNome">—</strong>
+        </div>
+        <div><span>SKU</span><strong id="movProdutoSku">—</strong></div>
+        <div>
+          <span>Categoria</span><strong id="movProdutoCategoria">—</strong>
+        </div>
+        <div><span>Cor</span><strong id="movProdutoCor">—</strong></div>
+        <div><span>Tamanho</span><strong id="movProdutoTamanho">—</strong></div>
+        <div>
+          <span>Estoque atual</span><strong id="movProdutoEstoque">—</strong>
+        </div>
+        <div>
+          <span>Estoque mínimo</span><strong id="movProdutoMinimo">—</strong>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card movimentacao-card">
+    <h3>Tipo de movimentação</h3>
+    <p class="section-helper">
+      Selecione o tipo de operação que será realizada.
+    </p>
+
+    <div class="field">
+      <label for="movTipo">Tipo de movimentação</label>
+      <select id="movTipo">
+        <option value="">Selecione...</option>
+        <option value="ENTRADA">Entrada</option>
+        <option value="SAIDA">Saída</option>
+        <option value="AJUSTE">Ajuste</option>
+      </select>
+    </div>
+
+    <div class="field">
+      <label for="movQuantidade">Quantidade</label>
+      <input type="number" id="movQuantidade" min="0" value="0" />
+    </div>
+
+    <div class="field">
+      <label for="movMotivo">Motivo</label>
+      <select id="movMotivo">
+        <option value="">Selecione...</option>
+        <option value="Reposição de estoque">Reposição de estoque</option>
+        <option value="Venda no caixa">Venda no caixa</option>
+        <option value="Ajuste por inventário">Ajuste por inventário</option>
+        <option value="Produto avariado">Produto avariado</option>
+        <option value="Devolução ao fornecedor">Devolução ao fornecedor</option>
+      </select>
+    </div>
+  </div>
+
+  <div class="card movimentacao-card">
+    <h3>Resumo da movimentação</h3>
+    <p class="section-helper">
+      Confira as informações antes de confirmar a operação.
+    </p>
+
+    <div class="mov-resumo-grid">
+    <div><span>Produto:</span><strong id="resumoProduto">—</strong></div>
+    <div><span>Tipo de movimentação:</span><strong id="resumoTipo">—</strong></div>
+    <div><span>Quantidade:</span><strong id="resumoQuantidade">0</strong></div>
+    <div><span>Motivo:</span><strong id="resumoMotivo">—</strong></div>
+    <div><span>Novo estoque previsto:</span><strong id="resumoNovoEstoque">—</strong></div>
+  </div>
+
+    <div class="mov-actions">
+      <button type="button" id="btnCancelarMov" class="btn-dark">
+        Cancelar
+      </button>
+      <button type="button" id="btnConfirmarMov" class="btn-primary">
+        Confirmar
+      </button>
+    </div>
+  </div>
+
+  <div id="modalMovSucesso" class="mov-modal hidden">
+    <div class="mov-modal-card">
+      <div class="mov-modal-icon success">✓</div>
+      <h3>Movimentação concluída</h3>
+      <p>A operação foi registrada no estoque com sucesso.</p>
+      <button type="button" id="btnVoltarMovSucesso" class="btn-primary">
+        Voltar para Movimentações
+      </button>
+    </div>
+  </div>
+
+  <div id="modalMovCancelada" class="mov-modal hidden">
+    <div class="mov-modal-card">
+      <div class="mov-modal-icon cancel">✕</div>
+      <h3>Operação cancelada</h3>
+      <p>Nenhuma alteração foi aplicada ao estoque.</p>
+      <button type="button" id="btnVoltarMovCancelada" class="btn-primary">
+        Voltar para Movimentações
+      </button>
+    </div>
+  </div>
+</section>
