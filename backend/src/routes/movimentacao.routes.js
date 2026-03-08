@@ -25,7 +25,7 @@ router.post(
 router.get(
   "/",
   authMiddleware,
-  authorizeRoles("Vendedora", "Estoquista", "Gerente de Operações"),
+  authorizeRoles( "Estoquista", "Gerente de Operações"),
   audit("CONSULTA_MOVIMENTACOES"),
   listarMovimentacoes
 );

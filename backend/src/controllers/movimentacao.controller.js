@@ -178,21 +178,39 @@ function registrarMovimentacao(req, res) {
 }
 
 // histórico PI-friendly (usa a VIEW com nome/email)
-function listarMovimentacoes(req, res) {
-  const limit = Math.min(Number(req.query.limit) || 100, 500);
 
+function listarMovimentacoes(req, res) {
   const sql = `
-    SELECT *
-    FROM vw_movimentacao_detalhada
-    ORDER BY datetime(criado_em) DESC
-    LIMIT ?
+    SELECT
+      me.id_movimentacao,
+      me.criado_em AS data_movimentacao,
+      me.tipo,
+      me.quantidade,
+      me.observacao AS motivo,
+      vp.id_variacao,
+      vp.sku,
+      vp.cor,
+      vp.tamanho,
+      p.id_produto,
+      p.nome AS nome_produto,
+      u.id_usuario,
+      u.nome AS nome_usuario
+    FROM movimentacao_estoque me
+    INNER JOIN variacao_produto vp
+      ON vp.id_variacao = me.id_variacao
+    INNER JOIN produto p
+      ON p.id_produto = vp.id_produto
+    INNER JOIN usuario u
+      ON u.id_usuario = me.id_usuario
+    ORDER BY me.criado_em DESC, me.id_movimentacao DESC
   `;
 
-  db.all(sql, [limit], (err, rows) => {
+  db.all(sql, [], (err, rows) => {
     if (err) {
       console.error(err);
       return res.status(500).json({ erro: "Erro ao listar movimentações." });
     }
+
     return res.json(rows);
   });
 }
