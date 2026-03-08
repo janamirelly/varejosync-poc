@@ -42,23 +42,6 @@ let produtoSelecionado = null;
 
     mostrarProdutoInfo(true);
     atualizarResumo();
-    if (movTipo)
-      movTipo.onchange = () => {
-        atualizarResumo();
-        atualizarEstadoCancelar();
-      };
-
-    if (movQuantidade)
-      movQuantidade.oninput = () => {
-        atualizarResumo();
-        atualizarEstadoCancelar();
-      };
-
-    if (movMotivo)
-      movMotivo.onchange = () => {
-        atualizarResumo();
-        atualizarEstadoCancelar();
-      };
 
     atualizarEstadoCancelar();
   }
