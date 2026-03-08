@@ -18,16 +18,21 @@
     <div class="produto-grid produto-grid-2">
       <div class="field">
         <label for="produtoNome">Nome do produto</label>
-        <input type="text" id="produtoNome" placeholder="Ex.: Camiseta Básica" />
+        <input
+          type="text"
+          id="produtoNome"
+          placeholder="Ex.: Camiseta Básica"
+        />
       </div>
 
       <div class="field">
         <label for="produtoSkuBase">SKU base</label>
-        <input type="text" id="produtoSkuBase" placeholder="Ex.: CAM-001" />
+        <input type="text" id="produtoSkuBase" placeholder="Ex.: CAM" />
       </div>
 
       <div class="field">
         <label for="produtoCategoria">Categoria</label>
+        <input type="text" id="produtoSkuBase" placeholder="Ex.: CAM" />
         <select id="produtoCategoria">
           <option value="">Selecione...</option>
           <option value="Moda Feminina">Moda Feminina</option>
@@ -52,24 +57,40 @@
 
   <div class="card produto-card">
     <h3>Preços</h3>
-    <p class="section-helper">
-      Informe os valores comerciais do produto.
-    </p>
+    <p class="section-helper">Informe os valores comerciais do produto.</p>
 
     <div class="produto-grid produto-grid-3">
       <div class="field">
         <label for="precoVenda">Preço de venda</label>
-        <input type="number" id="precoVenda" min="0" step="0.01" placeholder="0,00" />
+        <input
+          type="number"
+          id="precoVenda"
+          min="0"
+          step="0.01"
+          placeholder="0,00"
+        />
       </div>
 
       <div class="field">
         <label for="precoPromocional">Preço promocional</label>
-        <input type="number" id="precoPromocional" min="0" step="0.01" placeholder="0,00" />
+        <input
+          type="number"
+          id="precoPromocional"
+          min="0"
+          step="0.01"
+          placeholder="0,00"
+        />
       </div>
 
       <div class="field">
         <label for="custoProduto">Custo do produto</label>
-        <input type="number" id="custoProduto" min="0" step="0.01" placeholder="0,00" />
+        <input
+          type="number"
+          id="custoProduto"
+          min="0"
+          step="0.01"
+          placeholder="0,00"
+        />
       </div>
     </div>
   </div>
@@ -84,12 +105,24 @@
       <div class="produto-col">
         <div class="field">
           <label for="estoqueQuantidade">Quantidade em estoque</label>
-          <input type="number" id="estoqueQuantidade" min="0" step="1" placeholder="Ex.: 20" />
+          <input
+            type="number"
+            id="estoqueQuantidade"
+            min="0"
+            step="1"
+            placeholder="Ex.: 20"
+          />
         </div>
 
         <div class="field">
           <label for="estoqueMinimo">Estoque mínimo</label>
-          <input type="number" id="estoqueMinimo" min="0" step="1" placeholder="Ex.: 5" />
+          <input
+            type="number"
+            id="estoqueMinimo"
+            min="0"
+            step="1"
+            placeholder="Ex.: 5"
+          />
         </div>
 
         <div class="field">
@@ -103,10 +136,12 @@
       </div>
 
       <div class="produto-col">
-        <label class="upload-label" for="produtoImagem">Imagem do produto</label>
+        <label class="upload-label" for="produtoImagem"
+          >Imagem do produto</label
+        >
 
         <div class="upload-box">
-          <input type="file" id="produtoImagem" accept="image/*" />
+          <input type="file" id="produtoImagem" accept="image/*" multiple />
           <div class="upload-box-inner">
             <div class="upload-icon">⇪</div>
             <p>Arraste a imagem aqui</p>
@@ -120,30 +155,47 @@
       </div>
     </div>
   </div>
-
   <div class="card produto-card">
     <h3>Variações do produto</h3>
     <p class="section-helper">
-      Informe tamanhos e cores separados por vírgula e gere as combinações.
+      Selecione os tamanhos e cores para gerar as combinações automaticamente.
     </p>
 
     <div class="produto-grid produto-grid-2">
       <div class="field">
-        <label for="variacoesTamanhos">Tamanhos</label>
-        <input
-          type="text"
-          id="variacoesTamanhos"
-          placeholder="Ex.: P, M, G, GG"
-        />
+        <label>Tamanhos</label>
+        <div class="variacoes-check-grid" id="grupoTamanhos">
+          <label class="check-option"
+            ><input type="checkbox" value="P" /> P</label
+          >
+          <label class="check-option"
+            ><input type="checkbox" value="M" /> M</label
+          >
+          <label class="check-option"
+            ><input type="checkbox" value="G" /> G</label
+          >
+          <label class="check-option"
+            ><input type="checkbox" value="GG" /> GG</label
+          >
+        </div>
       </div>
 
       <div class="field">
-        <label for="variacoesCores">Cores</label>
-        <input
-          type="text"
-          id="variacoesCores"
-          placeholder="Ex.: Azul, Preto, Branco"
-        />
+        <label>Cores</label>
+        <div class="variacoes-check-grid" id="grupoCores">
+          <label class="check-option"
+            ><input type="checkbox" value="Branco" /> Branco</label
+          >
+          <label class="check-option"
+            ><input type="checkbox" value="Preto" /> Preto</label
+          >
+          <label class="check-option"
+            ><input type="checkbox" value="Azul" /> Azul</label
+          >
+          <label class="check-option"
+            ><input type="checkbox" value="Vermelho" /> Vermelho</label
+          >
+        </div>
       </div>
     </div>
 
@@ -156,7 +208,9 @@
     <div class="variacoes-box">
       <div class="variacoes-header">
         <h4>Combinações geradas</h4>
-        <span id="variacoesStatus" class="status-text">Aguardando geração...</span>
+        <span id="variacoesStatus" class="status-text"
+          >Aguardando geração...</span
+        >
       </div>
 
       <div id="variacoesLista" class="variacoes-lista">
@@ -172,16 +226,35 @@
     </p>
 
     <div class="produto-resumo-grid">
-      <div><span>Produto:</span><strong id="resumoProdutoCadastro">—</strong></div>
-      <div><span>Categoria:</span><strong id="resumoCategoriaCadastro">—</strong></div>
-      <div><span>Preço de venda:</span><strong id="resumoPrecoCadastro">—</strong></div>
-      <div><span>Estoque inicial:</span><strong id="resumoEstoqueCadastro">—</strong></div>
-      <div><span>Quantidade de variações:</span><strong id="resumoVariacoesCadastro">0</strong></div>
+      <div>
+        <span>Produto:</span><strong id="resumoProdutoCadastro">—</strong>
+      </div>
+      <div>
+        <span>Categoria:</span><strong id="resumoCategoriaCadastro">—</strong>
+      </div>
+      <div>
+        <span>Preço de venda:</span><strong id="resumoPrecoCadastro">—</strong>
+      </div>
+      <div>
+        <span>Estoque inicial:</span
+        ><strong id="resumoEstoqueCadastro">—</strong>
+      </div>
+      <div>
+        <span>Quantidade de variações:</span
+        ><strong id="resumoVariacoesCadastro">0</strong>
+      </div>
+      <div>
+        <span>SKU base:</span><strong id="resumoSkuBaseCadastro">—</strong>
+      </div>
     </div>
 
-    <div class="mov-actions">
-      <button type="button" id="btnCancelarProduto" class="btn-dark">Cancelar</button>
-      <button type="button" id="btnSalvarProduto" class="btn-primary">Salvar</button>
+    <div class="produto-form-actions">
+      <button type="button" id="btnCancelarProduto" class="btn-secondary">
+        Cancelar
+      </button>
+      <button type="button" id="btnSalvarProduto" class="btn-primary">
+        Salvar
+      </button>
     </div>
   </div>
 
@@ -214,7 +287,11 @@
         <button type="button" id="btnCancelarErroProduto" class="btn-secondary">
           Cancelar
         </button>
-        <button type="button" id="btnTentarNovamenteProduto" class="btn-primary">
+        <button
+          type="button"
+          id="btnTentarNovamenteProduto"
+          class="btn-primary"
+        >
           Tentar novamente
         </button>
       </div>
