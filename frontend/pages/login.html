@@ -1,0 +1,43 @@
+<section class="login-page">
+  <div class="login-card">
+    <div class="login-logo-wrap">
+      <div class="login-logo-circle">
+        <span class="login-logo-icon">🛒</span>
+      </div>
+      <h1 class="login-brand">VarejoSync</h1>
+      <p class="login-subtitle">Sistema de Gestão Varejista</p>
+    </div>
+
+    <div class="login-form-wrap">
+      <h2 class="login-title">Acesse o sistema</h2>
+
+      <form id="loginForm" class="login-form">
+        <div class="field">
+          <input
+            type="text"
+            id="loginUsuario"
+            placeholder="Usuário"
+            autocomplete="username"
+          />
+        </div>
+
+        <div class="field">
+          <input
+            type="password"
+            id="loginSenha"
+            placeholder="Senha"
+            autocomplete="current-password"
+          />
+        </div>
+
+        <button type="submit" class="btn-primary login-btn">Entrar</button>
+      </form>
+
+      <button type="button" class="login-link-btn" id="btnEsqueciSenha">
+        Esqueceu sua senha?
+      </button>
+
+      <p id="loginStatus" class="login-status"></p>
+    </div>
+  </div>
+</section>
