@@ -15,6 +15,15 @@ body {
   color: var(--color-text);
 }
 
+img,
+table,
+input,
+select,
+button,
+textarea {
+  max-width: 100%;
+}
+
 .app-shell {
   min-height: 100vh;
 }
@@ -37,6 +46,7 @@ body {
   gap: 10px;
   font-weight: 700;
   font-size: 22px;
+  min-width: 0;
 }
 
 .brand-icon {
@@ -54,6 +64,7 @@ body {
   gap: 8px;
   color: var(--color-text-on-primary);
   font-weight: 600;
+  min-width: 0;
 }
 
 .user-avatar {
@@ -81,6 +92,7 @@ body {
   background: var(--color-sidebar);
   padding: 20px 16px;
   border-right: 1px solid var(--color-border);
+  flex-shrink: 0;
 }
 
 .content {
@@ -93,4 +105,112 @@ body {
 main {
   padding: 32px;
   overflow: auto;
+  min-width: 0;
+}
+
+/* BASE RESPONSIVA GLOBAL */
+.page-section,
+.card,
+.table-wrapper {
+  min-width: 0;
+}
+
+.table-wrapper {
+  width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* NOTEBOOK / DESKTOP MENOR */
+@media (max-width: 1100px) {
+  .topbar-global {
+    padding: 0 24px;
+  }
+
+  .sidebar {
+    width: 210px;
+    padding: 18px 14px;
+  }
+
+  main {
+    padding: 24px;
+  }
+}
+
+/* TABLET */
+@media (max-width: 900px) {
+  .topbar-global {
+    padding: 0 18px;
+  }
+
+  .brand-name {
+    font-size: 20px;
+  }
+
+  .user-name {
+    font-size: 14px;
+  }
+
+  .app {
+    flex-direction: column;
+  }
+
+  .sidebar {
+    width: 100%;
+    border-right: none;
+    border-bottom: 1px solid var(--color-border);
+    padding: 14px 16px;
+  }
+
+  main {
+    padding: 20px 16px;
+  }
+}
+
+/* CELULAR */
+@media (max-width: 640px) {
+  .topbar-global {
+    height: auto;
+    min-height: 64px;
+    padding: 12px 14px;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+
+  .topbar-brand,
+  .topbar-user {
+    width: 100%;
+  }
+
+  .topbar-brand {
+    justify-content: flex-start;
+  }
+
+  .topbar-user {
+    justify-content: space-between;
+  }
+
+  .brand-name {
+    font-size: 18px;
+  }
+
+  .brand-icon {
+    font-size: 20px;
+  }
+
+  .user-name {
+    font-size: 14px;
+  }
+
+  .sidebar {
+    padding: 12px;
+  }
+
+  .content {
+    min-width: 0;
+  }
+
+  main {
+    padding: 14px 12px;
+  }
 }
