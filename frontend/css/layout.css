@@ -1,0 +1,96 @@
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  font-family: var(--font-main);
+}
+
+html,
+body {
+  height: 100%;
+}
+
+body {
+  background: var(--color-bg);
+  color: var(--color-text);
+}
+
+.app-shell {
+  min-height: 100vh;
+}
+
+/* TOPBAR GLOBAL */
+.topbar-global {
+  height: 64px;
+  background: var(--color-topbar);
+  color: var(--color-text-on-primary);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 32px;
+  box-shadow: var(--shadow-soft);
+}
+
+.topbar-brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-weight: 700;
+  font-size: 22px;
+}
+
+.brand-icon {
+  font-size: 22px;
+  line-height: 1;
+}
+
+.brand-name {
+  color: var(--color-text-on-primary);
+}
+
+.topbar-user {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--color-text-on-primary);
+  font-weight: 600;
+}
+
+.user-avatar {
+  font-size: 18px;
+  line-height: 1;
+}
+
+.user-name {
+  color: var(--color-text-on-primary);
+}
+
+.user-caret {
+  font-size: 11px;
+  opacity: 0.9;
+}
+
+/* APP ABAIXO DA TOPBAR */
+.app {
+  display: flex;
+  min-height: calc(100vh - 64px);
+}
+
+.sidebar {
+  width: 230px;
+  background: var(--color-sidebar);
+  padding: 20px 16px;
+  border-right: 1px solid var(--color-border);
+}
+
+.content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+main {
+  padding: 32px;
+  overflow: auto;
+}

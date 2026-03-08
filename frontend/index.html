@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <title>VarejoSync</title>
+
+    <link rel="stylesheet" href="./css/app.css" />
+  </head>
+
+  <body>
+    <div class="app-shell">
+      <!-- TOPBAR GLOBAL -->
+      <header class="topbar-global">
+        <div class="topbar-brand">
+          <span class="brand-icon">🛒</span>
+          <span class="brand-name">VarejoSync</span>
+        </div>
+
+        <div class="topbar-user">
+          <span class="user-avatar">👤</span>
+          <span class="user-name">Marcos Lima</span>
+          <span class="user-caret">▼</span>
+        </div>
+      </header>
+
+      <!-- APP -->
+      <div class="app">
+        <!-- SIDEBAR -->
+        <aside class="sidebar">
+          <nav class="menu">
+            <button type="button" data-page="dashboard">Dashboard</button>
+            <button type="button" data-page="estoque">Consultar Estoque</button>
+             <button type="button" data-page="movimentacoes">Movimentações de Estoque</button>
+            <button type="button" data-page="produtos">Cadastro de Produtos</button>
+            <button type="button" data-page="vendas">Vendas</button>
+            <button type="button" data-page="alertas">Alertas</button>
+          </nav>
+        </aside>
+
+        <!-- CONTEÚDO -->
+        <div class="content">
+          <main id="appMain">
+            <!-- páginas carregam aqui -->
+          </main>
+        </div>
+      </div>
+    </div>
+
+    <script src="./js/api.js?v=501"></script>
+    <script src="./js/dashboard.js?v=501"></script>
+    <script src="./js/estoque.js?v=501"></script>
+    <script src="./js/movimentacoes.js?v=501"></script>
+    <script src="./js/produtos.js?v=501"></script>
+    <script src="./js/vendas.js?v=501"></script>
+    <script src="./js/alertas.js?v=501"></script>
+    <script src="./js/app.js?v=501"></script>
+  </body>
+</html>

@@ -1,0 +1,73 @@
+<section class="page-section">
+  <div class="page-header">
+    <div>
+      <h2>Controle de Estoque</h2>
+      <p>Consulta de produtos, variações e saldos disponíveis.</p>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="filters">
+      <div class="field field-busca">
+        <label for="filtroBuscaEstoque">Buscar</label>
+        <input
+          type="text"
+          id="filtroBuscaEstoque"
+          placeholder="Digite nome, SKU ou variação"
+        />
+      </div>
+
+      <div class="field field-select">
+        <label for="filtroCor">Cor</label>
+        <select id="filtroCor">
+          <option value="">Todas as cores</option>
+        </select>
+      </div>
+
+      <div class="field field-select">
+        <label for="filtroTamanho">Tamanho</label>
+        <select id="filtroTamanho">
+          <option value="">Todos os tamanhos</option>
+        </select>
+      </div>
+
+      <div class="actions">
+        <button type="button" id="btnBuscarEstoque" class="btn-primary">
+          Consultar
+        </button>
+        <button type="button" id="btnLimparBuscaEstoque" class="btn-secondary">
+          Limpar
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="table-header">
+      <h3>Itens em estoque</h3>
+      <span id="estoqueStatus" class="status-text">Aguardando consulta...</span>
+    </div>
+
+    <div class="table-wrapper">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>ID Variação</th>
+            <th>Produto</th>
+            <th>Cor</th>
+            <th>Tamanho</th>
+            <th>SKU</th>
+            <th>Quantidade</th>
+            <th>Mínimo</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody id="tabelaEstoqueBody">
+          <tr>
+            <td colspan="8" class="empty-state">Nenhum dado carregado.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
