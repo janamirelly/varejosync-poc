@@ -279,12 +279,35 @@ let produtoSelecionado = null;
 
     if (btnCancelar) {
       btnCancelar.onclick = function () {
+        const tipo = document.getElementById("movTipo")?.value || "";
+        const quantidade = Number(
+          document.getElementById("movQuantidade")?.value || 0,
+        );
+        const motivo = document.getElementById("movMotivo")?.value || "";
+        const busca =
+          document.getElementById("movBuscaProduto")?.value.trim() || "";
+
+        const existeContexto =
+          !!produtoSelecionado ||
+          !!busca ||
+          !!tipo ||
+          !!motivo ||
+          quantidade > 0;
+
+        if (!existeContexto) {
+          return;
+        }
+
         const textoCancelada = document.getElementById(
           "movModalCanceladaTexto",
         );
         if (textoCancelada && produtoSelecionado) {
           textoCancelada.textContent = `Nenhuma alteração foi aplicada ao item ${produtoSelecionado.nome} — ${produtoSelecionado.cor} — ${produtoSelecionado.tamanho}.`;
+        } else if (textoCancelada) {
+          textoCancelada.textContent =
+            "Nenhuma alteração foi aplicada ao estoque.";
         }
+
         abrirModal("modalMovCancelada");
       };
     }
