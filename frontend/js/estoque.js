@@ -80,8 +80,7 @@
         (localStorage.getItem("token") || "").trim() ||
         "Mjplc3RvcXVlQHZhcmVqb3N5bmMuY29t";
 
-      const query = termo ? `?q=${encodeURIComponent(termo)}` : "";
-      const url = `http://localhost:3000/estoque${query}`;
+      const url = `http://localhost:3000/estoque`;
 
       console.log("[ESTOQUE] FETCH URL:", url);
       console.log("[ESTOQUE] FETCH TOKEN:", token);
@@ -119,8 +118,10 @@
           : [];
 
       popularFiltros(itens);
-
       const itensFiltrados = itens.filter((item) => {
+        const idVariacao = String(
+          item.id_variacao ?? item.id ?? "",
+        ).toLowerCase();
         const nomeProduto = String(
           item.nome_produto ?? item.produto ?? "",
         ).toLowerCase();
@@ -128,12 +129,22 @@
         const cor = String(item.cor ?? "").toLowerCase();
         const tamanho = String(item.tamanho ?? "").toLowerCase();
 
+        const variacaoSimples = `${cor} ${tamanho}`.trim();
+        const variacaoCompleta = `${nomeProduto} ${cor} ${tamanho}`.trim();
+        const textoBusca =
+          `${idVariacao} ${nomeProduto} ${sku} ${cor} ${tamanho} ${variacaoSimples} ${variacaoCompleta}`.trim();
+
         const atendeBusca =
           !termo ||
+          idVariacao === termo ||
+          sku === termo ||
           nomeProduto.includes(termo) ||
           sku.includes(termo) ||
           cor.includes(termo) ||
-          tamanho.includes(termo);
+          tamanho.includes(termo) ||
+          variacaoSimples.includes(termo) ||
+          variacaoCompleta.includes(termo) ||
+          textoBusca.includes(termo);
 
         const atendeCor = !corSelecionada || cor === corSelecionada;
         const atendeTamanho =
@@ -251,7 +262,13 @@
 
       console.log("[ESTOQUE] clique em Limpar");
 
+      const filtroCor = document.getElementById("filtroCor");
+      const filtroTamanho = document.getElementById("filtroTamanho");
+
       if (campoBusca) campoBusca.value = "";
+      if (filtroCor) filtroCor.value = "";
+      if (filtroTamanho) filtroTamanho.value = "";
+
       atualizarEstadoInicial();
     };
 
