@@ -68,8 +68,8 @@ textarea {
 }
 
 .user-avatar {
-  font-size: 18px;
-  line-height: 1;
+  width: 24px;
+  height: 24px;
 }
 
 .user-name {
@@ -77,8 +77,7 @@ textarea {
 }
 
 .user-caret {
-  font-size: 11px;
-  opacity: 0.9;
+  font-size: 10px;
 }
 
 /* APP ABAIXO DA TOPBAR */
@@ -114,7 +113,63 @@ main {
 .table-wrapper {
   min-width: 0;
 }
+.page-header h2 {
+  font-size: 22px;
+}
+.page-header p,
+.section-helper,
+.status-text {
+  font-size: 14px;
+}
+.menu {
+  grid-template-columns: 1fr;
+}
 
+.menu button {
+  text-align: left;
+}
+
+.actions {
+  flex-direction: column;
+  align-items: stretch;
+}
+
+.actions .btn-primary,
+.actions .btn-secondary {
+  width: 100%;
+}
+.mov-actions {
+  flex-direction: column-reverse;
+  align-items: stretch;
+}
+
+.mov-actions .btn-primary,
+.mov-actions .btn-dark {
+  width: 100%;
+}
+
+.alerta-card-top {
+  flex-direction: column;
+  align-items: flex-start;
+}
+.mov-modal {
+  padding: 16px;
+}
+.mov-modal-card {
+  max-width: 100%;
+  padding: 24px 18px;
+  border-radius: 18px;
+}
+.mov-modal-card {
+  max-width: 100%;
+  padding: 24px 18px;
+  border-radius: 18px;
+}
+.card,
+.movimentacao-card,
+.alerta-card {
+  padding: 16px;
+}
 .table-wrapper {
   width: 100%;
   overflow-x: auto;
@@ -170,36 +225,53 @@ main {
 /* CELULAR */
 @media (max-width: 640px) {
   .topbar-global {
-    height: auto;
+    height: 64px;
     min-height: 64px;
-    padding: 12px 14px;
-    flex-wrap: wrap;
-    gap: 10px;
+    padding: 0 12px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    flex-wrap: nowrap;
   }
 
   .topbar-brand,
   .topbar-user {
-    width: 100%;
+    width: auto;
+    min-width: 0;
+    display: flex;
+    align-items: center;
   }
 
   .topbar-brand {
-    justify-content: flex-start;
+    gap: 8px;
+    flex: 1;
+    overflow: hidden;
   }
 
   .topbar-user {
-    justify-content: space-between;
+    gap: 6px;
+    flex-shrink: 0;
   }
 
   .brand-name {
-    font-size: 18px;
+    font-size: 16px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
 
   .brand-icon {
-    font-size: 20px;
+    font-size: 18px;
+    flex-shrink: 0;
   }
 
   .user-name {
-    font-size: 14px;
+    font-size: 13px;
+    max-width: 110px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
 
   .sidebar {
