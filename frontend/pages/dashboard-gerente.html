@@ -1,0 +1,85 @@
+<section class="page-section page-dashboard-gerente">
+  <div class="page-header">
+    <div>
+      <h2 class="page-title">Dashboard Gerencial</h2>
+      <p class="page-subtitle">
+        Visão consolidada de vendas, estoque e indicadores operacionais.
+      </p>
+    </div>
+
+    <div class="page-meta">
+      <span id="gerenteAtualizacao" class="status-chip">Atualizando...</span>
+    </div>
+  </div>
+
+  <div class="grid-kpis">
+    <article class="card kpi-card">
+      <div class="kpi-label">Estoque total</div>
+      <div class="kpi-value" id="kpiEstoqueTotal">—</div>
+      <div class="kpi-hint">Itens disponíveis no estoque</div>
+    </article>
+
+    <article class="card kpi-card">
+      <div class="kpi-label">Itens críticos</div>
+      <div class="kpi-value" id="kpiItensCriticos">—</div>
+      <div class="kpi-hint">Produtos em nível de atenção</div>
+    </article>
+
+    <article class="card kpi-card">
+      <div class="kpi-label">Pedidos (7 dias)</div>
+      <div class="kpi-value" id="kpiPedidos7Dias">—</div>
+      <div class="kpi-hint">Pedidos concluídos no período</div>
+    </article>
+
+    <article class="card kpi-card">
+      <div class="kpi-label">Faturamento (7 dias)</div>
+      <div class="kpi-value" id="kpiFaturamento7Dias">—</div>
+      <div class="kpi-hint">Receita consolidada da última semana</div>
+    </article>
+  </div>
+
+  <div class="grid-dashboard-gerente">
+    <article class="card card-dashboard-gerente">
+      <div class="card-header-gerente">
+        <h2>Ticket médio</h2>
+      </div>
+      <div class="card-body-gerente">
+        <div class="metric-highlight" id="ticketMedioGerente">—</div>
+        <p class="card-note">Média por pedido nos últimos 7 dias.</p>
+      </div>
+    </article>
+
+    <article class="card card-dashboard-gerente">
+      <div class="card-header-gerente">
+        <h2>Produtos mais vendidos (24h)</h2>
+      </div>
+      <div class="card-body-gerente">
+        <ul class="list-clean" id="listaMaisVendidos24h">
+          <li class="empty-state">Nenhum dado encontrado.</li>
+        </ul>
+      </div>
+    </article>
+
+    <article class="card card-dashboard-gerente">
+      <div class="card-header-gerente">
+        <h2>Formas de pagamento (7 dias)</h2>
+      </div>
+      <div class="card-body-gerente">
+        <ul class="list-clean" id="listaFormasPagamento">
+          <li class="empty-state">Nenhum dado encontrado.</li>
+        </ul>
+      </div>
+    </article>
+
+    <article class="card card-dashboard-gerente">
+      <div class="card-header-gerente">
+        <h2>Produtos com estoque crítico</h2>
+      </div>
+      <div class="card-body-gerente">
+        <ul class="list-clean" id="listaCriticos">
+          <li class="empty-state">Nenhum item crítico no momento.</li>
+        </ul>
+      </div>
+    </article>
+  </div>
+</section>
