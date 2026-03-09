@@ -67,10 +67,20 @@ textarea {
   min-width: 0;
 }
 
-.user-avatar {
+ .user-avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid rgba(255, 255, 255, 0.35);
+  display: block;
+  flex-shrink: 0;
+} 
+
+ /* .user-avatar {
   width: 24px;
   height: 24px;
-}
+}  */
 
 .user-name {
   color: var(--color-text-on-primary);
@@ -113,63 +123,7 @@ main {
 .table-wrapper {
   min-width: 0;
 }
-.page-header h2 {
-  font-size: 22px;
-}
-.page-header p,
-.section-helper,
-.status-text {
-  font-size: 14px;
-}
-.menu {
-  grid-template-columns: 1fr;
-}
 
-.menu button {
-  text-align: left;
-}
-
-.actions {
-  flex-direction: column;
-  align-items: stretch;
-}
-
-.actions .btn-primary,
-.actions .btn-secondary {
-  width: 100%;
-}
-.mov-actions {
-  flex-direction: column-reverse;
-  align-items: stretch;
-}
-
-.mov-actions .btn-primary,
-.mov-actions .btn-dark {
-  width: 100%;
-}
-
-.alerta-card-top {
-  flex-direction: column;
-  align-items: flex-start;
-}
-.mov-modal {
-  padding: 16px;
-}
-.mov-modal-card {
-  max-width: 100%;
-  padding: 24px 18px;
-  border-radius: 18px;
-}
-.mov-modal-card {
-  max-width: 100%;
-  padding: 24px 18px;
-  border-radius: 18px;
-}
-.card,
-.movimentacao-card,
-.alerta-card {
-  padding: 16px;
-}
 .table-wrapper {
   width: 100%;
   overflow-x: auto;
@@ -284,5 +238,64 @@ main {
 
   main {
     padding: 14px 12px;
+  }
+
+  .page-header h2 {
+    font-size: 22px;
+  }
+
+  .page-header p,
+  .section-helper,
+  .status-text {
+    font-size: 14px;
+  }
+
+  .menu {
+    grid-template-columns: 1fr;
+  }
+
+  .menu button {
+    text-align: left;
+  }
+
+  .actions {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .actions .btn-primary,
+  .actions .btn-secondary {
+    width: 100%;
+  }
+
+  .mov-actions {
+    flex-direction: column-reverse;
+    align-items: stretch;
+  }
+
+  .mov-actions .btn-primary,
+  .mov-actions .btn-dark {
+    width: 100%;
+  }
+
+  .alerta-card-top {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .mov-modal {
+    padding: 16px;
+  }
+
+  .mov-modal-card {
+    max-width: 100%;
+    padding: 24px 18px;
+    border-radius: 18px;
+  }
+
+  .card,
+  .movimentacao-card,
+  .alerta-card {
+    padding: 16px;
   }
 }
