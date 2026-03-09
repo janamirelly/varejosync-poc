@@ -19,29 +19,26 @@
         </div>
 
         <div class="topbar-user">
-          <span class="user-avatar">👤</span>
-          <span class="user-name">Marcos Lima</span>
+          <img
+            id="topbarUserAvatar"
+            class="user-avatar"
+            src="./assets/users/marcos-lima.png"
+            alt="Foto do usuário"
+          />
+          <span class="user-name" id="topbarUserName">Usuário</span>
           <span class="user-caret">▼</span>
         </div>
+
+        
+
+      
       </header>
 
       <!-- APP -->
       <div class="app">
         <!-- SIDEBAR -->
         <aside class="sidebar">
-          <nav class="menu">
-            <button type="button" data-page="dashboard">Dashboard</button>
-            <button type="button" data-page="estoque">Consultar Estoque</button>
-            <button type="button" data-page="produtos">
-              Cadastrar Produto
-            </button>
-            <button type="button" data-page="movimentacoes">
-              Movimentações
-            </button>
-            <button type="button" data-page="historico">Histórico</button>
-
-            <button type="button" data-page="alertas">Alertas</button>
-          </nav>
+          <nav class="menu" id="sideMenu"></nav>
         </aside>
 
         <!-- CONTEÚDO -->
@@ -54,12 +51,16 @@
     </div>
 
     <script src="./js/api.js?v=501"></script>
+
     <script src="./js/dashboard.js?v=501"></script>
+    <script src="./js/dashboard-gerente/dashboard-gerente.js?v=501"></script>
+    <script src="./js/pdv/dashboard-pdv.js"></script>
+    <script src="./js/login.js?v=501"></script>
     <script src="./js/estoque.js?v=501"></script>
     <script src="./js/produtos.js?v=501"></script>
     <script src="./js/movimentacoes.js?v=501"></script>
     <script src="./js/historico.js?v=501"></script>
-    <script src="./js/vendas.js?v=501"></script>
+    <script src="./js/pdv/vendas.js?v=502"></script>
     <script src="./js/alertas.js?v=501"></script>
     <script src="./js/app.js?v=501"></script>
   </body>
