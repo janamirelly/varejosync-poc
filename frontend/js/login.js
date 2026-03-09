@@ -7,16 +7,14 @@
     status.style.color = isError ? "#dc2626" : "#6b7280";
   }
 
-  function salvarTokenFake() {
-    // mantém compatibilidade com o que vocês já estão usando no front
-    localStorage.setItem("token", "Mjplc3RvcXVlQHZhcmVqb3N5bmMuY29t");
+  function salvarTokenFake(token) {
+    localStorage.setItem("token", token);
   }
 
   window.inicializarTelaLogin = function () {
     const form = document.getElementById("loginForm");
     const btnEsqueciSenha = document.getElementById("btnEsqueciSenha");
 
-    // ao entrar na tela login pelo botão sair, limpa sessão
     localStorage.removeItem("token");
 
     if (form) {
@@ -32,13 +30,45 @@
           return;
         }
 
-        // fluxo simples para a PI
-        salvarTokenFake();
         setStatus("Login realizado com sucesso.");
 
-        if (typeof loadPage === "function") {
-          loadPage("dashboard");
+        if (usuario === "vendas@varejosync.com" && senha === "123456") {
+          salvarTokenFake("Mzp2ZW5kYXNAdmFyZWpvc3luYy5jb20=");
+
+          localStorage.setItem("perfil", "VENDEDORA");
+          localStorage.setItem("nomeUsuario", "Ana Paula");
+
+          if (typeof loadPage === "function") {
+            loadPage("dashboard-pdv");
+          }
+          return;
         }
+
+        if (usuario === "estoque@varejosync.com" && senha === "123456") {
+          salvarTokenFake("Mjplc3RvcXVlQHZhcmVqb3N5bmMuY29t");
+
+          localStorage.setItem("perfil", "ESTOQUISTA");
+          localStorage.setItem("nomeUsuario", "Marcos Lima");
+
+          if (typeof loadPage === "function") {
+            loadPage("dashboard");
+          }
+          return;
+        }
+
+        if (usuario === "gerente@varejosync.com" && senha === "123456") {
+          salvarTokenFake("MTpnZXJlbnRlQHZhcmVqb3N5bmMuY29t");
+
+          localStorage.setItem("perfil", "GERENTE");
+          localStorage.setItem("nomeUsuario", "João Almeida");
+
+          if (typeof loadPage === "function") {
+            loadPage("dashboard-gerente");
+          }
+          return;
+        }
+
+        setStatus("Usuário ou senha inválidos.", true);
       };
     }
 
