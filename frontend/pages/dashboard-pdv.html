@@ -1,0 +1,196 @@
+<section class="page-section">
+  <div class="page-header">
+    <h2>Dashboard da Vendedora</h2>
+    <p>Painel operacional com visão rápida das vendas e atalhos do PDV.</p>
+  </div>
+
+  <section class="card vd-hero-card">
+    <div class="vd-hero-top">
+      <div>
+        <h3>Resumo do turno</h3>
+        <p class="vd-hero-subtitle">
+          Indicadores principais do desempenho de vendas.
+        </p>
+      </div>
+      <span class="status-text" id="vdAtualizacaoTopo"
+        >Atualizado há 10 minutos</span
+      >
+    </div>
+
+    <div class="vd-kpi-grid">
+      <div class="vd-kpi-card">
+        <span class="vd-kpi-label">Vendas do dia</span>
+        <strong class="vd-kpi-value" id="vdKpiVendasDia">12</strong>
+        <span class="vd-kpi-meta">vendas registradas</span>
+      </div>
+
+      <div class="vd-kpi-card">
+        <span class="vd-kpi-label">Faturamento do dia</span>
+        <strong class="vd-kpi-value" id="vdKpiFaturamentoDia"
+          >R$ 2.589,70</strong
+        >
+        <span class="vd-kpi-meta">valor total vendido</span>
+      </div>
+
+      <div class="vd-kpi-card">
+        <span class="vd-kpi-label">Ticket médio</span>
+        <strong class="vd-kpi-value" id="vdKpiTicketMedio">R$ 215,80</strong>
+        <span class="vd-kpi-meta">média por venda</span>
+      </div>
+
+      <div class="vd-kpi-card">
+        <span class="vd-kpi-label">Vendas finalizadas</span>
+        <strong class="vd-kpi-value" id="vdKpiFinalizadas">10</strong>
+        <span class="vd-kpi-meta">2 pendentes no turno</span>
+      </div>
+    </div>
+  </section>
+
+  <section class="card vd-shortcuts-card">
+    <div class="table-header">
+      <h3>Atalhos rápidos</h3>
+      <span class="status-text">Acesso direto às principais ações</span>
+    </div>
+
+    <div class="vd-shortcuts-actions">
+      <button type="button" class="btn-primary" id="btnNovaVendaDashboard">
+        Iniciar nova venda
+      </button>
+      <button type="button" class="btn-dark" id="btnConsultarEstoqueDashboard">
+        Consultar estoque
+      </button>
+    </div>
+  </section>
+
+  <div class="vd-grid-2">
+    <section class="card vd-panel-card">
+      <div class="table-header">
+        <h3>Produtos mais vendidos</h3>
+        <span class="status-text">Top itens do dia</span>
+      </div>
+
+      <div class="vd-list" id="vdListaProdutosMaisVendidos">
+        <div class="vd-list-item">
+          <div>
+            <strong>Camiseta Básica</strong>
+            <span>SKU: CAM-001</span>
+          </div>
+          <strong>28 vendas</strong>
+        </div>
+
+        <div class="vd-list-item">
+          <div>
+            <strong>Vestido Midi</strong>
+            <span>SKU: VES-014</span>
+          </div>
+          <strong>17 vendas</strong>
+        </div>
+
+        <div class="vd-list-item">
+          <div>
+            <strong>Calça Jeans</strong>
+            <span>SKU: CAL-008</span>
+          </div>
+          <strong>12 vendas</strong>
+        </div>
+      </div>
+    </section>
+
+    <section class="card vd-panel-card">
+      <div class="table-header">
+        <h3>Últimas vendas registradas</h3>
+        <span class="status-text">Movimento recente</span>
+      </div>
+
+      <div class="vd-list" id="vdListaUltimasVendas">
+        <div class="vd-list-item">
+          <div>
+            <strong>16:40</strong>
+            <span>Venda #00128</span>
+          </div>
+          <div class="vd-list-right">
+            <strong>R$ 289,70</strong>
+            <span class="status status-ok">Finalizada</span>
+          </div>
+        </div>
+
+        <div class="vd-list-item">
+          <div>
+            <strong>15:25</strong>
+            <span>Venda #00127</span>
+          </div>
+          <div class="vd-list-right">
+            <strong>R$ 159,90</strong>
+            <span class="status status-ok">Finalizada</span>
+          </div>
+        </div>
+
+        <div class="vd-list-item">
+          <div>
+            <strong>14:10</strong>
+            <span>Venda #00126</span>
+          </div>
+          <div class="vd-list-right">
+            <strong>R$ 89,90</strong>
+            <span class="status status-warning">Cancelada</span>
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <div class="vd-grid-2">
+    <section class="card vd-panel-card">
+      <div class="table-header">
+        <h3>Avisos</h3>
+        <span class="status-text">Ocorrências do turno</span>
+      </div>
+
+      <div class="vd-alert-list" id="vdListaAvisos">
+        <div class="vd-alert-item warning">
+          <strong>Reposição necessária</strong>
+          <span
+            >2 produtos estão com estoque baixo — solicitar apoio ao
+            Estoquista.</span
+          >
+        </div>
+
+        <div class="vd-alert-item neutral">
+          <strong>Sistema</strong>
+          <span>Nenhuma pendência operacional no momento.</span>
+        </div>
+      </div>
+    </section>
+
+    <section class="card vd-panel-card">
+      <div class="table-header">
+        <h3>Faturamento da semana</h3>
+        <span class="status-text">Resumo comercial</span>
+      </div>
+
+      <div class="vd-week-box">
+        <div class="vd-week-main">
+          <strong id="vdFaturamentoSemana">R$ 8.950,00</strong>
+          <span>+12% vs semana anterior</span>
+        </div>
+
+        <div class="vd-week-products">
+          <h4>Produtos vendidos na semana</h4>
+          <ul id="vdProdutosSemanaLista">
+            <li>Sem dados na semana.</li>
+          </ul>
+          <p>
+            Ticket médio semanal:
+            <strong id="vdTicketMedioSemana">R$ 0,00</strong>
+          </p>
+        </div>
+
+        <div class="vd-week-bars" aria-hidden="true">
+          <span class="bar bar-1"></span>
+          <span class="bar bar-2"></span>
+          <span class="bar bar-3"></span>
+        </div>
+      </div>
+    </section>
+  </div>
+</section>
