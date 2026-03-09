@@ -23,16 +23,14 @@ https://SEU-USUARIO.github.io/varejosync
 
 ## ▶ Execução rápida
 
-1️⃣ Iniciar o Backend
+### 1️⃣ Iniciar o Backend
 
 ```bash
 cd backend
 npm run dev
 
-2️⃣ Iniciar o Frontend
+## 2️⃣ Iniciar o Frontend
 
-```md
-```bash
 cd frontend
 python -m http.server 5501 --bind 127.0.0.1
 
@@ -228,7 +226,7 @@ Banco de dados
 
 👨‍💻 Participação no Projeto
 
- Janayna Mirelly Henrique Santos
+ **Janayna Mirelly Henrique Santos**
 
 Responsável pelo desenvolvimento técnico principal do projeto.
 
@@ -246,14 +244,14 @@ Responsável pelo desenvolvimento técnico principal do projeto.
 
 - organização das evidências e documentação técnica
 
-Alissa Caetano Santos
+**Alissa Caetano Santos**
 - Participou da etapa inicial de levantamento e organização dos requisitos do sistema.
 
 Atividades:
 - levantamento inicial das funcionalidades esperadas para um sistema de gestão de loja
 - organização das funcionalidades por perfil de usuário
 
-Beatriz Silva de Sousa
+**Beatriz Silva de Sousa**
 - Apoio na definição do fluxo operacional da loja representado na aplicação.
 
 Atividades:
@@ -261,7 +259,7 @@ Atividades:
 - apoio na definição das informações necessárias para registro de vendas
 - verificação da coerência das informações exibidas nos dashboards
 
-Claudia Carli
+**Claudia Carli**
 - Apoio na organização da documentação e materiais do projeto.
 
 Atividades:
@@ -269,14 +267,14 @@ Atividades:
 - conferência das descrições das funcionalidades apresentadas no projeto
 
 
-Gabriela de Melo Arruda
+**Gabriela de Melo Arruda**
 - apoio na organização das evidências do sistema.
 
 Atividades:
 - seleção e organização dos prints utilizados para demonstrar o funcionamento da aplicação
 - revisão das telas capturadas para evidenciar os principais fluxos do sistema
 
-Julia Maria de Lima Silva
+**Julia Maria de Lima Silva**
 - Apoio na revisão das funcionalidades implementadas.
 
 Atividades:
@@ -284,7 +282,7 @@ Atividades:
 - revisão das descrições das funcionalidades no README
 - apoio na validação das telas utilizadas na demonstração
 
-Maiara Vitória Deicke
+**Maiara Vitória Deicke**
 - Apoio na preparação do material de apresentação do projeto.
 
 Atividades:
@@ -292,7 +290,7 @@ Atividades:
 - organização do roteiro de demonstração da aplicação
 - apoio na preparação do vídeo de apresentação
 
-Samara de Paiva Lacerda
+**Samara de Paiva Lacerda**
 - Apoio na conferência final da entrega.
 
 Atividades:
