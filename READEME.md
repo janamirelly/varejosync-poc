@@ -1,4 +1,3 @@
-
 ## 📌 Resumo do Projeto
 
 O **VarejoSync** simula o funcionamento básico de uma loja com:
@@ -13,27 +12,51 @@ A aplicação foi construída utilizando:
 - **Backend:** Node.js + Express
 - **Banco de dados:** SQLite
 
+## 🔗 Links do Projeto
+
+Repositório do projeto  
+https://github.com/janamirelly/varejosync-poc.git
+
+Landing page publicada  
+https://SEU-USUARIO.github.io/varejosync
 ---
 
 ## ▶ Execução rápida
 
-Backend
+1️⃣ Iniciar o Backend
 
 ```bash
 cd backend
 npm run dev
 
-Frontend
+2️⃣ Iniciar o Frontend
 
+```md
+```bash
 cd frontend
 python -m http.server 5501 --bind 127.0.0.1
 
+
+```md
 Abrir no navegador:
 
 http://127.0.0.1:5501
 
+## Usuários de teste
 
-📌 Visão Geral do Sistema
+Gerente
+usuario: gerente@varejosync.com
+senha: 123456
+
+Estoquista
+usuario: estoque@varejosync.com
+senha: 123456
+Vendedora
+
+usuario: vendas@varejosync.com
+senha: 123456
+
+## 📌 Visão Geral do Sistema
 
 O sistema foi estruturado com três perfis de usuário, representando papéis comuns no funcionamento de uma loja.
 
@@ -57,7 +80,7 @@ O sistema foi estruturado com três perfis de usuário, representando papéis co
 - visualização das últimas vendas
 - acompanhamento de indicadores de vendas do dia
 
-🗂 Estrutura do Projeto
+## 🗂 Estrutura do Projeto
 
 A estrutura do repositório foi organizada separando backend, frontend e evidências do sistema.
 
@@ -103,7 +126,7 @@ tools
 README.md
 
 
-🗄 Banco de Dados
+## 🗄 Banco de Dados
 
 O sistema utiliza SQLite como banco de dados local.
 
@@ -121,66 +144,17 @@ seed.sql – dados iniciais utilizados para testes
 A conexão com o banco é realizada no módulo:
 
 backend/src/db/database.js
+
 Principais entidades
 
-produto
+ - produto
+ - variacao_produto
+ - estoque
+ - venda
+ - item_venda
+ - documento_fiscal
 
-variacao_produto
-
-estoque
-
-venda
-
-item_venda
-
-documento_fiscal
-
-▶ Execução do Sistema
-1️⃣ Iniciar o Backend
-
-No terminal, acessar a pasta backend:
-
-cd backend
-npm run dev
-
-A API será iniciada em:
-
-http://localhost:3000
-2️⃣ Iniciar o Frontend
-
-Durante os testes foi identificado comportamento instável ao utilizar o Live Server do VSCode, com recarregamento contínuo da aplicação.
-
-Para evitar esse problema, o frontend deve ser executado utilizando um servidor HTTP simples do Python.
-
-No terminal:
-
-cd frontend
-python -m http.server 5501 --bind 127.0.0.1
-
-Depois abrir no navegador:
-
-http://127.0.0.1:5501
-
-Observação: em alguns ambientes o terminal pode exibir um endereço IPv6 automático.
-Esse endereço pode ser ignorado. Utilize sempre o acesso manual acima.
-
-👥 Usuários de Teste
-
-Para facilitar a demonstração do sistema foram criados três usuários de teste.
-
-Gerente
-usuario: gerente@varejosync.com
-senha: 123456
-
-Estoquista
-usuario: estoque@varejosync.com
-senha: 123456
-Vendedora
-
-usuario: vendas@varejosync.com
-senha: 123456
-
-🔗 Endpoints Principais da API
+## 🔗 Endpoints Principais da API
 
 A API foi organizada em rotas REST para atender as funcionalidades do sistema.
 
@@ -199,7 +173,7 @@ POST   /fiscal
 
 Esses endpoints são consumidos pelo frontend para alimentar os dashboards e registrar operações de venda.
 
-📸 Evidências do Sistema
+## 📸 Evidências do Sistema
 
 Durante o desenvolvimento foram registradas evidências da execução do sistema, incluindo:
 
@@ -223,7 +197,7 @@ Também foram criadas páginas HTML específicas para demonstrar evidências em:
 
 tools/evidencias/html
 
-🌐 Landing Page
+##🌐 Landing Page
 
 Foi criada uma página simples de apresentação do projeto disponível na pasta:
 
@@ -254,7 +228,9 @@ Banco de dados
 
 👨‍💻 Participação no Projeto
 
-O desenvolvimento técnico principal da aplicação foi realizado por Janayna Mirelly, incluindo:
+ Janayna Mirelly Henrique Santos
+
+Responsável pelo desenvolvimento técnico principal do projeto.
 
 - modelagem do banco de dados
 
@@ -270,18 +246,67 @@ O desenvolvimento técnico principal da aplicação foi realizado por Janayna Mi
 
 - organização das evidências e documentação técnica
 
-- Os demais integrantes contribuíram com apoio em:
+Alissa Caetano Santos
+- Participou da etapa inicial de levantamento e organização dos requisitos do sistema.
 
-- levantamento inicial de requisitos
+Atividades:
+- levantamento inicial das funcionalidades esperadas para um sistema de gestão de loja
+- organização das funcionalidades por perfil de usuário
 
-- revisão da documentação
+Beatriz Silva de Sousa
+- Apoio na definição do fluxo operacional da loja representado na aplicação.
 
-- organização de materiais para apresentação
+Atividades:
+- discussão e validação do fluxo básico de venda no PDV
+- apoio na definição das informações necessárias para registro de vendas
+- verificação da coerência das informações exibidas nos dashboards
 
-- apoio na preparação da entrega final do projeto
+Claudia Carli
+- Apoio na organização da documentação e materiais do projeto.
+
+Atividades:
+- revisão textual da documentação descritiva do sistema
+- conferência das descrições das funcionalidades apresentadas no projeto
 
 
+Gabriela de Melo Arruda
+- apoio na organização das evidências do sistema.
 
+Atividades:
+- seleção e organização dos prints utilizados para demonstrar o funcionamento da aplicação
+- revisão das telas capturadas para evidenciar os principais fluxos do sistema
 
+Julia Maria de Lima Silva
+- Apoio na revisão das funcionalidades implementadas.
 
+Atividades:
+- verificação das funcionalidades apresentadas nos dashboards
+- revisão das descrições das funcionalidades no README
+- apoio na validação das telas utilizadas na demonstração
 
+Maiara Vitória Deicke
+- Apoio na preparação do material de apresentação do projeto.
+
+Atividades:
+- revisão das informações utilizadas na apresentação do sistema
+- organização do roteiro de demonstração da aplicação
+- apoio na preparação do vídeo de apresentação
+
+Samara de Paiva Lacerda
+- Apoio na conferência final da entrega.
+
+Atividades:
+- revisão da estrutura final do repositório
+- conferência dos arquivos incluídos na entrega
+- validação dos layouts do frontend.
+```
+### Colaboração durante o desenvolvimento
+
+Durante o desenvolvimento do sistema, os integrantes do grupo também participaram de momentos de validação da aplicação e discussão de ajustes identificados nos testes.
+
+Contribuições nessas etapas incluíram:
+
+- análise de comportamentos inesperados observados durante os testes do backend e da interface
+- discussão de possíveis causas para inconsistências no fluxo de vendas e exibição de dados
+- sugestões de ajustes nas regras de funcionamento da aplicação
+- apoio na identificação de soluções para correção de bugs encontrados durante o desenvolvimento
