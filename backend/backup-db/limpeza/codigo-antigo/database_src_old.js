@@ -6,8 +6,13 @@ const path = require("path");
 // ===============================
 // Caminho do banco 
 // ===============================
-const defaultDbPath = path.resolve(__dirname, "..", "db", "varejosync.db");
-const dbPath = process.env.DB_PATH || defaultDbPath;
+const defaultDbPath = path.resolve(process.cwd(), "db", "varejosync_pi.db");
+const dbPath = process.env.DB_PATH
+  ? path.resolve(process.env.DB_PATH)
+  : defaultDbPath;
+
+console.log("[CWD]", process.cwd());
+console.log("[__dirname]", __dirname);
 console.log("[DB PATH]", dbPath);
 
 // ===============================
@@ -85,8 +90,7 @@ function get(sql, params = []) {
   });
 }
 
-// ===============================
-// Arquivos SQL (fora do src)
+
 // ===============================
 // root do backend (porque este arquivo está em backend/src)
 const backendRoot = path.resolve(__dirname, "..");
