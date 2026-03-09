@@ -1,0 +1,160 @@
+<section class="page-section">
+  <div class="page-header">
+    <h2>PDV - Vendas</h2>
+    <p>Módulo da Vendedora</p>
+  </div>
+
+  <section class="card pdv-card">
+    <div class="table-header">
+      <h3>Busca de produto</h3>
+      <span class="status-text" id="pdvStatusBusca">
+        Digite para buscar no estoque
+      </span>
+    </div>
+
+    <div class="pdv-search-wrap">
+      <span class="pdv-search-icon">🔍</span>
+      <input
+        type="text"
+        id="pdvInputBusca"
+        class="pdv-search-input"
+        placeholder="Buscar por nome, SKU, código de barras ou variação"
+        autocomplete="off"
+      />
+    </div>
+
+     <div class="pdv-chip-row">
+      <button type="button" class="pdv-chip active" data-chip="todos">
+        Todos
+      </button>
+      <button type="button" class="pdv-chip" data-chip="promocao">
+        Promoção
+      </button>
+      <button type="button" class="pdv-chip" data-chip="novidades">
+        Novidades
+      </button>
+      <button type="button" class="pdv-chip" data-chip="vistos">
+        Últimos vistos
+      </button>
+    </div> 
+  </section>
+
+  <section class="card pdv-card">
+    <div class="table-header">
+      <h3>Produtos encontrados</h3>
+      <span class="status-text" id="pdvStatusResultados">0 registros</span>
+    </div>
+
+    <div class="table-wrapper">
+      <table class="data-table pdv-table">
+        <thead>
+          <tr>
+            <th>Produto</th>
+            <th>SKU</th>
+            <th>Variação</th>
+            <th>Estoque</th>
+            <th>Preço</th>
+            <th>Ação</th>
+          </tr>
+        </thead>
+        <tbody id="pdvTabelaProdutos">
+          <tr>
+            <td colspan="6" class="empty-state">Nenhum produto carregado.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="pdv-feedback" id="pdvFeedback"></div>
+  </section>
+
+  <section class="card pdv-card">
+    <div class="table-header">
+      <h3>Resumo da venda</h3>
+      <span class="status-text" id="pdvStatusCarrinho"
+        >0 itens adicionados</span
+      >
+    </div>
+
+    <div class="pdv-resumo-head">
+      <div>Produto</div>
+      <div>Qtd</div>
+      <div>Preço</div>
+      <div>Total</div>
+      <div>Ação</div>
+    </div>
+
+    <div id="pdvResumoLista" class="pdv-resumo-lista">
+      <div class="pdv-empty">Nenhum item adicionado à venda.</div>
+    </div>
+
+    <div class="pdv-footer">
+      <div class="pdv-total-box">
+        <span>Total da venda:</span>
+        <strong id="pdvTotalVenda">R$ 0,00</strong>
+      </div>
+
+      <div class="pdv-actions">
+        <button type="button" class="btn-cancel" id="btnAbrirCancelarVenda">
+          Cancelar
+        </button>
+        <button type="button" class="btn-primary" id="btnAbrirFinalizarVenda">
+          Finalizar
+        </button>
+      </div>
+    </div>
+  </section>
+</section>
+
+<!-- MODAL CANCELAR -->
+<div class="mov-modal hidden" id="pdvModalCancelar">
+  <div class="mov-modal-card pdv-modal-card">
+    <h3>Cancelar venda</h3>
+    <p>Deseja cancelar esta venda? Todos os itens do resumo serão removidos.</p>
+
+    <div class="produto-modal-actions">
+      <button type="button" class="btn-secondary" id="btnFecharModalCancelar">
+        Voltar
+      </button>
+      <button type="button" class="btn-cancel" id="btnConfirmarCancelarVenda">
+        Confirmar cancelamento
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL FINALIZAR -->
+<div class="mov-modal hidden" id="pdvModalFinalizar">
+  <div class="mov-modal-card pdv-modal-card">
+    <h3>Finalizar venda</h3>
+    <p>Deseja finalizar esta venda?</p>
+
+    <div class="pdv-modal-lista" id="pdvModalListaItens"></div>
+
+    <div class="pdv-modal-total">
+      Total da venda: <strong id="pdvModalTotal">R$ 0,00</strong>
+    </div>
+
+    <div class="produto-modal-actions">
+      <button type="button" class="btn-cancel" id="btnFecharModalFinalizar">
+        Cancelar
+      </button>
+      <button type="button" class="btn-primary" id="btnConfirmarFinalizarVenda">
+        Finalizar
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL SUCESSO -->
+<div class="mov-modal hidden" id="pdvModalSucesso">
+  <div class="mov-modal-card pdv-modal-card pdv-modal-sucesso">
+    <div class="pdv-success-icon">✓</div>
+    <h3>Venda concluída com sucesso!</h3>
+    <p id="pdvNumeroVenda">Número da venda: #000000</p>
+
+    <button type="button" class="btn-primary" id="btnVoltarPDV">
+      Voltar ao PDV
+    </button>
+  </div>
+</div>
