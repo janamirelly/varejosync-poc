@@ -211,7 +211,47 @@ function criarProduto(req, res) {
   });
 }
 
+// GET /produtos/pdv
+function listarProdutosPDV(req, res) {
+  const sql = `
+  SELECT
+    vp.id_variacao,
+    p.id_produto,
+    p.nome AS nome_produto,
+    vp.cor,
+    vp.tamanho,
+    vp.sku,
+    vp.preco AS preco_venda,
+    COALESCE(e.quantidade, 0) AS quantidade_atual,
+    COALESCE(e.estoque_min, 0) AS estoque_min,
+    CASE
+      WHEN COALESCE(e.quantidade, 0) = 0 THEN 'ESGOTADO'
+      WHEN COALESCE(e.quantidade, 0) < COALESCE(e.estoque_min, 0) THEN 'CRITICO'
+      WHEN COALESCE(e.quantidade, 0) <= COALESCE(e.estoque_min, 0) + 2 THEN 'ATENCAO'
+      ELSE 'DISPONIVEL'
+    END AS status
+  FROM variacao_produto vp
+  INNER JOIN produto p
+    ON p.id_produto = vp.id_produto
+  LEFT JOIN estoque e
+    ON e.id_variacao = vp.id_variacao
+  ORDER BY p.nome, vp.cor, vp.tamanho
+`;
+
+  db.all(sql, [], (err, rows) => {
+    if (err) {
+      console.error(err);
+      return res
+        .status(500)
+        .json({ erro: "Erro ao buscar produtos para o PDV" });
+    }
+
+    res.json(rows);
+  });
+}
+
 module.exports = {
   listarProdutos,
+  listarProdutosPDV,
   criarProduto,
 };
