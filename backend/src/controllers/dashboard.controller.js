@@ -92,6 +92,112 @@ async function obterDashboard(req, res) {
   }
 }
 
+async function obterDashboardPdv(req, res) {
+  try {
+    const resumo =
+      (await get(`
+      SELECT
+        COUNT(DISTINCT v.id_venda) AS vendas_dia,
+        ROUND(COALESCE(SUM(iv.subtotal), 0), 2) AS faturamento_dia,
+        ROUND(
+          COALESCE(SUM(iv.subtotal), 0) / NULLIF(COUNT(DISTINCT v.id_venda), 0),
+          2
+        ) AS ticket_medio,
+        COUNT(DISTINCT CASE WHEN v.status = 'CONCLUIDA' THEN v.id_venda END) AS vendas_finalizadas
+      FROM venda v
+      LEFT JOIN item_venda iv
+        ON iv.id_venda = v.id_venda
+      WHERE date(v.criado_em) = date('now')
+    `)) || {};
+
+    const ultimas_vendas = await all(`
+      SELECT
+        v.id_venda,
+        ROUND(COALESCE(SUM(iv.subtotal), 0), 2) AS valor_total,
+        v.status,
+        v.criado_em
+      FROM venda v
+      LEFT JOIN item_venda iv
+        ON iv.id_venda = v.id_venda
+      GROUP BY v.id_venda, v.status, v.criado_em
+      ORDER BY datetime(v.criado_em) DESC
+      LIMIT 3
+    `);
+
+    const produtos_mais_vendidos = await all(`
+  SELECT
+    p.nome AS produto,
+    vp.sku AS sku,
+    SUM(iv.quantidade) AS unidades
+  FROM item_venda iv
+  JOIN variacao_produto vp
+    ON vp.id_variacao = iv.id_variacao
+  JOIN produto p
+    ON p.id_produto = vp.id_produto
+  JOIN venda v
+    ON v.id_venda = iv.id_venda
+  WHERE v.status = 'CONCLUIDA'
+  GROUP BY p.nome, vp.sku
+  ORDER BY unidades DESC, produto
+  LIMIT 3
+`);
+
+    const faturamento_semana =
+      (await get(`
+  SELECT
+    ROUND(COALESCE(SUM(iv.subtotal), 0), 2) AS faturamento_semana,
+    ROUND(
+      COALESCE(SUM(iv.subtotal), 0) / NULLIF(COUNT(DISTINCT v.id_venda), 0),
+      2
+    ) AS ticket_medio_semana
+  FROM venda v
+  LEFT JOIN item_venda iv
+    ON iv.id_venda = v.id_venda
+  WHERE v.status = 'CONCLUIDA'
+    AND datetime(v.criado_em) >= datetime('now', '-7 day')
+`)) || {};
+
+    const produtos_semana = await all(`
+  SELECT
+    p.nome AS produto,
+    SUM(iv.quantidade) AS unidades
+  FROM item_venda iv
+  JOIN variacao_produto vp
+    ON vp.id_variacao = iv.id_variacao
+  JOIN produto p
+    ON p.id_produto = vp.id_produto
+  JOIN venda v
+    ON v.id_venda = iv.id_venda
+  WHERE v.status = 'CONCLUIDA'
+    AND datetime(v.criado_em) >= datetime('now', '-7 day')
+  GROUP BY p.nome
+  ORDER BY unidades DESC, p.nome
+  LIMIT 3
+`);
+
+    return res.json({
+      resumo: {
+        vendas_dia: Number(resumo.vendas_dia || 0),
+        faturamento_dia: Number(resumo.faturamento_dia || 0),
+        ticket_medio: Number(resumo.ticket_medio || 0),
+        vendas_finalizadas: Number(resumo.vendas_finalizadas || 0),
+      },
+      ultimas_vendas: ultimas_vendas || [],
+      produtos_mais_vendidos: produtos_mais_vendidos || [],
+      faturamento_semana: {
+        valor: Number(faturamento_semana.faturamento_semana || 0),
+
+        ticket_medio: Number(faturamento_semana.ticket_medio_semana || 0),
+      },
+      produtos_semana: produtos_semana || [],
+    });
+  } catch (err) {
+    console.error("[DASHBOARD PDV] erro:", err);
+    return res.status(500).json({ erro: "Erro ao montar dashboard do PDV" });
+  }
+}
+
 module.exports = {
   obterDashboard,
+  obterDashboardPdv,
 };
