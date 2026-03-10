@@ -44,19 +44,19 @@ Abrir no navegador:
 
 http://127.0.0.1:5501
 
-## Usuários de teste
+## 👤 Usuários de teste
 
-Gerente
-usuario: gerente@varejosync.com
-senha: 123456
+**Gerente**
+- usuário: gerente@varejosync.com
+- senha: 123456
 
-Estoquista
-usuario: estoque@varejosync.com
-senha: 123456
-Vendedora
+**Estoquista**
+- usuário: estoque@varejosync.com
+- senha: 123456
 
-usuario: vendas@varejosync.com
-senha: 123456
+**Vendedora**
+- usuário: vendas@varejosync.com
+- senha: 123456
 
 ## 📌 Visão Geral do Sistema
 
@@ -86,47 +86,45 @@ O sistema foi estruturado com três perfis de usuário, representando papéis co
 
 A estrutura do repositório foi organizada separando backend, frontend e evidências do sistema.
 
+```
 VAREJOSYNC-POC
-
-backend
- ├ db
- │ ├ schema.sql
- │ ├ migrations.sql
- │ ├ seed.sql
- │ └ patches
- │
- ├ src
- │ ├ controllers
- │ ├ routes
- │ ├ middlewares
- │ ├ utils
- │ └ db
- │    └ database.js
- │
- └ server.js
-
-frontend
- ├ assets
- │ ├ icons
- │ └ users
- │
- ├ css
- ├ js
- ├ pages
- └ index.html
-
-docs
- └ evidencias
-    └ prints
-
-landing
-
-tools
- └ evidencias
-    └ html
-
-README.md
-
+│
+├── backend
+│   ├── db
+│   │   ├── schema.sql
+│   │   ├── migrations.sql
+│   │   ├── seed.sql
+│   │   └── patches
+│   │
+│   ├── src
+│   │   ├── controllers
+│   │   ├── routes
+│   │   ├── middlewares
+│   │   ├── utils
+│   │   └── db
+│   │       └── database.js
+│   │
+│   └── server.js
+│
+├── frontend
+│   ├── assets
+│   ├── css
+│   ├── js
+│   ├── pages
+│   └── index.html
+│
+├── docs
+│   └── evidencias
+│       └── prints
+│
+├── landing
+│
+├── tools
+│   └── evidencias
+│       └── html
+│
+└── README.md
+```
 
 ## 🗄 Banco de Dados
 
@@ -134,14 +132,15 @@ O sistema utiliza SQLite como banco de dados local.
 
 Os scripts responsáveis pela criação e evolução da estrutura estão localizados em:
 
-backend/db
-Scripts principais
+Os scripts do banco estão localizados em:
 
-schema.sql – criação da estrutura inicial do banco
+`backend/db`
 
-migrations.sql – ajustes estruturais realizados durante o desenvolvimento
+### Scripts principais
 
-seed.sql – dados iniciais utilizados para testes
+- `schema.sql` — criação da estrutura inicial do banco  
+- `migrations.sql` — ajustes estruturais durante o desenvolvimento  
+- `seed.sql` — dados iniciais para testes
 
 A conexão com o banco é realizada no módulo:
 
@@ -162,6 +161,7 @@ A API foi organizada em rotas REST para atender as funcionalidades do sistema.
 
 Principais endpoints:
 
+```
 GET    /dashboard
 GET    /dashboard-pdv
 GET    /produtos
@@ -172,6 +172,7 @@ PUT    /vendas
 PATCH  /vendas
 
 POST   /fiscal
+```
 
 Esses endpoints são consumidos pelo frontend para alimentar os dashboards e registrar operações de venda.
 
@@ -199,11 +200,13 @@ Também foram criadas páginas HTML específicas para demonstrar evidências em:
 
 tools/evidencias/html
 
-##🌐 Landing Page
+## 🌐 Landing Page
 
-Foi criada uma página simples de apresentação do projeto disponível na pasta:
+Foi criada uma landing page simples para apresentar o projeto e facilitar a visualização inicial da aplicação.
 
-landing
+A página está publicada em:
+
+https://janamirelly.github.io/varejosync-poc/
 
 Essa página apresenta uma visão geral do sistema, suas funcionalidades e tecnologias utilizadas.
 
@@ -312,3 +315,7 @@ Contribuições nessas etapas incluíram:
 - discussão de possíveis causas para inconsistências no fluxo de vendas e exibição de dados
 - sugestões de ajustes nas regras de funcionamento da aplicação
 - apoio na identificação de soluções para correção de bugs encontrados durante o desenvolvimento
+
+## 📘 Contexto Acadêmico
+
+Este projeto foi desenvolvido como parte do **Projeto Integrador** do curso de **Análise e Desenvolvimento de Sistemas**, com o objetivo de demonstrar a integração entre backend, frontend e banco de dados em um sistema de gestão de varejo.
