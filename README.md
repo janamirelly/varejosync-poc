@@ -27,15 +27,18 @@ Landing page publicada
 
 ```bash
 cd backend
+npm install
 npm run dev
+
+O servidor será iniciado em:
+
+http://localhost:3000
 
 ## 2️⃣ Iniciar o Frontend
 
 cd frontend
 python -m http.server 5501 --bind 127.0.0.1
 
-
-```md
 Abrir no navegador:
 
 http://127.0.0.1:5501
