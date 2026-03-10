@@ -86,7 +86,7 @@ O sistema foi estruturado com três perfis de usuário, representando papéis co
 
 A estrutura do repositório foi organizada separando backend, frontend e evidências do sistema.
 
-```
+```text
 VAREJOSYNC-POC
 │
 ├── backend
