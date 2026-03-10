@@ -14,11 +14,9 @@ A aplicação foi construída utilizando:
 
 ## 🔗 Links do Projeto
 
-## 🔗 Links do Projeto
-
 - [Repositório do projeto](https://github.com/janamirelly/varejosync-poc)
 - [Landing page publicada](https://janamirelly.github.io/varejosync-poc/)
-- [Vídeo de demonstração] (https://drive.google.com/file/d/1yqX3ds-ivW7m5R4qcd3UcR9oHxO39JiV/view)
+- [Vídeo de demonstração](https://drive.google.com/file/d/1yqX3ds-iW7m5R4qcd3UcR9oHxO39jiV/view)
 
 
 ## ▶ Execução rápida
