@@ -18,7 +18,7 @@ Repositório do projeto
 https://github.com/janamirelly/varejosync-poc.git
 
 Landing page publicada  
-https://SEU-USUARIO.github.io/varejosync
+ https://janamirelly.github.io/varejosync-poc/
 ---
 
 ## ▶ Execução rápida
