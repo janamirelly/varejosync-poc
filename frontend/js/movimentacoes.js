@@ -284,34 +284,92 @@ let produtoSelecionado = null;
         atualizarEstadoCancelar();
       };
 
-    if (btnConfirmar) {
-      btnConfirmar.onclick = function () {
-        const tipo = document.getElementById("movTipo")?.value || "";
-        const quantidade = Number(
-          document.getElementById("movQuantidade")?.value || 0,
-        );
-        const motivo = document.getElementById("movMotivo")?.value || "";
+  if (btnConfirmar) {
+    btnConfirmar.onclick = async function (e) {
+      e?.preventDefault?.();
 
-        if (!produtoSelecionado) {
-          alert("Busque e selecione um produto antes de confirmar.");
-          return;
+      console.log("[MOV] clique em confirmar disparado");
+
+      const tipoOriginal = document.getElementById("movTipo")?.value || "";
+      const quantidade = Number(
+        document.getElementById("movQuantidade")?.value || 0,
+      );
+      const motivo = document.getElementById("movMotivo")?.value.trim() || "";
+
+      console.log("[MOV] valores capturados:", {
+        produtoSelecionado,
+        tipoOriginal,
+        quantidade,
+        motivo,
+      });
+
+      if (!produtoSelecionado) {
+        alert("Busque e selecione um produto antes de confirmar.");
+        return;
+      }
+
+      if (!tipoOriginal || !motivo || quantidade <= 0) {
+        alert(
+          "Preencha tipo, quantidade e motivo para confirmar a movimentação.",
+        );
+        return;
+      }
+
+      const tipo = tipoOriginal.toLowerCase();
+
+      const payload = {
+        id_variacao: Number(produtoSelecionado.idVariacao),
+        quantidade: Number(quantidade),
+        tipo,
+        observacao: motivo,
+      };
+
+      console.log("[MOV] payload enviado:", payload);
+
+      try {
+        const token =
+          (localStorage.getItem("token") || "").trim() ||
+          "Mjplc3RvcXVlQHZhcmVqb3N5bmMuY29t";
+
+        const response = await fetch("http://localhost:3000/movimentacoes", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify(payload),
+        });
+
+        console.log("[MOV] status response:", response.status);
+
+        const texto = await response.text();
+        console.log("[MOV] texto bruto response:", texto);
+
+        let resultado = {};
+        try {
+          resultado = texto ? JSON.parse(texto) : {};
+        } catch {
+          throw new Error("Resposta inválida da API.");
         }
 
-        if (!tipo || !motivo || quantidade <= 0) {
-          alert(
-            "Preencha tipo, quantidade e motivo para confirmar a movimentação.",
-          );
-          return;
+        console.log("[MOV] response parseada:", resultado);
+
+        if (!response.ok) {
+          throw new Error(resultado.erro || `Erro HTTP ${response.status}`);
         }
 
         const textoModal = document.getElementById("movModalSucessoTexto");
         if (textoModal) {
-          textoModal.textContent = `${formatarTipo(tipo)} de ${quantidade} unidade(s) registrada para ${produtoSelecionado.nome} — ${produtoSelecionado.cor} — ${produtoSelecionado.tamanho}.`;
+          textoModal.textContent = `${formatarTipo(tipoOriginal)} de ${quantidade} unidade(s) registrada para ${produtoSelecionado.nome} — ${produtoSelecionado.cor} — ${produtoSelecionado.tamanho}.`;
         }
 
         abrirModal("modalMovSucesso");
-      };
-    }
+      } catch (error) {
+        console.error("[MOV] erro ao registrar movimentação:", error);
+        alert(`Erro ao registrar movimentação: ${error.message}`);
+      }
+    };
+  }
 
     if (btnCancelar) {
       btnCancelar.onclick = function () {
