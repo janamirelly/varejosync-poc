@@ -13,6 +13,14 @@
       currency: "BRL",
     });
   }
+  const JUROS_CREDITO = {
+    1: 0,
+    2: 0,
+    3: 0,
+    4: 0.0733,
+    5: 0.0866,
+    6: 0.0996,
+  };
 
   function debounce(fn, delay = 350) {
     let timer = null;
@@ -83,10 +91,47 @@
     return String(item.id_variacao ?? item.id_produto ?? item.sku);
   }
 
+  function getSubtotalItem(item) {
+    const bruto = Number(item.quantidade * item.preco);
+    const desconto = Number(item.desconto_percent || 0);
+    const valorDesconto = Number(((bruto * desconto) / 100).toFixed(2));
+    return Number((bruto - valorDesconto).toFixed(2));
+  }
+
   function getTotalCarrinho() {
     return state.carrinho.reduce((acc, item) => {
-      return acc + item.quantidade * item.preco;
+      return acc + getSubtotalItem(item);
     }, 0);
+  }
+  function calcularPagamentoCredito(total, formaPagamento, parcelas) {
+    const forma = String(formaPagamento || "PIX").toUpperCase();
+    const qtdParcelas = Number(parcelas || 1);
+
+    if (forma !== "CREDITO") {
+      return {
+        jurosPercentual: 0,
+        valorJuros: 0,
+        totalFinal: Number(total.toFixed(2)),
+        valorParcela: Number(total.toFixed(2)),
+        textoCondicao: "À vista",
+      };
+    }
+
+    const jurosPercentual = JUROS_CREDITO[qtdParcelas] || 0;
+    const valorJuros = Number((total * jurosPercentual).toFixed(2));
+    const totalFinal = Number((total + valorJuros).toFixed(2));
+    const valorParcela = Number((totalFinal / qtdParcelas).toFixed(2));
+
+    return {
+      jurosPercentual,
+      valorJuros,
+      totalFinal,
+      valorParcela,
+      textoCondicao:
+        qtdParcelas <= 3
+          ? `${qtdParcelas}x sem juros`
+          : `${qtdParcelas}x com juros`,
+    };
   }
 
   function getQuantidadeItens() {
@@ -99,6 +144,49 @@
 
   function fecharModal(modal) {
     if (modal) modal.classList.add("hidden");
+  }
+  function atualizarParcelasPagamento() {
+    const formaEl = document.getElementById("pdvFormaPagamento");
+    const parcelasWrap = document.getElementById("pdvParcelasWrap");
+    const parcelasEl = document.getElementById("pdvParcelas");
+    const totalEl = document.getElementById("pdvModalTotal");
+    const resumoPgtoEl = document.getElementById("pdvResumoPagamento");
+
+    if (!formaEl || !parcelasWrap || !parcelasEl) return;
+
+    const forma = String(formaEl.value || "").toUpperCase();
+
+    if (forma === "CREDITO") {
+      parcelasWrap.classList.remove("hidden");
+    } else {
+      parcelasWrap.classList.add("hidden");
+      parcelasEl.value = "1";
+    }
+
+    const totalBase = getTotalCarrinho();
+    const parcelas = Number(parcelasEl.value || 1);
+
+    const jurosPercentual =
+      forma === "CREDITO" ? JUROS_CREDITO[parcelas] || 0 : 0;
+
+    const valorJuros = Number((totalBase * jurosPercentual).toFixed(2));
+    const totalFinal = Number((totalBase + valorJuros).toFixed(2));
+    const valorParcela = Number((totalFinal / parcelas).toFixed(2));
+
+    if (totalEl) {
+      totalEl.textContent = money(totalFinal);
+    }
+
+    if (resumoPgtoEl) {
+      if (forma === "CREDITO") {
+        const textoCondicao =
+          parcelas <= 3 ? `${parcelas}x sem juros` : `${parcelas}x com juros`;
+
+        resumoPgtoEl.textContent = `${textoCondicao} • ${parcelas} parcela(s) de ${money(valorParcela)}`;
+      } else {
+        resumoPgtoEl.textContent = "Pagamento à vista";
+      }
+    }
   }
 
   function renderProdutos() {
@@ -179,46 +267,61 @@
 
     lista.innerHTML = state.carrinho
       .map((item) => {
-        const totalItem = item.quantidade * item.preco;
+        const totalItem = getSubtotalItem(item);
+        const desconto = Number(item.desconto_percent || 0);
         const key = String(getKey(item)).replace(/'/g, "\\'");
 
         return `
-          <div class="pdv-resumo-item">
-            <div class="pdv-item-main">
-              <strong>${item.nome}</strong>
-              <span>SKU: ${item.sku} • ${item.variacao || "—"}</span>
-            </div>
+  <div class="pdv-resumo-item">
+    <div class="pdv-item-main">
+      <strong>${item.nome}</strong>
+      <span>SKU: ${item.sku} • ${item.variacao || "—"}</span>
+      ${
+        desconto > 0
+          ? `<span class="pdv-item-desconto">Desconto: ${desconto}% • Motivo: ${item.motivo_desconto || "—"}</span>`
+          : ""
+      }
 
-            <div class="pdv-qtd-wrap">
-              <button
-                type="button"
-                class="pdv-qtd-btn"
-                onclick="window.pdvAlterarQuantidade('${key}', 'menos')"
-              >-</button>
+      <div class="pdv-item-actions-inline">
+        <button
+          type="button"
+          class="btn-secondary btn-small"
+          onclick="window.pdvAbrirDesconto('${key}')"
+        >
+          Desconto
+        </button>
 
-              <span class="pdv-qtd-value">${item.quantidade}</span>
+        <button
+          type="button"
+          class="btn-secondary btn-small"
+          onclick="window.pdvRemoverItem('${key}')"
+        >
+          Remover
+        </button>
+      </div>
+    </div>
 
-              <button
-                type="button"
-                class="pdv-qtd-btn"
-                onclick="window.pdvAlterarQuantidade('${key}', 'mais')"
-              >+</button>
-            </div>
+    <div class="pdv-qtd-wrap">
+      <button
+        type="button"
+        class="pdv-qtd-btn"
+        onclick="window.pdvAlterarQuantidade('${key}', 'menos')"
+      >-</button>
 
-            <div class="pdv-item-price">${money(item.preco)}</div>
-            <div class="pdv-item-total">${money(totalItem)}</div>
+      <span class="pdv-qtd-value">${item.quantidade}</span>
 
-            <div>
-              <button
-                type="button"
-                class="btn-secondary"
-                onclick="window.pdvRemoverItem('${key}')"
-              >
-                Remover
-              </button>
-            </div>
-          </div>
-        `;
+      <button
+        type="button"
+        class="pdv-qtd-btn"
+        onclick="window.pdvAlterarQuantidade('${key}', 'mais')"
+      >+</button>
+    </div>
+
+    <div class="pdv-item-price">${money(item.preco)}</div>
+
+    <div class="pdv-item-total">${money(totalItem)}</div>
+  </div>
+`;
       })
       .join("");
   }
@@ -341,6 +444,8 @@
       state.carrinho.push({
         ...produto,
         quantidade: 1,
+        desconto_percent: 0,
+        motivo_desconto: "",
       });
     }
 
@@ -404,6 +509,49 @@
     );
     renderResumo();
   }
+  function abrirModalDesconto(key) {
+    const item = state.carrinho.find((prod) => getKey(prod) === String(key));
+    if (!item) return;
+
+    const keyEl = document.getElementById("pdvDescontoKey");
+    const percentualEl = document.getElementById("pdvDescontoPercent");
+    const motivoEl = document.getElementById("pdvDescontoMotivo");
+
+    if (keyEl) keyEl.value = String(key);
+    if (percentualEl) percentualEl.value = String(item.desconto_percent || 0);
+    if (motivoEl) motivoEl.value = item.motivo_desconto || "";
+
+    abrirModal(document.getElementById("pdvModalDesconto"));
+  }
+
+  function confirmarDesconto() {
+    const key = document.getElementById("pdvDescontoKey")?.value;
+    const percentual = Number(
+      document.getElementById("pdvDescontoPercent")?.value || 0,
+    );
+    const motivo = String(
+      document.getElementById("pdvDescontoMotivo")?.value || "",
+    ).trim();
+
+    const item = state.carrinho.find((prod) => getKey(prod) === String(key));
+    if (!item) return;
+
+    if (percentual < 0 || percentual > 100) {
+      alert("Informe um desconto válido entre 0 e 100.");
+      return;
+    }
+
+    if (percentual > 0 && motivo.length < 3) {
+      alert("Informe o motivo do desconto com pelo menos 3 caracteres.");
+      return;
+    }
+
+    item.desconto_percent = percentual;
+    item.motivo_desconto = percentual > 0 ? motivo : "";
+
+    fecharModal(document.getElementById("pdvModalDesconto"));
+    renderResumo();
+  }
 
   function abrirCancelarVenda() {
     if (!state.carrinho.length) {
@@ -444,19 +592,34 @@
     if (totalEl) {
       totalEl.textContent = money(getTotalCarrinho());
     }
+    const formaEl = document.getElementById("pdvFormaPagamento");
+    const parcelasEl = document.getElementById("pdvParcelas");
+
+    if (formaEl) formaEl.value = "PIX";
+    if (parcelasEl) parcelasEl.value = "1";
+
+    atualizarParcelasPagamento();
 
     abrirModal(document.getElementById("pdvModalFinalizar"));
   }
 
   async function confirmarFinalizarVenda() {
+    const formaEl = document.getElementById("pdvFormaPagamento");
+    const parcelasEl = document.getElementById("pdvParcelas");
+
+    const formaPagamento = String(formaEl?.value || "PIX").toUpperCase();
+    const parcelas =
+      formaPagamento === "CREDITO" ? Number(parcelasEl?.value || 1) : 1;
+
     const payload = {
-      forma_pagamento: "PIX",
+      forma_pagamento: formaPagamento,
+      parcelas,
       itens: state.carrinho.map((item) => ({
         id_variacao: item.id_variacao,
         quantidade: item.quantidade,
         preco_unit: item.preco,
-        desconto_percent: 0,
-        motivo_desconto: "",
+        desconto_percent: Number(item.desconto_percent || 0),
+        motivo_desconto: item.motivo_desconto || "",
       })),
     };
 
@@ -523,6 +686,16 @@
       );
 
     document
+      .getElementById("btnFecharModalDesconto")
+      ?.addEventListener("click", () =>
+        fecharModal(document.getElementById("pdvModalDesconto")),
+      );
+
+    document
+      .getElementById("btnConfirmarDesconto")
+      ?.addEventListener("click", confirmarDesconto);
+
+    document
       .getElementById("btnConfirmarCancelarVenda")
       ?.addEventListener("click", confirmarCancelarVenda);
 
@@ -546,8 +719,16 @@
         fecharModal(document.getElementById("pdvModalSucesso")),
       );
 
+    document
+      .getElementById("pdvFormaPagamento")
+      ?.addEventListener("change", atualizarParcelasPagamento);
+    document
+      .getElementById("pdvParcelas")
+      ?.addEventListener("change", atualizarParcelasPagamento);
+
     [
       document.getElementById("pdvModalCancelar"),
+      document.getElementById("pdvModalDesconto"),
       document.getElementById("pdvModalFinalizar"),
       document.getElementById("pdvModalSucesso"),
     ].forEach((modal) => {
@@ -562,6 +743,7 @@
   window.pdvAdicionarProduto = adicionarProduto;
   window.pdvAlterarQuantidade = alterarQuantidade;
   window.pdvRemoverItem = removerItem;
+  window.pdvAbrirDesconto = abrirModalDesconto;
 
   window.inicializarTelaVendas = function () {
     bindEventos();
