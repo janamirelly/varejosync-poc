@@ -5,7 +5,7 @@ const { db, SYSTEM_USER_ID } = require("../db/database");
 // =========================
 function registrarVenda(req, res) {
   const id_usuario = req.user?.id_usuario ?? SYSTEM_USER_ID();
-  const { forma_pagamento, itens } = req.body;
+  const { forma_pagamento, parcelas, itens } = req.body;
 
   if (!forma_pagamento) {
     return res.status(400).json({ erro: "forma_pagamento é obrigatório." });
@@ -15,6 +15,48 @@ function registrarVenda(req, res) {
   const formasValidas = ["DINHEIRO", "CREDITO", "DEBITO", "PIX", "OUTRO"];
   if (!formasValidas.includes(fp)) {
     return res.status(400).json({ erro: "forma_pagamento inválida." });
+  }
+  const parcelasNum =
+    parcelas === undefined || parcelas === null || parcelas === ""
+      ? 1
+      : Number(parcelas);
+
+  if (!Number.isInteger(parcelasNum) || parcelasNum <= 0) {
+    return res
+      .status(400)
+      .json({ erro: "parcelas deve ser um número inteiro maior que 0." });
+  }
+
+  if (fp === "CREDITO") {
+    if (parcelasNum < 1) {
+      return res
+        .status(400)
+        .json({ erro: "Venda no crédito deve ter ao menos 1 parcela." });
+    }
+  } else {
+    if (parcelasNum !== 1) {
+      return res.status(400).json({
+        erro: "Parcelamento só é permitido para pagamento em CREDITO.",
+      });
+    }
+  }
+
+  const jurosMapaCredito = {
+    1: 0,
+    2: 0,
+    3: 0,
+    4: 0.0733,
+    5: 0.0866,
+    6: 0.0996,
+  };
+
+  if (
+    fp === "CREDITO" &&
+    !Object.prototype.hasOwnProperty.call(jurosMapaCredito, parcelasNum)
+  ) {
+    return res.status(400).json({
+      erro: "Parcelamento no crédito permitido somente de 1x a 6x.",
+    });
   }
 
   if (!Array.isArray(itens) || itens.length === 0) {
@@ -243,15 +285,39 @@ function registrarVenda(req, res) {
         const total = Number(
           itensCompletos.reduce((acc, it) => acc + it.subtotal, 0).toFixed(2),
         );
+        const jurosPercentual =
+          fp === "CREDITO" ? jurosMapaCredito[parcelasNum] || 0 : 0;
+
+        const valorJuros = Number((total * jurosPercentual).toFixed(2));
+        const totalFinal = Number((total + valorJuros).toFixed(2));
 
         const sqlVenda = `
-          INSERT INTO venda (id_usuario, status, forma_pagamento, total, total_bruto, desconto_total)
-          VALUES (?, 'CONCLUIDA', ?, ?, ?, ?)
+          INSERT INTO venda (
+            id_usuario,
+            status,
+            forma_pagamento,
+            parcelas,
+            total,
+            total_bruto,
+            desconto_total,
+            juros_percentual,
+            valor_juros
+         )
+         VALUES (?, 'CONCLUIDA', ?, ?, ?, ?, ?, ?, ?)
         `;
 
         db.run(
           sqlVenda,
-          [id_usuario, fp, total, total_bruto, desconto_total],
+          [
+            id_usuario,
+            fp,
+            parcelasNum,
+            totalFinal,
+            total_bruto,
+            desconto_total,
+            jurosPercentual,
+            valorJuros,
+          ],
           function (err2) {
             if (err2) {
               db.run("ROLLBACK");
@@ -275,8 +341,18 @@ function registrarVenda(req, res) {
 
                   // puxa id_usuario
                   db.get(
-                    `SELECT id_venda, id_usuario, status, forma_pagamento,
-                            total, total_bruto, desconto_total, criado_em
+                    `SELECT
+                    id_venda,
+                    id_usuario,
+                    status,
+                    forma_pagamento,
+                    parcelas,
+                    total,
+                    total_bruto,
+                    desconto_total,
+                    juros_percentual AS jurosPercentual,
+                    valor_juros AS valorJuros,
+                    criado_em
                      FROM venda
                      WHERE id_venda = ?`,
                     [id_venda],

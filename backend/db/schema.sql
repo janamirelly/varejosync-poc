@@ -76,9 +76,13 @@ CREATE TABLE IF NOT EXISTS venda (
                      CHECK (status IN ('CONCLUIDA','CANCELADA','DEVOLVIDA')),
   forma_pagamento     TEXT NOT NULL
                      CHECK (forma_pagamento IN ('DINHEIRO','CREDITO','DEBITO','PIX','OUTRO')),
+  parcelas            INTEGER NOT NULL DEFAULT 1
+                     CHECK (parcelas >= 1),
 
   total_bruto REAL NOT NULL DEFAULT 0 CHECK (total_bruto >= 0),
   desconto_total REAL NOT NULL DEFAULT 0 CHECK (desconto_total >= 0),
+  juros_percentual    REAL NOT NULL DEFAULT 0 CHECK (juros_percentual >= 0),
+  valor_juros         REAL NOT NULL DEFAULT 0 CHECK (valor_juros >= 0),
 
   total               REAL NOT NULL DEFAULT 0 CHECK (total >= 0),
   motivo_cancelamento TEXT,

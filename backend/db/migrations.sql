@@ -454,4 +454,7 @@ UPDATE venda
 SET desconto_total = 0
 WHERE desconto_total IS NULL;
 
+--ALTER TABLE venda ADD COLUMN juros_percentual REAL NOT NULL DEFAULT 0;
+--ALTER TABLE venda ADD COLUMN valor_juros REAL NOT NULL DEFAULT 0;
+
 --ALTER TABLE venda ADD COLUMN cancelado_em TEXT;
