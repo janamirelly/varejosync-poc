@@ -214,7 +214,7 @@ window.inicializarTelaDashboardPdv = async function () {
 
     if (elFaturamentoSemana) {
       elFaturamentoSemana.textContent = Number(
-        faturamentoSemana.valor || 0,
+        resumo.faturamento_dia || 0,
       ).toLocaleString("pt-BR", {
         style: "currency",
         currency: "BRL",
@@ -222,13 +222,8 @@ window.inicializarTelaDashboardPdv = async function () {
     }
 
     if (elVariacaoSemana) {
-      const sinal = variacaoPercentual > 0 ? "+" : "";
-      elVariacaoSemana.textContent = `${sinal}${variacaoPercentual}% vs semana anterior`;
-
+      elVariacaoSemana.textContent = "";
       elVariacaoSemana.classList.remove("is-positive", "is-negative");
-      elVariacaoSemana.classList.add(
-        variacaoPercentual >= 0 ? "is-positive" : "is-negative",
-      );
     }
 
     if (elProdutosSemanaLista) {
@@ -262,7 +257,7 @@ window.inicializarTelaDashboardPdv = async function () {
 
     if (elTicketMedioSemana) {
       elTicketMedioSemana.textContent = Number(
-        faturamentoSemana.ticket_medio || 0,
+        resumo.ticket_medio || 0,
       ).toLocaleString("pt-BR", {
         style: "currency",
         currency: "BRL",
@@ -271,7 +266,6 @@ window.inicializarTelaDashboardPdv = async function () {
 
     if (elGraficoSemana) {
       const graficoCompleto = montarGraficoSemanaCompleto(graficoSemana);
-
       const maiorValor = Math.max(
         ...graficoCompleto.map((item) => Number(item.valor || 0)),
         1,
@@ -279,24 +273,13 @@ window.inicializarTelaDashboardPdv = async function () {
 
       const nomesDias = ["Seg", "Ter", "Qua", "Qui", "Sex", "Sáb", "Dom"];
 
-      if (elGraficoSemana) {
-        const graficoCompleto = montarGraficoSemanaCompleto(graficoSemana);
-        const maiorValor = Math.max(
-          ...graficoCompleto.map((item) => Number(item.valor || 0)),
-          1,
-        );
+      elGraficoSemana.innerHTML = graficoCompleto
+        .map((item, index) => {
+          const valor = Number(item.valor || 0);
+          const altura =
+            valor > 0 ? Math.max(16, Math.round((valor / maiorValor) * 60)) : 6;
 
-        const nomesDias = ["Seg", "Ter", "Qua", "Qui", "Sex", "Sáb", "Dom"];
-
-        elGraficoSemana.innerHTML = graficoCompleto
-          .map((item, index) => {
-            const valor = Number(item.valor || 0);
-            const altura =
-              valor > 0
-                ? Math.max(16, Math.round((valor / maiorValor) * 60))
-                : 6;
-
-            return `
+          return `
         <div class="vd-bar-wrap" title="${item.dia} • ${valor.toLocaleString(
           "pt-BR",
           {
@@ -311,9 +294,8 @@ window.inicializarTelaDashboardPdv = async function () {
           <small>${nomesDias[index]}</small>
         </div>
       `;
-          })
-          .join("");
-      }
+        })
+        .join("");
     }
 
     if (elAvisoReposicao) {
