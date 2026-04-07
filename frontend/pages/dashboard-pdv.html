@@ -147,15 +147,12 @@
       </div>
 
       <div class="vd-alert-list" id="vdListaAvisos">
-        <div class="vd-alert-item warning">
+        <div class="vd-alert-item warning" id="vdAvisoReposicao">
           <strong>Reposição necessária</strong>
-          <span
-            >2 produtos estão com estoque baixo — solicitar apoio ao
-            Estoquista.</span
-          >
+          <span>Nenhum item com alerta de estoque no momento.</span>
         </div>
 
-        <div class="vd-alert-item neutral">
+        <div class="vd-alert-item neutral" id="vdAvisoSistema">
           <strong>Sistema</strong>
           <span>Nenhuma pendência operacional no momento.</span>
         </div>
@@ -170,8 +167,8 @@
 
       <div class="vd-week-box">
         <div class="vd-week-main">
-          <strong id="vdFaturamentoSemana">R$ 8.950,00</strong>
-          <span>+12% vs semana anterior</span>
+          <strong id="vdFaturamentoSemana">R$ 0,00</strong>
+          <span id="vdVariacaoSemana">0% vs semana anterior</span>
         </div>
 
         <div class="vd-week-products">
@@ -185,7 +182,7 @@
           </p>
         </div>
 
-        <div class="vd-week-bars" aria-hidden="true">
+        <div class="vd-week-bars" id="vdGraficoSemana" aria-hidden="true">
           <span class="bar bar-1"></span>
           <span class="bar bar-2"></span>
           <span class="bar bar-3"></span>
