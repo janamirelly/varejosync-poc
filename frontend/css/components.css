@@ -1240,6 +1240,14 @@
 
 .vd-alert-item strong {
   font-size: 14px;
+  color: var(--color-text);
+}
+.vd-alert-item.warning strong {
+  color: #92400e;
+}
+
+.vd-alert-item.neutral strong {
+  color: var(--color-text);
 }
 
 .vd-alert-item span {
@@ -1306,9 +1314,32 @@
 
 .vd-week-bars {
   display: flex;
-  align-items: flex-end;
-  gap: 8px;
-  height: 60px;
+  align-items: end;
+  gap: 10px;
+  min-height: 80px;
+}
+
+.vd-bar-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+}
+
+.vd-bar-wrap small {
+  font-size: 11px;
+  color: var(--color-text-soft);
+}
+.vd-week-bars .bar-dinamica {
+  width: 14px;
+  border-radius: 4px;
+  display: inline-block;
+  background: var(--color-primary);
+  transition: height 0.2s ease;
+}
+.vd-empty-chart {
+  font-size: 13px;
+  color: var(--color-text-soft);
 }
 
 .vd-week-bars .bar {
@@ -1633,6 +1664,14 @@
   margin-left: auto;
 }
 
+.vd-week-main .is-positive {
+  color: var(--color-success);
+}
+
+.vd-week-main .is-negative {
+  color: var(--color-danger);
+}
+
 @media (max-width: 1100px) {
   .pdv-resumo-head {
     display: none;
@@ -1893,7 +1932,7 @@
 .pdv-select:focus {
   border-color: var(--color-primary);
   box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12);
-   outline: none;
+  outline: none;
 }
 
 .pdv-resumo-pagamento {
@@ -2292,4 +2331,11 @@
   .page-dashboard-gerente .metric-highlight {
     font-size: 24px;
   }
+}
+
+.kpi-value.kpi-value-critical {
+  color: var(--color-danger);
+}
+.kpi-card.kpi-card-critical {
+  border-left: 4px solid var(--color-danger);
 }
