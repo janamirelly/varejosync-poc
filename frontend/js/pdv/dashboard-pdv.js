@@ -1,3 +1,38 @@
+function montarGraficoSemanaCompleto(graficoSemana) {
+  const hoje = new Date();
+  const diaSemana = hoje.getDay(); // 0=dom, 1=seg...
+  const diffParaSegunda = (diaSemana + 6) % 7;
+
+  const inicioSemana = new Date(hoje);
+  inicioSemana.setDate(hoje.getDate() - diffParaSegunda);
+  inicioSemana.setHours(0, 0, 0, 0);
+
+  const mapa = new Map(
+    (Array.isArray(graficoSemana) ? graficoSemana : []).map((item) => [
+      item.dia,
+      Number(item.valor || 0),
+    ]),
+  );
+
+  const dias = [];
+  for (let i = 0; i < 7; i += 1) {
+    const data = new Date(inicioSemana);
+    data.setDate(inicioSemana.getDate() + i);
+
+    const yyyy = data.getFullYear();
+    const mm = String(data.getMonth() + 1).padStart(2, "0");
+    const dd = String(data.getDate()).padStart(2, "0");
+    const chave = `${yyyy}-${mm}-${dd}`;
+
+    dias.push({
+      dia: chave,
+      valor: mapa.get(chave) || 0,
+    });
+  }
+
+  return dias;
+}
+
 window.inicializarTelaDashboardPdv = async function () {
   const btnNovaVenda = document.getElementById("btnNovaVendaDashboard");
   const btnConsultarEstoque = document.getElementById(
@@ -30,18 +65,23 @@ window.inicializarTelaDashboardPdv = async function () {
     const produtosMaisVendidos = Array.isArray(data?.produtos_mais_vendidos)
       ? data.produtos_mais_vendidos
       : [];
-     const faturamentoSemana = data?.faturamento_semana || {};
-     const produtosSemanaRaw = data?.produtos_semana;
+    const faturamentoSemana = data?.faturamento_semana || {};
+    const produtosSemanaRaw = data?.produtos_semana;
+    const graficoSemana = Array.isArray(data?.grafico_semana)
+      ? data.grafico_semana
+      : [];
 
-     console.log("[PDV] data completo dashboard:", data);
-     console.log("[PDV] produtosSemanaRaw:", produtosSemanaRaw);
+    const avisos = data?.avisos || {};
+    const variacaoPercentual = Number(
+      faturamentoSemana.variacao_percentual || 0,
+    );
 
-     const produtosSemana = Array.isArray(produtosSemanaRaw)
-       ? produtosSemanaRaw
-       : [];
-    
+    console.log("[PDV] data completo dashboard:", data);
+    console.log("[PDV] produtosSemanaRaw:", produtosSemanaRaw);
 
-    
+    const produtosSemana = Array.isArray(produtosSemanaRaw)
+      ? produtosSemanaRaw
+      : [];
 
     const elVendasDia = document.getElementById("vdKpiVendasDia");
     const elFaturamentoDia = document.getElementById("vdKpiFaturamentoDia");
@@ -57,6 +97,10 @@ window.inicializarTelaDashboardPdv = async function () {
       "vdProdutosSemanaLista",
     );
     const elAtualizacaoTopo = document.getElementById("vdAtualizacaoTopo");
+    const elVariacaoSemana = document.getElementById("vdVariacaoSemana");
+    const elGraficoSemana = document.getElementById("vdGraficoSemana");
+    const elAvisoReposicao = document.getElementById("vdAvisoReposicao");
+    const elAvisoSistema = document.getElementById("vdAvisoSistema");
 
     if (elVendasDia) {
       elVendasDia.textContent = String(resumo.vendas_dia || 0);
@@ -177,24 +221,34 @@ window.inicializarTelaDashboardPdv = async function () {
       });
     }
 
-   if (elProdutosSemanaLista) {
-     console.log("[PDV] elProdutosSemanaLista existe:", true);
-     console.log("[PDV] produtosSemana final:", produtosSemana);
+    if (elVariacaoSemana) {
+      const sinal = variacaoPercentual > 0 ? "+" : "";
+      elVariacaoSemana.textContent = `${sinal}${variacaoPercentual}% vs semana anterior`;
 
-     if (!produtosSemana.length) {
-       elProdutosSemanaLista.innerHTML = `<li>Sem dados na semana.</li>`;
-     } else {
-       const htmlProdutosSemana = produtosSemana
-         .map((item) => {
-           return `<li>${item.produto} — ${item.unidades} un.</li>`;
-         })
-         .join("");
+      elVariacaoSemana.classList.remove("is-positive", "is-negative");
+      elVariacaoSemana.classList.add(
+        variacaoPercentual >= 0 ? "is-positive" : "is-negative",
+      );
+    }
 
-       console.log("[PDV] html produtos semana:", htmlProdutosSemana);
+    if (elProdutosSemanaLista) {
+      console.log("[PDV] elProdutosSemanaLista existe:", true);
+      console.log("[PDV] produtosSemana final:", produtosSemana);
 
-       elProdutosSemanaLista.innerHTML = htmlProdutosSemana;
-     }
-   }
+      if (!produtosSemana.length) {
+        elProdutosSemanaLista.innerHTML = `<li>Sem dados na semana.</li>`;
+      } else {
+        const htmlProdutosSemana = produtosSemana
+          .map((item) => {
+            return `<li>${item.produto} — ${item.unidades} un.</li>`;
+          })
+          .join("");
+
+        console.log("[PDV] html produtos semana:", htmlProdutosSemana);
+
+        elProdutosSemanaLista.innerHTML = htmlProdutosSemana;
+      }
+    }
 
     // if (elProdutosSemanaLista) {
     //   if (!produtosSemana.length) {
@@ -213,6 +267,83 @@ window.inicializarTelaDashboardPdv = async function () {
         style: "currency",
         currency: "BRL",
       });
+    }
+
+    if (elGraficoSemana) {
+      const graficoCompleto = montarGraficoSemanaCompleto(graficoSemana);
+
+      const maiorValor = Math.max(
+        ...graficoCompleto.map((item) => Number(item.valor || 0)),
+        1,
+      );
+
+      const nomesDias = ["Seg", "Ter", "Qua", "Qui", "Sex", "Sáb", "Dom"];
+
+      if (elGraficoSemana) {
+        const graficoCompleto = montarGraficoSemanaCompleto(graficoSemana);
+        const maiorValor = Math.max(
+          ...graficoCompleto.map((item) => Number(item.valor || 0)),
+          1,
+        );
+
+        const nomesDias = ["Seg", "Ter", "Qua", "Qui", "Sex", "Sáb", "Dom"];
+
+        elGraficoSemana.innerHTML = graficoCompleto
+          .map((item, index) => {
+            const valor = Number(item.valor || 0);
+            const altura =
+              valor > 0
+                ? Math.max(16, Math.round((valor / maiorValor) * 60))
+                : 6;
+
+            return `
+        <div class="vd-bar-wrap" title="${item.dia} • ${valor.toLocaleString(
+          "pt-BR",
+          {
+            style: "currency",
+            currency: "BRL",
+          },
+        )}">
+          <span
+            class="bar bar-dinamica"
+            style="height: ${altura}px; opacity: ${valor > 0 ? 1 : 0.25}"
+          ></span>
+          <small>${nomesDias[index]}</small>
+        </div>
+      `;
+          })
+          .join("");
+      }
+    }
+
+    if (elAvisoReposicao) {
+      const qtdReposicao = Number(avisos.reposicao_necessaria || 0);
+
+      elAvisoReposicao.innerHTML =
+        qtdReposicao > 0
+          ? `
+        <strong>Reposição necessária</strong>
+        <span>${qtdReposicao} produto(s) estão com estoque baixo — solicitar apoio ao Estoquista.</span>
+      `
+          : `
+        <strong>Reposição necessária</strong>
+        <span>Nenhum item com alerta de estoque no momento.</span>
+      `;
+    }
+
+    if (elAvisoSistema) {
+      const qtdPendencias = Number(avisos.pendencias_sistema || 0);
+
+      elAvisoSistema.innerHTML =
+        qtdPendencias > 0
+          ? `
+        <strong>Sistema</strong>
+        <span>${qtdPendencias} ocorrência(s) registrada(s) hoje.</span>
+      `
+          : `
+        <strong>Sistema</strong>
+        <span>Nenhuma pendência operacional no momento.</span>
+      `;
     }
 
     console.log("[PDV] dashboard carregada com dados reais");
