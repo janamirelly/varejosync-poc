@@ -60,14 +60,14 @@
       "listaMaisVendidos24h",
       lista,
       (item) => `
-        <li class="list-row">
-          <div class="list-main">
-            <strong>${item.produto || "Produto"}</strong>
-            <span>${formatarNumero(item.unidades)} un.</span>
-          </div>
-          <small>${formatarMoeda(item.receita || 0)}</small>
-        </li>
-      `,
+  <li class="list-row">
+    <div class="list-main">
+      <strong>${item.produto || "Produto"}</strong>
+      <span>ID ${item.id_produto || "—"} • ${formatarNumero(item.unidades)} un.</span>
+    </div>
+    <small>${formatarMoeda(item.receita || 0)}</small>
+  </li>
+`,
       "Nenhum dado encontrado nas últimas 24h.",
     );
   }
