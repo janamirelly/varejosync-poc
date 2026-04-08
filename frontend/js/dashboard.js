@@ -74,6 +74,13 @@
       "—",
       "Carregando dados...",
     );
+
+    atualizarDashboardTexto(
+      "kpiEsgotados",
+      "kpiEsgotadosDesc",
+      "—",
+      "Carregando dados...",
+    );
     atualizarDashboardTexto(
       "kpiEstoqueTotal",
       "kpiEstoqueTotalDesc",
@@ -145,6 +152,8 @@
         );
       });
 
+      const esgotados = itens.filter((item) => Number(item.quantidade) === 0);
+
       atualizarDashboardTexto(
         "kpiProdutos",
         "kpiProdutosDesc",
@@ -176,6 +185,15 @@
         alertas.length > 0
           ? "Itens com baixo estoque, críticos ou esgotados."
           : "Nenhum alerta de estoque no momento.",
+      );
+
+      atualizarDashboardTexto(
+        "kpiEsgotados",
+        "kpiEsgotadosDesc",
+        esgotados.length,
+        esgotados.length > 0
+          ? "Produtos sem disponibilidade no estoque."
+          : "Nenhum item esgotado no momento.",
       );
       atualizarDashboardTexto(
         "kpiEstoqueTotal",

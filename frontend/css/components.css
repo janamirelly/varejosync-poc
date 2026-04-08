@@ -395,6 +395,14 @@
 .dashboard-card-value-alerta {
   color: var(--color-warning, #f59e0b);
 }
+
+.dashboard-card-esgotado {
+  border-left: 4px solid var(--color-danger, #dc2626);
+}
+
+.dashboard-card-value-esgotado {
+  color: var(--color-danger, #dc2626);
+}
 /* MOVIMENTAÇÕES */
 
 .movimentacao-card {
