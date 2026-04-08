@@ -163,35 +163,57 @@ async function obterDashboardPdv(req, res) {
   `)) || {};
 
     const ultimas_vendas = await all(`
-  SELECT
-    v.id_venda,
-    ROUND(COALESCE(v.total, 0), 2) AS valor_total,
-    v.status,
-    datetime(v.criado_em, 'localtime') AS criado_em
-  FROM venda v
-  WHERE v.status = 'CONCLUIDA'
-  ORDER BY datetime(v.criado_em, 'localtime') DESC
-  LIMIT 3
-`);
+      SELECT
+        v.id_venda,
+        ROUND(COALESCE(v.total, 0), 2) AS valor_total,
+        v.status,
+        datetime(v.criado_em, 'localtime') AS criado_em
+      FROM venda v
+      WHERE v.status = 'CONCLUIDA'
+      ORDER BY datetime(v.criado_em, 'localtime') DESC
+      LIMIT 3
+    `);
 
-    const produtos_mais_vendidos = await all(`
-  SELECT
-    p.nome AS produto,
-    vp.sku AS sku,
-    SUM(iv.quantidade) AS unidades
-  FROM item_venda iv
-  JOIN variacao_produto vp
-    ON vp.id_variacao = iv.id_variacao
-  JOIN produto p
-    ON p.id_produto = vp.id_produto
-  JOIN venda v
-    ON v.id_venda = iv.id_venda
-  WHERE v.status = 'CONCLUIDA'
-    AND date(v.criado_em) = date('now', 'localtime')
-  GROUP BY p.nome, vp.sku
-  ORDER BY unidades DESC, produto
-  LIMIT 3
-`);
+    const produtos_mais_vendidos_dia = await all(`
+      SELECT
+        p.nome AS produto,
+        MIN(vp.sku) AS sku,
+        SUM(iv.quantidade) AS unidades
+      FROM item_venda iv
+      JOIN variacao_produto vp
+        ON vp.id_variacao = iv.id_variacao
+      JOIN produto p
+        ON p.id_produto = vp.id_produto
+      JOIN venda v
+        ON v.id_venda = iv.id_venda
+      WHERE v.status = 'CONCLUIDA'
+        AND date(datetime(v.criado_em, 'localtime')) = date('now', 'localtime')
+      GROUP BY p.id_produto, p.nome
+      ORDER BY unidades DESC, produto
+      LIMIT 3
+    `);
+
+    const variacoes_vendidas_dia = await all(`
+      SELECT
+        p.nome AS produto,
+        vp.sku AS sku,
+        vp.cor AS cor,
+        vp.tamanho AS tamanho,
+        SUM(iv.quantidade) AS unidades
+      FROM item_venda iv
+      JOIN variacao_produto vp
+        ON vp.id_variacao = iv.id_variacao
+      JOIN produto p
+        ON p.id_produto = vp.id_produto
+      JOIN venda v
+        ON v.id_venda = iv.id_venda
+      WHERE v.status = 'CONCLUIDA'
+        AND date(datetime(v.criado_em, 'localtime')) = date('now', 'localtime')
+      GROUP BY vp.id_variacao, p.nome, vp.sku, vp.cor, vp.tamanho
+      ORDER BY unidades DESC, produto
+      LIMIT 10
+    `);
+
     const faturamento_semana =
       (await get(`
     WITH params AS (
@@ -247,59 +269,60 @@ async function obterDashboardPdv(req, res) {
   `)) || {};
 
     const produtos_semana = await all(`
-  WITH params AS (
-    SELECT
-      date('now', 'localtime') AS hoje,
-      date('now', 'localtime', '-' || ((strftime('%w','now','localtime') + 6) % 7) || ' days') AS inicio_semana
-  )
-  SELECT
-    p.nome AS produto,
-    SUM(iv.quantidade) AS unidades
-  FROM item_venda iv
-  JOIN variacao_produto vp
-    ON vp.id_variacao = iv.id_variacao
-  JOIN produto p
-    ON p.id_produto = vp.id_produto
-  JOIN venda v
-    ON v.id_venda = iv.id_venda
-  JOIN params ON 1=1
-  WHERE v.status = 'CONCLUIDA'
-    AND date(v.criado_em) BETWEEN params.inicio_semana AND params.hoje
-  GROUP BY p.nome
-  ORDER BY unidades DESC, p.nome
-  LIMIT 3
-`);
+      WITH params AS (
+        SELECT
+          date('now', 'localtime') AS hoje,
+          date('now', 'localtime', '-' || ((strftime('%w','now','localtime') + 6) % 7) || ' days') AS inicio_semana
+      )
+      SELECT
+        p.nome AS produto,
+        SUM(iv.quantidade) AS unidades
+      FROM item_venda iv
+      JOIN variacao_produto vp
+        ON vp.id_variacao = iv.id_variacao
+      JOIN produto p
+        ON p.id_produto = vp.id_produto
+      JOIN venda v
+        ON v.id_venda = iv.id_venda
+      JOIN params ON 1=1
+      WHERE v.status = 'CONCLUIDA'
+        AND date(datetime(v.criado_em, 'localtime')) BETWEEN params.inicio_semana AND params.hoje
+      GROUP BY p.nome
+      ORDER BY unidades DESC, p.nome
+      LIMIT 3
+    `);
+
     const grafico_semana = await all(`
-  WITH params AS (
-    SELECT
-      date('now', 'localtime') AS hoje,
-      date('now', 'localtime', '-' || ((strftime('%w','now','localtime') + 6) % 7) || ' days') AS inicio_semana
-  )
-  SELECT
-    date(datetime(v.criado_em, 'localtime')) AS dia,
-    ROUND(COALESCE(SUM(v.total), 0), 2) AS valor
-  FROM venda v
-  JOIN params ON 1=1
-  WHERE v.status = 'CONCLUIDA'
-    AND date(datetime(v.criado_em, 'localtime')) BETWEEN params.inicio_semana AND params.hoje
-  GROUP BY date(datetime(v.criado_em, 'localtime'))
-  ORDER BY dia
-`);
+      WITH params AS (
+        SELECT
+          date('now', 'localtime') AS hoje,
+          date('now', 'localtime', '-' || ((strftime('%w','now','localtime') + 6) % 7) || ' days') AS inicio_semana
+      )
+      SELECT
+        date(datetime(v.criado_em, 'localtime')) AS dia,
+        ROUND(COALESCE(SUM(v.total), 0), 2) AS valor
+      FROM venda v
+      JOIN params ON 1=1
+      WHERE v.status = 'CONCLUIDA'
+        AND date(datetime(v.criado_em, 'localtime')) BETWEEN params.inicio_semana AND params.hoje
+      GROUP BY date(datetime(v.criado_em, 'localtime'))
+      ORDER BY dia
+    `);
 
     const avisos = {};
 
     const reposicao_necessaria = (await get(`
-    SELECT COUNT(*) AS qtd
-    FROM vw_estoque_detalhado
-    WHERE status IN ('ATENCAO', 'CRITICO', 'ESGOTADO')
-  `)) || { qtd: 0 };
+      SELECT COUNT(*) AS qtd
+      FROM vw_estoque_detalhado
+      WHERE status IN ('ATENCAO', 'CRITICO', 'ESGOTADO')
+    `)) || { qtd: 0 };
 
     const pendencias_sistema = (await get(`
-    SELECT COUNT(*) AS qtd
-    FROM venda
-    WHERE status IN ('CANCELADA', 'DEVOLVIDA')
-      AND date(criado_em) = date('now', 'localtime')
-  `)) || { qtd: 0 };
+      SELECT COUNT(*) AS qtd
+      FROM venda
+      WHERE status IN ('CANCELADA', 'DEVOLVIDA')
+        AND date(datetime(criado_em, 'localtime')) = date('now', 'localtime')
+    `)) || { qtd: 0 };
 
     avisos.reposicao_necessaria = Number(reposicao_necessaria.qtd || 0);
     avisos.pendencias_sistema = Number(pendencias_sistema.qtd || 0);
@@ -312,7 +335,9 @@ async function obterDashboardPdv(req, res) {
         vendas_finalizadas: Number(resumo.vendas_finalizadas || 0),
       },
       ultimas_vendas: ultimas_vendas || [],
-      produtos_mais_vendidos: produtos_mais_vendidos || [],
+      produtos_mais_vendidos_dia: produtos_mais_vendidos_dia || [],
+      variacoes_vendidas_dia: variacoes_vendidas_dia || [],
+      produtos_mais_vendidos: produtos_mais_vendidos_dia || [],
       faturamento_semana: {
         valor: Number(faturamento_semana.faturamento_semana || 0),
         ticket_medio: Number(faturamento_semana.ticket_medio_semana || 0),
