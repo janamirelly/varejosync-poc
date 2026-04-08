@@ -62,11 +62,19 @@ window.inicializarTelaDashboardPdv = async function () {
     const ultimas = Array.isArray(data?.ultimas_vendas)
       ? data.ultimas_vendas
       : [];
-    const produtosMaisVendidos = Array.isArray(data?.produtos_mais_vendidos)
-      ? data.produtos_mais_vendidos
-      : [];
+    const produtosMaisVendidosDia = Array.isArray(
+      data?.produtos_mais_vendidos_dia,
+    )
+      ? data.produtos_mais_vendidos_dia
+      : Array.isArray(data?.produtos_mais_vendidos)
+        ? data.produtos_mais_vendidos
+        : [];
+
     const faturamentoSemana = data?.faturamento_semana || {};
-    const produtosSemanaRaw = data?.produtos_semana;
+
+    const variacoesVendidasDia = Array.isArray(data?.variacoes_vendidas_dia)
+      ? data.variacoes_vendidas_dia
+      : [];
     const graficoSemana = Array.isArray(data?.grafico_semana)
       ? data.grafico_semana
       : [];
@@ -77,11 +85,12 @@ window.inicializarTelaDashboardPdv = async function () {
     );
 
     console.log("[PDV] data completo dashboard:", data);
-    console.log("[PDV] produtosSemanaRaw:", produtosSemanaRaw);
-
-    const produtosSemana = Array.isArray(produtosSemanaRaw)
-      ? produtosSemanaRaw
-      : [];
+    console.log(
+      "[PDV] produtos_mais_vendidos_dia:",
+      data?.produtos_mais_vendidos_dia,
+    );
+    console.log("[PDV] produtos_mais_vendidos:", data?.produtos_mais_vendidos);
+    console.log("[PDV] variacoes_vendidas_dia:", data?.variacoes_vendidas_dia);
 
     const elVendasDia = document.getElementById("vdKpiVendasDia");
     const elFaturamentoDia = document.getElementById("vdKpiFaturamentoDia");
@@ -186,7 +195,7 @@ window.inicializarTelaDashboardPdv = async function () {
     }
 
     if (elListaProdutos) {
-      if (!produtosMaisVendidos.length) {
+      if (!produtosMaisVendidosDia.length) {
         elListaProdutos.innerHTML = `
           <div class="vd-list-item">
             <div>
@@ -196,7 +205,7 @@ window.inicializarTelaDashboardPdv = async function () {
           </div>
         `;
       } else {
-        elListaProdutos.innerHTML = produtosMaisVendidos
+        elListaProdutos.innerHTML = produtosMaisVendidosDia
           .map((item) => {
             return `
               <div class="vd-list-item">
@@ -227,21 +236,17 @@ window.inicializarTelaDashboardPdv = async function () {
     }
 
     if (elProdutosSemanaLista) {
-      console.log("[PDV] elProdutosSemanaLista existe:", true);
-      console.log("[PDV] produtosSemana final:", produtosSemana);
-
-      if (!produtosSemana.length) {
-        elProdutosSemanaLista.innerHTML = `<li>Sem dados na semana.</li>`;
+      if (!produtosMaisVendidosDia.length) {
+        elProdutosSemanaLista.innerHTML = `<li>Sem vendas registradas hoje.</li>`;
       } else {
-        const htmlProdutosSemana = produtosSemana
+        elProdutosSemanaLista.innerHTML = produtosMaisVendidosDia
           .map((item) => {
-            return `<li>${item.produto} — ${item.unidades} un.</li>`;
+            const nomeProduto = item.produto || "Produto";
+            const unidades = Number(item.unidades || 0);
+
+            return `<li>${nomeProduto} — ${unidades} un.</li>`;
           })
           .join("");
-
-        console.log("[PDV] html produtos semana:", htmlProdutosSemana);
-
-        elProdutosSemanaLista.innerHTML = htmlProdutosSemana;
       }
     }
 
