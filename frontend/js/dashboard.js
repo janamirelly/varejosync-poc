@@ -19,7 +19,13 @@
         item.tamanho ?? item.nome_tamanho ?? item.variacao_tamanho ?? "—",
       quantidade:
         item.quantidade_atual ?? item.quantidade ?? item.estoque_atual ?? 0,
-      minimo: item.estoque_minimo ?? item.minimo ?? item.quantidade_minima ?? 0,
+      minimo:
+        item.estoque_min ??
+        item.estoque_minimo ??
+        item.minimo ??
+        item.quantidade_minima ??
+        0,
+      status: String(item.status ?? "").toUpperCase(),
     };
   }
 
@@ -119,10 +125,10 @@
     );
 
     const alertas = itens.filter((item) => {
-      const status = getStatusDashboard(item.quantidade, item.minimo);
-      return (
-        status === "critico" || status === "atencao" || status === "esgotado"
-      );
+      const statusCalculado = getStatusDashboard(item.quantidade, item.minimo);
+      const status = (item.status || statusCalculado).toUpperCase();
+
+      return ["ATENCAO", "CRITICO", "ESGOTADO"].includes(status);
     });
 
     const esgotados = itens.filter((item) => Number(item.quantidade) === 0);
@@ -257,7 +263,6 @@
       sessionStorage.removeItem("recarregarDashboardEstoque");
     } catch (error) {
       console.error("[DASHBOARD] erro:", error);
-
 
       atualizarDashboardTexto(
         "kpiProdutos",
