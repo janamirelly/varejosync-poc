@@ -1019,10 +1019,12 @@
 .login-card {
   width: 100%;
   max-width: 440px;
-  background: var(--color-card);
+  background: linear-gradient(180deg, #ffffff 0%, #fcfdff 100%);
   border: 1px solid var(--color-border-soft);
   border-radius: 24px;
-  box-shadow: 0 24px 60px rgba(15, 23, 42, 0.12);
+  box-shadow:
+    0 24px 60px rgba(15, 23, 42, 0.1),
+    0 8px 20px rgba(15, 23, 42, 0.05);
   padding: 40px 32px 30px;
 }
 
@@ -1118,16 +1120,20 @@
   top: 50%;
   left: 14px;
   transform: translateY(-50%);
-  font-size: 14px;
-  line-height: 1;
-  opacity: 0.55;
+  width: 18px;
+  height: 18px;
+  color: #7b8794;
+  opacity: 0.9;
   pointer-events: none;
   display: flex;
   align-items: center;
   justify-content: center;
+}
+
+.field-with-icon .field-icon svg {
   width: 18px;
   height: 18px;
-  filter: grayscale(100%);
+  display: block;
 }
 
 .field-with-action input {
@@ -1139,12 +1145,11 @@
   top: 50%;
   right: 12px;
   transform: translateY(-50%);
-  width: 28px;
-  height: 28px;
+  width: 30px;
+  height: 30px;
   border: none;
   background: transparent;
-  color: var(--color-neutral);
-  font-size: 15px;
+  color: var(--color-text-soft);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -1155,7 +1160,25 @@
     color 0.2s ease,
     transform 0.15s ease,
     opacity 0.2s ease;
-  opacity: 0.8;
+  opacity: 0.82;
+}
+
+.field-action-btn svg {
+  width: 18px;
+  height: 18px;
+  display: block;
+}
+
+.field-action-btn .icon-eye-off {
+  display: none;
+}
+
+.field-action-btn.is-visible .icon-eye {
+  display: none;
+}
+
+.field-action-btn.is-visible .icon-eye-off {
+  display: block;
 }
 
 .field-action-btn:hover {

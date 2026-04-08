@@ -90,7 +90,7 @@
         const mostrando = inputSenha.type === "text";
 
         inputSenha.type = mostrando ? "password" : "text";
-        btnToggleSenha.textContent = mostrando ? "○" : "◉";
+        btnToggleSenha.classList.toggle("is-visible", !mostrando);
         btnToggleSenha.setAttribute(
           "aria-label",
           mostrando ? "Mostrar senha" : "Ocultar senha",
