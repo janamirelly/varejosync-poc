@@ -80,7 +80,8 @@
 
     [inputUsuario, inputSenha].forEach((input) => {
       input?.addEventListener("input", () => {
-        limparClassesCampos();
+        const field = input.closest(".field");
+        field?.classList.remove("field-error", "field-success");
         limparStatus();
       });
     });
