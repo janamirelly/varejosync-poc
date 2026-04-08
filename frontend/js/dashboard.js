@@ -31,6 +31,16 @@
     if (elDesc) elDesc.textContent = descricao;
   }
 
+  function normalizarTextoDashboard(valor) {
+    const texto = String(valor || "")
+      .trim()
+      .replace(/\s+/g, " ");
+
+    if (!texto || texto === "—") return "";
+
+    return texto.toUpperCase();
+  }
+
   window.inicializarTelaDashboard = async function () {
     if (dashboardCarregando) {
       console.log("[DASHBOARD] já existe carregamento em andamento.");
@@ -51,6 +61,7 @@
       "—",
       "Carregando dados...",
     );
+
     atualizarDashboardTexto(
       "kpiTamanhos",
       "kpiTamanhosDesc",
@@ -105,11 +116,21 @@
       const itens = listaBruta.map(normalizarDashboardItem);
 
       const produtos = [
-        ...new Set(itens.map((i) => i.produto).filter(Boolean)),
+        ...new Set(
+          itens.map((i) => normalizarTextoDashboard(i.produto)).filter(Boolean),
+        ),
       ];
-      const cores = [...new Set(itens.map((i) => i.cor).filter(Boolean))];
+
+      const cores = [
+        ...new Set(
+          itens.map((i) => normalizarTextoDashboard(i.cor)).filter(Boolean),
+        ),
+      ];
+
       const tamanhos = [
-        ...new Set(itens.map((i) => i.tamanho).filter(Boolean)),
+        ...new Set(
+          itens.map((i) => normalizarTextoDashboard(i.tamanho)).filter(Boolean),
+        ),
       ];
 
       const estoqueTotal = itens.reduce(
@@ -134,19 +155,27 @@
         "kpiCores",
         "kpiCoresDesc",
         cores.length,
-        `Cores cadastradas: ${cores.join(", ") || "—"}.`,
+        cores.length
+          ? `Cores cadastradas: ${cores.slice(0, 4).join(", ")}${cores.length > 4 ? "..." : ""}.`
+          : "Nenhuma cor cadastrada.",
       );
+
       atualizarDashboardTexto(
         "kpiTamanhos",
         "kpiTamanhosDesc",
         tamanhos.length,
-        `Tamanhos cadastrados: ${tamanhos.join(", ") || "—"}.`,
+        tamanhos.length
+          ? `Tamanhos cadastrados: ${tamanhos.join(", ")}.`
+          : "Nenhum tamanho cadastrado.",
       );
+
       atualizarDashboardTexto(
         "kpiAlertas",
         "kpiAlertasDesc",
         alertas.length,
-        "Itens com nível de atenção no estoque.",
+        alertas.length > 0
+          ? "Itens com baixo estoque, críticos ou esgotados."
+          : "Nenhum alerta de estoque no momento.",
       );
       atualizarDashboardTexto(
         "kpiEstoqueTotal",

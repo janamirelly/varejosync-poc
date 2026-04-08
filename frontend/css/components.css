@@ -388,7 +388,13 @@
   font-size: 13px;
   color: var(--color-text-soft);
 }
+.dashboard-card-alerta {
+  border-left: 4px solid var(--color-warning, #f59e0b);
+}
 
+.dashboard-card-value-alerta {
+  color: var(--color-warning, #f59e0b);
+}
 /* MOVIMENTAÇÕES */
 
 .movimentacao-card {
