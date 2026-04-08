@@ -197,25 +197,27 @@ window.inicializarTelaDashboardPdv = async function () {
     if (elListaProdutos) {
       if (!produtosMaisVendidosDia.length) {
         elListaProdutos.innerHTML = `
-          <div class="vd-list-item">
-            <div>
-              <strong>Nenhum produto vendido</strong>
-              <span>Sem dados de vendas para exibir.</span>
-            </div>
-          </div>
-        `;
+      <div class="vd-list-item">
+        <div>
+          <strong>Nenhum produto vendido</strong>
+          <span>Sem dados de vendas para exibir.</span>
+        </div>
+      </div>
+    `;
       } else {
         elListaProdutos.innerHTML = produtosMaisVendidosDia
           .map((item) => {
+            const unidades = Number(item.unidades || 0);
+
             return `
-              <div class="vd-list-item">
-                <div>
-                  <strong>${item.produto}</strong>
-                  <span>SKU: ${item.sku || "—"}</span>
-                </div>
-                <strong>${item.unidades} venda(s)</strong>
-              </div>
-            `;
+          <div class="vd-list-item">
+            <div>
+              <strong>${item.produto}</strong>
+              <span>Produto com saída no dia</span>
+            </div>
+            <strong>${unidades} un.</strong>
+          </div>
+        `;
           })
           .join("");
       }
@@ -280,12 +282,14 @@ window.inicializarTelaDashboardPdv = async function () {
 
       elGraficoSemana.innerHTML = graficoCompleto
         .map((item, index) => {
-          const valor = Number(item.valor || 0);
-          const altura =
-            valor > 0 ? Math.max(16, Math.round((valor / maiorValor) * 60)) : 6;
+         const valor = Number(item.valor || 0);
+         const altura =
+           valor > 0 ? Math.max(34, Math.round((valor / maiorValor) * 112)) : 0;
+
+         const isPeak = valor > 0 && valor === maiorValor;
 
           return `
-        <div class="vd-bar-wrap" title="${item.dia} • ${valor.toLocaleString(
+        <div class="vd-bar-wrap ${isPeak ? "is-peak" : ""}" title="${item.dia} • ${valor.toLocaleString(
           "pt-BR",
           {
             style: "currency",
@@ -294,7 +298,7 @@ window.inicializarTelaDashboardPdv = async function () {
         )}">
           <span
             class="bar bar-dinamica"
-            style="height: ${altura}px; opacity: ${valor > 0 ? 1 : 0.25}"
+            style="height: ${altura}px; opacity: ${valor > 0 ? 1 : 0}"
           ></span>
           <small>${nomesDias[index]}</small>
         </div>

@@ -139,7 +139,38 @@
     </section>
   </div>
 
-  <div class="vd-grid-2">
+  <div class="vd-grid-2 vd-grid-bottom">
+    <section class="card vd-panel-card vd-panel-card--highlight">
+      <div class="table-header">
+        <h3>Faturamento do dia</h3>
+        <span class="status-text">Resumo do dia</span>
+      </div>
+
+      <div class="vd-week-box">
+        <div class="vd-week-main">
+          <strong id="vdFaturamentoSemana">R$ 0,00</strong>
+          <span id="vdVariacaoSemana">0% vs semana anterior</span>
+        </div>
+
+        <div class="vd-week-products">
+          <h4>Top produtos do dia</h4>
+          <ul id="vdProdutosSemanaLista">
+            <li>Sem vendas registradas hoje.</li>
+          </ul>
+          <p>
+            Ticket médio do dia:
+            <strong id="vdTicketMedioSemana">R$ 0,00</strong>
+          </p>
+        </div>
+
+        <div class="vd-week-bars" id="vdGraficoSemana" aria-hidden="true">
+          <span class="bar bar-1"></span>
+          <span class="bar bar-2"></span>
+          <span class="bar bar-3"></span>
+        </div>
+      </div>
+    </section>
+
     <section class="card vd-panel-card">
       <div class="table-header">
         <h3>Avisos</h3>
@@ -155,37 +186,6 @@
         <div class="vd-alert-item neutral" id="vdAvisoSistema">
           <strong>Sistema</strong>
           <span>Nenhuma pendência operacional no momento.</span>
-        </div>
-      </div>
-    </section>
-
-    <section class="card vd-panel-card">
-      <div class="table-header">
-        <h3>Faturamento do dia</h3>
-        <span class="status-text">Resumo do dia</span>
-      </div>
-
-      <div class="vd-week-box">
-        <div class="vd-week-main">
-          <strong id="vdFaturamentoSemana">R$ 0,00</strong>
-          <span id="vdVariacaoSemana">0% vs semana anterior</span>
-        </div>
-
-        <div class="vd-week-products">
-          <h4>Top produtos do dia hoje</h4>
-          <ul id="vdProdutosSemanaLista">
-            <li>Sem vendas registradas hoje.</li> 
-          </ul>
-          <p>
-            Ticket médio do dia:
-            <strong id="vdTicketMedioSemana">R$ 0,00</strong>
-          </p>
-        </div>
-
-        <div class="vd-week-bars" id="vdGraficoSemana" aria-hidden="true">
-          <span class="bar bar-1"></span>
-          <span class="bar bar-2"></span>
-          <span class="bar bar-3"></span>
         </div>
       </div>
     </section>
