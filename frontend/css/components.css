@@ -403,6 +403,9 @@
 .dashboard-card-value-esgotado {
   color: var(--color-danger, #dc2626);
 }
+
+
+
 /* MOVIMENTAÇÕES */
 
 .movimentacao-card {

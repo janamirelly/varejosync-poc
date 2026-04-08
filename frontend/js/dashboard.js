@@ -55,16 +55,29 @@
       "—",
       "Carregando dados...",
     );
+    // atualizarDashboardTexto(
+    //   "kpiCores",
+    //   "kpiCoresDesc",
+    //   "—",
+    //   "Carregando dados...",
+    // );
+
+    // atualizarDashboardTexto(
+    //   "kpiTamanhos",
+    //   "kpiTamanhosDesc",
+    //   "—",
+    //   "Carregando dados...",
+    // );
     atualizarDashboardTexto(
-      "kpiCores",
-      "kpiCoresDesc",
+      "kpiMovimentacoesHoje",
+      "kpiMovimentacoesHojeDesc",
       "—",
       "Carregando dados...",
     );
 
     atualizarDashboardTexto(
-      "kpiTamanhos",
-      "kpiTamanhosDesc",
+      "kpiUltimasEntradas",
+      "kpiUltimasEntradasDesc",
       "—",
       "Carregando dados...",
     );
@@ -93,6 +106,7 @@
         (localStorage.getItem("token") || "").trim() ||
         "Mjplc3RvcXVlQHZhcmVqb3N5bmMuY29t";
 
+      /* ===== ESTOQUE ===== */
       const resposta = await fetch("http://localhost:3000/estoque", {
         method: "GET",
         headers: {
@@ -107,11 +121,11 @@
       try {
         resultado = texto ? JSON.parse(texto) : [];
       } catch {
-        throw new Error("Resposta inválida da API.");
+        throw new Error("Resposta inválida da API de estoque.");
       }
 
       if (!resposta.ok) {
-        throw new Error(`Erro HTTP ${resposta.status}`);
+        throw new Error(`Erro HTTP ${resposta.status} ao buscar estoque`);
       }
 
       const listaBruta = Array.isArray(resultado)
@@ -122,21 +136,40 @@
 
       const itens = listaBruta.map(normalizarDashboardItem);
 
+      /* ===== MOVIMENTAÇÕES ===== */
+      const respostaMov = await fetch("http://localhost:3000/movimentacoes", {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      const textoMov = await respostaMov.text();
+      let resultadoMov = [];
+
+      try {
+        resultadoMov = textoMov ? JSON.parse(textoMov) : [];
+      } catch {
+        throw new Error("Resposta inválida da API de movimentações.");
+      }
+
+      if (!respostaMov.ok) {
+        throw new Error(
+          `Erro HTTP ${respostaMov.status} ao buscar movimentações`,
+        );
+      }
+
+      const movimentacoes = Array.isArray(resultadoMov)
+        ? resultadoMov
+        : Array.isArray(resultadoMov.itens)
+          ? resultadoMov.itens
+          : [];
+
+      /* ===== KPI ESTOQUE ===== */
       const produtos = [
         ...new Set(
           itens.map((i) => normalizarTextoDashboard(i.produto)).filter(Boolean),
-        ),
-      ];
-
-      const cores = [
-        ...new Set(
-          itens.map((i) => normalizarTextoDashboard(i.cor)).filter(Boolean),
-        ),
-      ];
-
-      const tamanhos = [
-        ...new Set(
-          itens.map((i) => normalizarTextoDashboard(i.tamanho)).filter(Boolean),
         ),
       ];
 
@@ -154,28 +187,61 @@
 
       const esgotados = itens.filter((item) => Number(item.quantidade) === 0);
 
+      /* ===== KPI MOVIMENTAÇÕES ===== */
+      const agora = new Date();
+      const yyyy = agora.getFullYear();
+      const mm = String(agora.getMonth() + 1).padStart(2, "0");
+      const dd = String(agora.getDate()).padStart(2, "0");
+      const hoje = `${yyyy}-${mm}-${dd}`;
+
+      console.log("[DASHBOARD] hoje local:", hoje);
+      console.log("[DASHBOARD] movimentacoes:", movimentacoes);
+      console.log("[DASHBOARD] primeira movimentacao:", movimentacoes[0]);
+
+      const movimentacoesHoje = movimentacoes.filter((mov) => {
+        const dataMov = String(
+          mov.data_movimentacao || mov.criado_em || mov.data || "",
+        ).slice(0, 10);
+
+        return dataMov === hoje;
+      });
+
+      const ultimasEntradas = movimentacoes.filter((mov) => {
+        const tipo = String(
+          mov.tipo || mov.tipo_movimentacao || "",
+        ).toUpperCase();
+
+        const dataMov = String(
+          mov.data_movimentacao || mov.criado_em || mov.data || "",
+        ).slice(0, 10);
+
+        return tipo === "ENTRADA" && dataMov === hoje;
+      });
+
+      /* ===== ATUALIZA KPIs ===== */
       atualizarDashboardTexto(
         "kpiProdutos",
         "kpiProdutosDesc",
         produtos.length,
-        "Produtos ativos no sistema.",
-      );
-      atualizarDashboardTexto(
-        "kpiCores",
-        "kpiCoresDesc",
-        cores.length,
-        cores.length
-          ? `Cores cadastradas: ${cores.slice(0, 4).join(", ")}${cores.length > 4 ? "..." : ""}.`
-          : "Nenhuma cor cadastrada.",
+        "Produtos distintos com registro no estoque.",
       );
 
       atualizarDashboardTexto(
-        "kpiTamanhos",
-        "kpiTamanhosDesc",
-        tamanhos.length,
-        tamanhos.length
-          ? `Tamanhos cadastrados: ${tamanhos.join(", ")}.`
-          : "Nenhum tamanho cadastrado.",
+        "kpiMovimentacoesHoje",
+        "kpiMovimentacoesHojeDesc",
+        movimentacoesHoje.length,
+        movimentacoesHoje.length > 0
+          ? "Movimentações registradas no dia."
+          : "Nenhuma movimentação registrada hoje.",
+      );
+
+      atualizarDashboardTexto(
+        "kpiUltimasEntradas",
+        "kpiUltimasEntradasDesc",
+        ultimasEntradas.length,
+        ultimasEntradas.length > 0
+          ? "Entradas de estoque registradas hoje."
+          : "Nenhuma entrada registrada hoje.",
       );
 
       atualizarDashboardTexto(
@@ -195,6 +261,7 @@
           ? "Produtos sem disponibilidade no estoque."
           : "Nenhum item esgotado no momento.",
       );
+
       atualizarDashboardTexto(
         "kpiEstoqueTotal",
         "kpiEstoqueTotalDesc",
@@ -212,21 +279,40 @@
         "—",
         "Erro ao carregar dados.",
       );
+      // atualizarDashboardTexto(
+      //   "kpiCores",
+      //   "kpiCoresDesc",
+      //   "—",
+      //   "Erro ao carregar dados.",
+      // );
+      // atualizarDashboardTexto(
+      //   "kpiTamanhos",
+      //   "kpiTamanhosDesc",
+      //   "—",
+      //   "Erro ao carregar dados.",
+      // );
       atualizarDashboardTexto(
-        "kpiCores",
-        "kpiCoresDesc",
+        "kpiMovimentacoesHoje",
+        "kpiMovimentacoesHojeDesc",
         "—",
         "Erro ao carregar dados.",
       );
+
       atualizarDashboardTexto(
-        "kpiTamanhos",
-        "kpiTamanhosDesc",
+        "kpiUltimasEntradas",
+        "kpiUltimasEntradasDesc",
         "—",
         "Erro ao carregar dados.",
       );
       atualizarDashboardTexto(
         "kpiAlertas",
         "kpiAlertasDesc",
+        "—",
+        "Erro ao carregar dados.",
+      );
+      atualizarDashboardTexto(
+        "kpiEsgotados",
+        "kpiEsgotadosDesc",
         "—",
         "Erro ao carregar dados.",
       );
