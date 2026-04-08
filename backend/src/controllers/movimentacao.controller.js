@@ -183,7 +183,7 @@ function listarMovimentacoes(req, res) {
   const sql = `
     SELECT
       me.id_movimentacao,
-      me.criado_em AS data_movimentacao,
+      datetime(me.criado_em, 'localtime') AS data_movimentacao,
       me.tipo,
       me.quantidade,
       me.observacao AS motivo,
