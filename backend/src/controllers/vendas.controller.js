@@ -16,6 +16,7 @@ function registrarVenda(req, res) {
   if (!formasValidas.includes(fp)) {
     return res.status(400).json({ erro: "forma_pagamento inválida." });
   }
+
   const parcelasNum =
     parcelas === undefined || parcelas === null || parcelas === ""
       ? 1
@@ -65,19 +66,15 @@ function registrarVenda(req, res) {
       .json({ erro: "itens deve ser um array com ao menos 1 item." });
   }
 
-  // Normaliza itens recebidos (inclui desconto no PDV)
   const itensNorm = itens
     .map((i) => ({
       id_variacao: Number(i.id_variacao),
       quantidade: Number(i.quantidade),
       preco_unit: i.preco_unit === undefined ? null : Number(i.preco_unit),
-
-      // desconto no momento da venda (percentual)
       desconto_percent:
         i.desconto_percent === undefined || i.desconto_percent === null
           ? 0
           : Number(i.desconto_percent),
-
       motivo_desconto:
         i.motivo_desconto === undefined || i.motivo_desconto === null
           ? null
@@ -95,30 +92,29 @@ function registrarVenda(req, res) {
     return res.status(400).json({ erro: "itens inválidos." });
   }
 
-  // Validações
   for (const it of itensNorm) {
     if (it.preco_unit === null) {
       return res.status(400).json({
         erro: "preco_unit é obrigatório em cada item (proteção contra divergência).",
       });
     }
+
     if (it.preco_unit < 0) {
       return res.status(400).json({ erro: "preco_unit inválido." });
     }
+
     if (it.id_variacao <= 0 || it.quantidade <= 0) {
       return res
         .status(400)
         .json({ erro: "id_variacao e quantidade devem ser > 0." });
     }
 
-    // desconto_percent 0..100
     if (it.desconto_percent < 0 || it.desconto_percent > 100) {
       return res
         .status(400)
         .json({ erro: "desconto_percent deve estar entre 0 e 100." });
     }
 
-    // motivo obrigatório se houver desconto
     if (it.desconto_percent > 0) {
       if (!it.motivo_desconto || it.motivo_desconto.length < 3) {
         return res.status(400).json({
@@ -127,7 +123,6 @@ function registrarVenda(req, res) {
       }
     }
 
-    // Regra PI: Vendedora até 10% | Gerente pode acima
     const perfil = req.user?.perfil;
     const ehGerente = perfil === "Gerente de Operações";
     if (!ehGerente && it.desconto_percent > 10) {
@@ -144,24 +139,30 @@ function registrarVenda(req, res) {
   db.serialize(() => {
     db.run("BEGIN IMMEDIATE TRANSACTION");
 
+    const rollbackComErro = (status, payload, error = null) => {
+      db.run("ROLLBACK");
+      if (error) console.error(error);
+      return res.status(status).json(payload);
+    };
+
     const sqlEnsEstoque = `
       INSERT OR IGNORE INTO estoque (id_variacao, quantidade, estoque_min)
       VALUES (?, 0, 10)
     `;
 
-    let i = 0;
+    let idxGarantia = 0;
     const garantirTodas = () => {
-      if (i >= ids.length) return buscarVariacoes();
+      if (idxGarantia >= ids.length) return buscarVariacoes();
 
-      db.run(sqlEnsEstoque, [ids[i]], (e) => {
+      db.run(sqlEnsEstoque, [ids[idxGarantia]], (e) => {
         if (e) {
-          db.run("ROLLBACK");
-          console.error(e);
-          return res
-            .status(500)
-            .json({ erro: "Erro ao garantir estoque (venda)." });
+          return rollbackComErro(
+            500,
+            { erro: "Erro ao garantir estoque (venda)." },
+            e,
+          );
         }
-        i += 1;
+        idxGarantia += 1;
         garantirTodas();
       });
     };
@@ -169,124 +170,207 @@ function registrarVenda(req, res) {
     const sqlVariacoes = `
       SELECT
         v.id_variacao,
-        v.preco,
+        v.preco AS preco_original,
         v.ativo,
-        COALESCE(e.quantidade, 0) AS estoque_atual
+        COALESCE(e.quantidade, 0) AS estoque_atual,
+
+        pr.id_promocao,
+        pr.nome_campanha,
+        pr.percentual_desconto,
+        pr.preco_promocional,
+        pr.parcelas_sem_juros,
+        pr.valor_minimo_parcelamento,
+
+        CASE
+          WHEN pr.id_promocao IS NOT NULL
+            AND pr.status = 'ATIVA'
+            AND datetime('now','localtime') BETWEEN datetime(pr.data_inicio) AND datetime(pr.data_fim)
+          THEN 1
+          ELSE 0
+        END AS em_promocao
       FROM variacao_produto v
-      LEFT JOIN estoque e ON e.id_variacao = v.id_variacao
+      LEFT JOIN estoque e
+        ON e.id_variacao = v.id_variacao
+      LEFT JOIN promocao pr
+        ON pr.id_variacao = v.id_variacao
+       AND pr.status = 'ATIVA'
+       AND datetime('now','localtime') BETWEEN datetime(pr.data_inicio) AND datetime(pr.data_fim)
       WHERE v.id_variacao IN (${placeholders})
     `;
 
     const buscarVariacoes = () => {
       db.all(sqlVariacoes, ids, (err, rows) => {
         if (err) {
-          db.run("ROLLBACK");
-          console.error(err);
-          return res
-            .status(500)
-            .json({ erro: "Erro ao buscar variações/estoque." });
+          return rollbackComErro(
+            500,
+            { erro: "Erro ao buscar variações/estoque." },
+            err,
+          );
         }
 
         const map = new Map(rows.map((r) => [r.id_variacao, r]));
 
-        // Valida existência/ativo/preço/estoque
+        const itensPreparados = [];
+
         for (const it of itensNorm) {
           if (!map.has(it.id_variacao)) {
-            db.run("ROLLBACK");
-            return res
-              .status(400)
-              .json({ erro: `Variação ${it.id_variacao} não existe.` });
+            return rollbackComErro(400, {
+              erro: `Variação ${it.id_variacao} não existe.`,
+            });
           }
 
           const row = map.get(it.id_variacao);
 
           if (row.ativo !== 1) {
-            db.run("ROLLBACK");
-            return res
-              .status(400)
-              .json({ erro: `Variação ${it.id_variacao} está inativa.` });
-          }
-
-          // Divergência de preço (anti-fraude / consistência PDV)
-          const precoDb = Number(row.preco);
-          const precoTela = Number(it.preco_unit);
-
-          if (Math.abs(precoDb - precoTela) > 0.01) {
-            db.run("ROLLBACK");
-            return res.status(409).json({
-              erro: "Preço divergente do cadastro. Atualize a tela e tente novamente.",
-              id_variacao: it.id_variacao,
-              preco_cadastro: precoDb,
-              preco_informado: precoTela,
+            return rollbackComErro(400, {
+              erro: `Variação ${it.id_variacao} está inativa.`,
             });
           }
 
-          // valida estoque
           if (row.estoque_atual < it.quantidade) {
-            db.run("ROLLBACK");
-            return res.status(400).json({
+            return rollbackComErro(400, {
               erro: `Estoque insuficiente para variação ${it.id_variacao}.`,
               estoque_atual: row.estoque_atual,
               solicitado: it.quantidade,
             });
           }
-        }
-
-        // Monta itens completos aplicando desconto no subtotal (e preco_unit final)
-        const itensCompletos = itensNorm.map((it) => {
-          const row = map.get(it.id_variacao);
 
           const quantidade = Number(it.quantidade);
-          const preco_unit_original = Number(row.preco);
+          const precoOriginal = Number(row.preco_original || 0);
+          const emPromocao = Number(row.em_promocao) === 1;
+          const precoPromocional = emPromocao
+            ? Number(row.preco_promocional || precoOriginal)
+            : precoOriginal;
 
-          const bruto = Number((preco_unit_original * quantidade).toFixed(2));
-          const desconto_percent = Number(it.desconto_percent || 0);
-          const desconto_valor = Number(
-            ((bruto * desconto_percent) / 100).toFixed(2),
-          );
+          let brutoBaseVenda = 0;
+          let precoUnitEsperadoTela = precoOriginal;
+          let promocaoAplicadaUnidades = 0;
 
-          // segurança: não pode zerar ou inverter subtotal
-          if (desconto_valor >= bruto) {
-            // aqui ainda estamos dentro da transação, então rollback
-            db.run("ROLLBACK");
-            throw new Error("Desconto inválido: >= subtotal bruto do item.");
+          if (!emPromocao) {
+            brutoBaseVenda = Number((precoOriginal * quantidade).toFixed(2));
+            precoUnitEsperadoTela = precoOriginal;
+          } else if (precoOriginal > 90) {
+            // promoção aplicada apenas em 1 unidade
+            if (quantidade === 1) {
+              brutoBaseVenda = Number(precoPromocional.toFixed(2));
+              precoUnitEsperadoTela = precoPromocional;
+              promocaoAplicadaUnidades = 1;
+            } else {
+              brutoBaseVenda = Number(
+                (precoPromocional + precoOriginal * (quantidade - 1)).toFixed(
+                  2,
+                ),
+              );
+              precoUnitEsperadoTela = Number(
+                (brutoBaseVenda / quantidade).toFixed(2),
+              );
+              promocaoAplicadaUnidades = 1;
+            }
+          } else {
+            // promoção em todas as unidades
+            brutoBaseVenda = Number((precoPromocional * quantidade).toFixed(2));
+            precoUnitEsperadoTela = precoPromocional;
+            promocaoAplicadaUnidades = quantidade;
           }
 
-          const subtotal = Number((bruto - desconto_valor).toFixed(2));
-          const preco_unit = Number((subtotal / quantidade).toFixed(2)); // final unitário
+          const precoTela = Number(it.preco_unit);
 
-          return {
+          if (Math.abs(precoUnitEsperadoTela - precoTela) > 0.01) {
+            return rollbackComErro(409, {
+              erro: "Preço divergente do cadastro. Atualize a tela e tente novamente.",
+              id_variacao: it.id_variacao,
+              preco_cadastro: precoUnitEsperadoTela,
+              preco_informado: precoTela,
+              em_promocao: emPromocao,
+            });
+          }
+
+          const desconto_percent = Number(it.desconto_percent || 0);
+          const desconto_valor = Number(
+            ((brutoBaseVenda * desconto_percent) / 100).toFixed(2),
+          );
+
+          if (desconto_valor >= brutoBaseVenda) {
+            return rollbackComErro(400, {
+              erro: "Desconto inválido: >= subtotal bruto do item.",
+            });
+          }
+
+          const subtotal = Number((brutoBaseVenda - desconto_valor).toFixed(2));
+          const preco_unit = Number((subtotal / quantidade).toFixed(2));
+
+          itensPreparados.push({
             id_variacao: it.id_variacao,
             quantidade,
-            preco_unit, // FINAL
-            preco_unit_original, // ORIGINAL
+            preco_unit,
+            preco_unit_original: precoOriginal,
+            preco_unit_base_venda: Number(
+              (brutoBaseVenda / quantidade).toFixed(2),
+            ),
             desconto_valor,
             desconto_percent,
             motivo_desconto: it.motivo_desconto || null,
-            subtotal, // FINAL
-          };
-        });
+            subtotal,
+            em_promocao: emPromocao,
+            preco_promocional: precoPromocional,
+            promocao_aplicada_unidades: promocaoAplicadaUnidades,
+            parcelas_sem_juros: Number(row.parcelas_sem_juros || 0),
+            valor_minimo_parcelamento: Number(
+              row.valor_minimo_parcelamento || 100,
+            ),
+          });
+        }
 
         const total_bruto = Number(
-          itensCompletos
+          itensPreparados
             .reduce(
-              (acc, it) => acc + it.preco_unit_original * it.quantidade,
+              (acc, it) => acc + it.preco_unit_base_venda * it.quantidade,
               0,
             )
             .toFixed(2),
         );
 
         const desconto_total = Number(
-          itensCompletos
+          itensPreparados
             .reduce((acc, it) => acc + (it.desconto_valor || 0), 0)
             .toFixed(2),
         );
 
         const total = Number(
-          itensCompletos.reduce((acc, it) => acc + it.subtotal, 0).toFixed(2),
+          itensPreparados.reduce((acc, it) => acc + it.subtotal, 0).toFixed(2),
         );
-        const jurosPercentual =
-          fp === "CREDITO" ? jurosMapaCredito[parcelasNum] || 0 : 0;
+
+        const existeItemPromocional = itensPreparados.some(
+          (it) => it.em_promocao === true,
+        );
+
+        if (fp === "CREDITO" && existeItemPromocional) {
+          if (total < 100 && parcelasNum > 1) {
+            return rollbackComErro(400, {
+              erro: "Venda com item promocional abaixo de R$ 100,00 permite apenas pagamento à vista no crédito.",
+              total_venda: total,
+              parcelas: parcelasNum,
+            });
+          }
+
+          if (total >= 100 && parcelasNum > 3) {
+            return rollbackComErro(400, {
+              erro: "Venda com item promocional permite no máximo 3x sem juros no crédito.",
+              total_venda: total,
+              parcelas: parcelasNum,
+            });
+          }
+        }
+
+        let jurosPercentual = 0;
+        if (fp === "CREDITO") {
+          if (existeItemPromocional) {
+            jurosPercentual =
+              parcelasNum <= 3 ? 0 : jurosMapaCredito[parcelasNum] || 0;
+          } else {
+            jurosPercentual = jurosMapaCredito[parcelasNum] || 0;
+          }
+        }
 
         const valorJuros = Number((total * jurosPercentual).toFixed(2));
         const totalFinal = Number((total + valorJuros).toFixed(2));
@@ -302,8 +386,8 @@ function registrarVenda(req, res) {
             desconto_total,
             juros_percentual,
             valor_juros
-         )
-         VALUES (?, 'CONCLUIDA', ?, ?, ?, ?, ?, ?, ?)
+          )
+          VALUES (?, 'CONCLUIDA', ?, ?, ?, ?, ?, ?, ?)
         `;
 
         db.run(
@@ -320,39 +404,40 @@ function registrarVenda(req, res) {
           ],
           function (err2) {
             if (err2) {
-              db.run("ROLLBACK");
-              console.error(err2);
-              return res.status(500).json({ erro: "Erro ao registrar venda." });
+              return rollbackComErro(
+                500,
+                { erro: "Erro ao registrar venda." },
+                err2,
+              );
             }
 
             const id_venda = this.lastID;
-
             let idx = 0;
+
             const proximo = () => {
-              if (idx >= itensCompletos.length) {
+              if (idx >= itensPreparados.length) {
                 return db.run("COMMIT", (errCommit) => {
                   if (errCommit) {
-                    db.run("ROLLBACK");
-                    console.error(errCommit);
-                    return res
-                      .status(500)
-                      .json({ erro: "Falha ao finalizar transação." });
+                    return rollbackComErro(
+                      500,
+                      { erro: "Falha ao finalizar transação." },
+                      errCommit,
+                    );
                   }
 
-                  // puxa id_usuario
                   db.get(
                     `SELECT
-                    id_venda,
-                    id_usuario,
-                    status,
-                    forma_pagamento,
-                    parcelas,
-                    total,
-                    total_bruto,
-                    desconto_total,
-                    juros_percentual AS jurosPercentual,
-                    valor_juros AS valorJuros,
-                    criado_em
+                      id_venda,
+                      id_usuario,
+                      status,
+                      forma_pagamento,
+                      parcelas,
+                      total,
+                      total_bruto,
+                      desconto_total,
+                      juros_percentual AS jurosPercentual,
+                      valor_juros AS valorJuros,
+                      criado_em
                      FROM venda
                      WHERE id_venda = ?`,
                     [id_venda],
@@ -367,14 +452,14 @@ function registrarVenda(req, res) {
                       return res.status(201).json({
                         ok: true,
                         ...vendaRow,
-                        itens: itensCompletos,
+                        itens: itensPreparados,
                       });
                     },
                   );
                 });
               }
 
-              const it = itensCompletos[idx];
+              const it = itensPreparados[idx];
 
               const sqlItem = `
                 INSERT INTO item_venda (
@@ -387,8 +472,8 @@ function registrarVenda(req, res) {
                   motivo_desconto,
                   preco_unit,
                   subtotal
-              )
-              VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+                )
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
               `;
 
               db.run(
@@ -406,17 +491,18 @@ function registrarVenda(req, res) {
                 ],
                 function (errItem) {
                   if (errItem) {
-                    db.run("ROLLBACK");
-                    console.error(errItem);
-                    return res
-                      .status(500)
-                      .json({ erro: "Erro ao inserir item da venda." });
+                    return rollbackComErro(
+                      500,
+                      { erro: "Erro ao inserir item da venda." },
+                      errItem,
+                    );
                   }
 
                   const sqlMov = `
-                  INSERT INTO movimentacao_estoque (id_variacao, tipo, quantidade, observacao, id_usuario)
-                  VALUES (?, 'SAIDA', ?, ?, ?)
-                `;
+                    INSERT INTO movimentacao_estoque
+                      (id_variacao, tipo, quantidade, observacao, id_usuario)
+                    VALUES (?, 'SAIDA', ?, ?, ?)
+                  `;
 
                   db.run(
                     sqlMov,
@@ -428,34 +514,35 @@ function registrarVenda(req, res) {
                     ],
                     function (errMov) {
                       if (errMov) {
-                        db.run("ROLLBACK");
-                        console.error(errMov);
-                        return res.status(500).json({
-                          erro: "Erro ao registrar movimentação de estoque.",
-                        });
+                        return rollbackComErro(
+                          500,
+                          {
+                            erro: "Erro ao registrar movimentação de estoque.",
+                          },
+                          errMov,
+                        );
                       }
 
                       const sqlUpd = `
-                      UPDATE estoque
-                      SET quantidade = quantidade - ?, atualizado_em = datetime('now')
-                      WHERE id_variacao = ? AND quantidade >= ?
-                    `;
+                        UPDATE estoque
+                        SET quantidade = quantidade - ?, atualizado_em = datetime('now','localtime')
+                        WHERE id_variacao = ? AND quantidade >= ?
+                      `;
 
                       db.run(
                         sqlUpd,
                         [it.quantidade, it.id_variacao, it.quantidade],
                         function (errUpd) {
                           if (errUpd) {
-                            db.run("ROLLBACK");
-                            console.error(errUpd);
-                            return res
-                              .status(500)
-                              .json({ erro: "Erro ao dar baixa no estoque." });
+                            return rollbackComErro(
+                              500,
+                              { erro: "Erro ao dar baixa no estoque." },
+                              errUpd,
+                            );
                           }
 
                           if (this.changes !== 1) {
-                            db.run("ROLLBACK");
-                            return res.status(400).json({
+                            return rollbackComErro(400, {
                               erro: "Estoque insuficiente (concorrência) ou variação sem estoque.",
                               id_variacao: it.id_variacao,
                             });
@@ -480,9 +567,7 @@ function registrarVenda(req, res) {
     try {
       garantirTodas();
     } catch (e) {
-      // fallback de erro no map (desconto inválido etc.)
       console.error("[VENDAS] registrarVenda erro:", e.message);
-      // se ainda estiver em transação, tenta rollback
       try {
         db.run("ROLLBACK");
       } catch (_) {}

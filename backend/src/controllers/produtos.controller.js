@@ -213,7 +213,7 @@ function criarProduto(req, res) {
 
 // GET /produtos/pdv
 function listarProdutosPDV(req, res) {
-  const sql = `
+ const sql = `
   SELECT
     vp.id_variacao,
     p.id_produto,
@@ -221,7 +221,46 @@ function listarProdutosPDV(req, res) {
     vp.cor,
     vp.tamanho,
     vp.sku,
-    vp.preco AS preco_venda,
+
+    vp.preco AS preco_original,
+    CASE
+      WHEN pr.id_promocao IS NOT NULL
+        AND pr.status = 'ATIVA'
+        AND datetime('now','localtime') BETWEEN datetime(pr.data_inicio) AND datetime(pr.data_fim)
+      THEN pr.preco_promocional
+      ELSE vp.preco
+    END AS preco_venda,
+
+    CASE
+      WHEN pr.id_promocao IS NOT NULL
+        AND pr.status = 'ATIVA'
+        AND datetime('now','localtime') BETWEEN datetime(pr.data_inicio) AND datetime(pr.data_fim)
+      THEN 1
+      ELSE 0
+    END AS em_promocao,
+
+    pr.id_promocao,
+    pr.nome_campanha,
+    pr.percentual_desconto,
+    pr.preco_promocional,
+    pr.parcelas_sem_juros,
+    pr.valor_minimo_parcelamento,
+    pr.data_inicio,
+    pr.data_fim,
+
+    CASE
+      WHEN pr.id_promocao IS NOT NULL
+        AND pr.status = 'ATIVA'
+        AND datetime('now','localtime') BETWEEN datetime(pr.data_inicio) AND datetime(pr.data_fim)
+        AND pr.preco_promocional >= pr.valor_minimo_parcelamento
+      THEN 'Até 3x sem juros'
+      WHEN pr.id_promocao IS NOT NULL
+        AND pr.status = 'ATIVA'
+        AND datetime('now','localtime') BETWEEN datetime(pr.data_inicio) AND datetime(pr.data_fim)
+      THEN 'Pagamento à vista'
+      ELSE NULL
+    END AS mensagem_pagamento,
+
     COALESCE(e.quantidade, 0) AS quantidade_atual,
     COALESCE(e.estoque_min, 0) AS estoque_min,
     CASE
@@ -235,6 +274,12 @@ function listarProdutosPDV(req, res) {
     ON p.id_produto = vp.id_produto
   LEFT JOIN estoque e
     ON e.id_variacao = vp.id_variacao
+  LEFT JOIN promocao pr
+    ON pr.id_variacao = vp.id_variacao
+   AND pr.status = 'ATIVA'
+   AND datetime('now','localtime') BETWEEN datetime(pr.data_inicio) AND datetime(pr.data_fim)
+  WHERE vp.ativo = 1
+    AND p.ativo = 1
   ORDER BY p.nome, vp.cor, vp.tamanho
 `;
 
