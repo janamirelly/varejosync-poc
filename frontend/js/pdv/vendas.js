@@ -41,6 +41,13 @@
     const variacao = [cor, tamanho].filter(Boolean).join(" / ") || "Padrão";
     const estoque = Number(item.quantidade_atual ?? item.quantidade ?? 0);
 
+    const precoOriginal = Number(
+      item.preco_original ?? item.preco ?? item.preco_venda ?? 0,
+    );
+    const precoVenda = Number(
+      item.preco_venda ?? item.preco ?? item.preco_unit ?? item.valor ?? 0,
+    );
+
     return {
       id_produto: item.id_produto ?? item.id ?? null,
       id_variacao: item.id_variacao ?? item.id ?? null,
@@ -51,12 +58,22 @@
       tamanho,
       estoque,
       estoque_min: Number(item.estoque_min ?? item.minimo ?? 0),
-      preco: Number(
-        item.preco_venda ?? item.preco ?? item.preco_unit ?? item.valor ?? 0,
-      ),
+
+      preco: precoVenda,
+      preco_original: precoOriginal,
+      preco_promocional: Number(item.preco_promocional ?? precoVenda),
+      percentual_desconto: Number(item.percentual_desconto ?? 0),
+      mensagem_pagamento: String(item.mensagem_pagamento ?? ""),
+      nome_campanha: String(item.nome_campanha ?? ""),
+      parcelas_sem_juros: Number(item.parcelas_sem_juros ?? 0),
+
       status: String(item.status ?? "").toUpperCase(),
-      promocao: Boolean(item.promocao ?? item.em_promocao ?? false),
-      novo: Boolean(item.novo ?? item.novidade ?? false),
+      promocao: Number(item.em_promocao ?? item.promocao ?? 0) === 1,
+      novo: Number(item.novidade ?? item.novo ?? 0) === 1,
+
+      quantidade: Number(item.quantidade ?? 1),
+      desconto_percent: Number(item.desconto_percent ?? 0),
+      motivo_desconto: String(item.motivo_desconto ?? ""),
     };
   }
 
@@ -92,10 +109,104 @@
   }
 
   function getSubtotalItem(item) {
-    const bruto = Number(item.quantidade * item.preco);
+    const quantidade = Number(item.quantidade || 0);
+    const precoBaseVenda = getPrecoUnitarioVenda(item);
+
+    const bruto = Number((quantidade * precoBaseVenda).toFixed(2));
     const desconto = Number(item.desconto_percent || 0);
     const valorDesconto = Number(((bruto * desconto) / 100).toFixed(2));
+
     return Number((bruto - valorDesconto).toFixed(2));
+  }
+
+  function getPrecoUnitarioVenda(item) {
+    const quantidade = Number(item.quantidade || 1);
+    const precoOriginal = Number(item.preco_original ?? item.preco ?? 0);
+    const precoAtual = Number(item.preco ?? 0);
+    const promocao = item.promocao === true;
+
+    if (!promocao) {
+      return precoAtual;
+    }
+
+    // Regra: produto em promoção com preço original acima de 90
+    // aplica promoção apenas em 1 unidade
+    if (precoOriginal > 90 && quantidade > 1) {
+      const totalBaseVenda = precoAtual + precoOriginal * (quantidade - 1);
+      return Number((totalBaseVenda / quantidade).toFixed(2));
+    }
+
+    return precoAtual;
+  }
+
+  function montarLinhaModalFinalizacao(item) {
+    const quantidade = Number(item.quantidade || 1);
+    const precoOriginal = Number(item.preco_original ?? item.preco ?? 0);
+    const precoPromocional = Number(item.preco ?? 0);
+    const promocao = item.promocao === true;
+
+    const linhas = [];
+
+    // Regra especial:
+    // produto promocional com preço original acima de 90
+    // aplica promoção apenas em 1 unidade
+    if (promocao && precoOriginal > 90 && quantidade > 1) {
+      linhas.push(`
+      <div class="pdv-modal-item-row">
+        <div class="pdv-modal-item-main">
+          <strong>${item.nome}</strong>
+          <span>${item.variacao} (1 un.)</span>
+          <small class="pdv-item-meta">Unidade promocional</small>
+        </div>
+        <div class="pdv-modal-item-values">
+          <span>Unit.: ${money(precoPromocional)}</span>
+          <strong>Total: ${money(precoPromocional)}</strong>
+        </div>
+      </div>
+    `);
+
+      const qtdNormal = quantidade - 1;
+      const totalNormal = Number((precoOriginal * qtdNormal).toFixed(2));
+
+      linhas.push(`
+      <div class="pdv-modal-item-row">
+        <div class="pdv-modal-item-main">
+          <strong>${item.nome}</strong>
+          <span>${item.variacao} (${qtdNormal} un.)</span>
+          <small class="pdv-item-meta pdv-item-meta--neutral">Unidade(s) sem promoção</small>
+        </div>
+        <div class="pdv-modal-item-values">
+          <span>Unit.: ${money(precoOriginal)}</span>
+          <strong>Total: ${money(totalNormal)}</strong>
+        </div>
+      </div>
+    `);
+
+      return linhas.join("");
+    }
+
+    const precoUnitarioVenda = getPrecoUnitarioVenda(item);
+    const subtotal = getSubtotalItem(item);
+
+    linhas.push(`
+    <div class="pdv-modal-item-row">
+      <div class="pdv-modal-item-main">
+        <strong>${item.nome}</strong>
+        <span>${item.variacao} (${quantidade} un.)</span>
+        ${
+          promocao
+            ? `<small class="pdv-item-meta">Preço promocional aplicado</small>`
+            : ``
+        }
+      </div>
+      <div class="pdv-modal-item-values">
+        <span>Unit.: ${money(precoUnitarioVenda)}</span>
+        <strong>Total: ${money(subtotal)}</strong>
+      </div>
+    </div>
+  `);
+
+    return linhas.join("");
   }
 
   function getTotalCarrinho() {
@@ -106,20 +217,32 @@
   function calcularPagamentoCredito(total, formaPagamento, parcelas) {
     const forma = String(formaPagamento || "PIX").toUpperCase();
     const qtdParcelas = Number(parcelas || 1);
+    const totalBase = Number(total || 0);
+
+    const existePromocional = state.carrinho.some(
+      (item) => item.promocao === true,
+    );
 
     if (forma !== "CREDITO") {
       return {
         jurosPercentual: 0,
         valorJuros: 0,
-        totalFinal: Number(total.toFixed(2)),
-        valorParcela: Number(total.toFixed(2)),
+        totalFinal: Number(totalBase.toFixed(2)),
+        valorParcela: Number(totalBase.toFixed(2)),
         textoCondicao: "À vista",
       };
     }
 
-    const jurosPercentual = JUROS_CREDITO[qtdParcelas] || 0;
-    const valorJuros = Number((total * jurosPercentual).toFixed(2));
-    const totalFinal = Number((total + valorJuros).toFixed(2));
+    let jurosPercentual = 0;
+
+    if (existePromocional) {
+      jurosPercentual = qtdParcelas <= 3 ? 0 : JUROS_CREDITO[qtdParcelas] || 0;
+    } else {
+      jurosPercentual = JUROS_CREDITO[qtdParcelas] || 0;
+    }
+
+    const valorJuros = Number((totalBase * jurosPercentual).toFixed(2));
+    const totalFinal = Number((totalBase + valorJuros).toFixed(2));
     const valorParcela = Number((totalFinal / qtdParcelas).toFixed(2));
 
     return {
@@ -155,36 +278,53 @@
     if (!formaEl || !parcelasWrap || !parcelasEl) return;
 
     const forma = String(formaEl.value || "").toUpperCase();
+    const totalBase = getTotalCarrinho();
+    const existePromocional = state.carrinho.some(
+      (item) => item.promocao === true,
+    );
 
-    if (forma === "CREDITO") {
-      parcelasWrap.classList.remove("hidden");
-    } else {
+    const valorAtualSelecionado = Number(parcelasEl.value || 1);
+
+    let opcoesPermitidas = [1];
+
+    if (forma !== "CREDITO") {
       parcelasWrap.classList.add("hidden");
-      parcelasEl.value = "1";
+      opcoesPermitidas = [1];
+    } else {
+      parcelasWrap.classList.remove("hidden");
+
+      if (existePromocional) {
+        opcoesPermitidas = totalBase >= 100 ? [1, 2, 3] : [1];
+      } else {
+        opcoesPermitidas = [1, 2, 3, 4, 5, 6];
+      }
     }
 
-    const totalBase = getTotalCarrinho();
+    const valorSelecionado = opcoesPermitidas.includes(valorAtualSelecionado)
+      ? valorAtualSelecionado
+      : 1;
+
+    parcelasEl.innerHTML = opcoesPermitidas
+      .map((n) => `<option value="${n}">${n}x</option>`)
+      .join("");
+
+    parcelasEl.value = String(valorSelecionado);
+
     const parcelas = Number(parcelasEl.value || 1);
-
-    const jurosPercentual =
-      forma === "CREDITO" ? JUROS_CREDITO[parcelas] || 0 : 0;
-
-    const valorJuros = Number((totalBase * jurosPercentual).toFixed(2));
-    const totalFinal = Number((totalBase + valorJuros).toFixed(2));
-    const valorParcela = Number((totalFinal / parcelas).toFixed(2));
+    const pagamento = calcularPagamentoCredito(totalBase, forma, parcelas);
 
     if (totalEl) {
-      totalEl.textContent = money(totalFinal);
+      totalEl.textContent = money(pagamento.totalFinal);
     }
 
     if (resumoPgtoEl) {
-      if (forma === "CREDITO") {
-        const textoCondicao =
-          parcelas <= 3 ? `${parcelas}x sem juros` : `${parcelas}x com juros`;
-
-        resumoPgtoEl.textContent = `${textoCondicao} • ${parcelas} parcela(s) de ${money(valorParcela)}`;
-      } else {
+      if (forma !== "CREDITO") {
         resumoPgtoEl.textContent = "Pagamento à vista";
+      } else if (existePromocional && totalBase < 100) {
+        resumoPgtoEl.textContent =
+          "Venda com item promocional abaixo de R$ 100,00: pagamento à vista no crédito";
+      } else {
+        resumoPgtoEl.textContent = `${pagamento.textoCondicao} • ${parcelas} parcela(s) de ${money(pagamento.valorParcela)}`;
       }
     }
   }
@@ -199,10 +339,10 @@
 
     if (!state.produtos.length) {
       tbody.innerHTML = `
-        <tr>
-          <td colspan="6" class="empty-state">Nenhum produto encontrado.</td>
-        </tr>
-      `;
+      <tr>
+        <td colspan="6" class="empty-state">Nenhum produto encontrado.</td>
+      </tr>
+    `;
       return;
     }
 
@@ -213,35 +353,62 @@
         const bloqueado = semEstoque || semVariacao;
         const key = String(getKey(produto)).replace(/'/g, "\\'");
 
-        return `
-          <tr>
-            <td class="pdv-col-produto">
-              <strong>${produto.nome}</strong>
-            </td>
-            <td>${produto.sku || "—"}</td>
-            <td>${produto.variacao || "—"}</td>
-            <td>
-              ${
-                semVariacao
-                  ? `<span class="status status-warning">Sem variação</span>`
-                  : semEstoque
-                    ? `<span class="status status-out">Sem estoque</span>`
-                    : `<span class="status status-ok">${produto.estoque} un.</span>`
-              }
-            </td>
-            <td>${money(produto.preco)}</td>
-            <td>
-              <button
-                type="button"
-                class="btn-primary"
-                onclick="window.pdvAdicionarProduto('${key}')"
-                ${bloqueado ? "disabled" : ""}
-              >
-                Adicionar
-              </button>
-            </td>
-          </tr>
+        const precoHtml = produto.promocao
+          ? `
+          <div class="pdv-preco-wrap">
+            <span class="pdv-preco-original">${money(produto.preco_original)}</span>
+            <strong class="pdv-preco-promocional">${money(produto.preco)}</strong>
+            <small class="pdv-preco-meta">
+              ${produto.percentual_desconto}% off${produto.mensagem_pagamento ? ` • ${produto.mensagem_pagamento}` : ""}
+            </small>
+          </div>
+        `
+          : `
+          <div class="pdv-preco-wrap">
+            <strong class="pdv-preco-normal">${money(produto.preco)}</strong>
+          </div>
         `;
+
+        const nomeHtml = `
+        <div class="pdv-produto-info">
+          <strong>${produto.nome}</strong>
+          ${
+            produto.promocao
+              ? `<span class="pdv-badge-promocao">Promoção</span>`
+              : ""
+          }
+        </div>
+      `;
+
+        return `
+        <tr>
+          <td class="pdv-col-produto">
+            ${nomeHtml}
+          </td>
+          <td>${produto.sku || "—"}</td>
+          <td>${produto.variacao || "—"}</td>
+          <td>
+            ${
+              semVariacao
+                ? `<span class="status status-warning">Sem variação</span>`
+                : semEstoque
+                  ? `<span class="status status-out">Sem estoque</span>`
+                  : `<span class="status status-ok">${produto.estoque} un.</span>`
+            }
+          </td>
+          <td>${precoHtml}</td>
+          <td>
+            <button
+              type="button"
+              class="btn-primary"
+              onclick="pdvAdicionarProduto('${key}')"
+              ${bloqueado ? "disabled" : ""}
+            >
+              Adicionar
+            </button>
+          </td>
+        </tr>
+      `;
       })
       .join("");
   }
@@ -388,6 +555,10 @@
 
       state.produtos = lista;
       renderProdutos();
+
+      if (feedback && lista.length) {
+        feedback.textContent = "";
+      }
 
       if (statusBusca) {
         statusBusca.textContent = termo
@@ -576,27 +747,34 @@
 
     const listaEl = document.getElementById("pdvModalListaItens");
     const totalEl = document.getElementById("pdvModalTotal");
+    const resumoPgtoEl = document.getElementById("pdvResumoPagamento");
+    const formaEl = document.getElementById("pdvFormaPagamento");
+    const parcelasEl = document.getElementById("pdvParcelas");
 
     if (listaEl) {
-      listaEl.innerHTML = state.carrinho
-        .map(
-          (item) => `
-            <div>
-              <strong>${item.nome}</strong> — ${item.variacao || "Padrão"} (${item.quantidade} un.)
-            </div>
-          `,
-        )
-        .join("");
+      listaEl.innerHTML = state.carrinho.length
+        ? state.carrinho
+            .map((item) => montarLinhaModalFinalizacao(item))
+            .join("")
+        : `<div class="pdv-empty">Nenhum item adicionado à venda.</div>`;
     }
 
     if (totalEl) {
       totalEl.textContent = money(getTotalCarrinho());
     }
-    const formaEl = document.getElementById("pdvFormaPagamento");
-    const parcelasEl = document.getElementById("pdvParcelas");
 
-    if (formaEl) formaEl.value = "PIX";
-    if (parcelasEl) parcelasEl.value = "1";
+    if (resumoPgtoEl) {
+      resumoPgtoEl.textContent = "Pagamento à vista";
+    }
+
+    if (formaEl) {
+      formaEl.value = "PIX";
+    }
+
+    if (parcelasEl) {
+      parcelasEl.innerHTML = `<option value="1">1x</option>`;
+      parcelasEl.value = "1";
+    }
 
     atualizarParcelasPagamento();
 
@@ -617,7 +795,7 @@
       itens: state.carrinho.map((item) => ({
         id_variacao: item.id_variacao,
         quantidade: item.quantidade,
-        preco_unit: item.preco,
+        preco_unit: getPrecoUnitarioVenda(item),
         desconto_percent: Number(item.desconto_percent || 0),
         motivo_desconto: item.motivo_desconto || "",
       })),
@@ -630,21 +808,22 @@
         data.numero_venda ??
         data.id_venda ??
         data.venda?.numero_venda ??
-        "000124";
-
-      fecharModal(document.getElementById("pdvModalFinalizar"));
+        data.venda?.id_venda ??
+        "000000";
 
       const numeroEl = document.getElementById("pdvNumeroVenda");
       if (numeroEl) {
         numeroEl.textContent = `Número da venda: #${numeroVenda}`;
       }
 
+      fecharModal(document.getElementById("pdvModalFinalizar"));
+      abrirModal(document.getElementById("pdvModalSucesso"));
+
       state.carrinho = [];
       renderResumo();
-      abrirModal(document.getElementById("pdvModalSucesso"));
-      buscarProdutos();
     } catch (error) {
-      alert(error.message || "Erro ao finalizar venda.");
+      console.error("[PDV] erro ao finalizar venda:", error);
+      alert(error?.message || "Não foi possível finalizar a venda.");
     }
   }
 

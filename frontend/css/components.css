@@ -2321,6 +2321,52 @@
   height: 46px;
 }
 
+.pdv-produto-info {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.pdv-badge-promocao {
+  display: inline-flex;
+  align-self: flex-start;
+  padding: 2px 8px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 600;
+  background: rgba(37, 99, 235, 0.12);
+  color: #1d4ed8;
+}
+
+.pdv-preco-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.pdv-preco-original {
+  font-size: 12px;
+  color: #6b7280;
+  text-decoration: line-through;
+}
+
+.pdv-preco-promocional {
+  font-size: 15px;
+  font-weight: 700;
+  color: #111827;
+}
+
+.pdv-preco-normal {
+  font-size: 15px;
+  font-weight: 700;
+  color: #111827;
+}
+
+.pdv-preco-meta {
+  font-size: 12px;
+  color: #2563eb;
+}
+
 /* CORREÇÃO DE CAMADAS / CLIQUE PDV */
 
 .pdv-card,
