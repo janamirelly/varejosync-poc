@@ -14,6 +14,7 @@ const authRoutes = require("./routes/auth.routes");
 const movimentacaoRoutes = require("./routes/movimentacao.routes");
 const relatoriosRoutes = require("./routes/relatorios.routes");
 const fiscalRoutes = require("./routes/fiscal.routes");
+const promocoesRoutes = require("./routes/promocoes.routes");
 
 const app = express();
 const PORT = 3000;
@@ -37,6 +38,7 @@ app.use("/auth", authRoutes);
 app.use("/movimentacoes", movimentacaoRoutes);
 app.use("/relatorios", relatoriosRoutes);
 app.use("/fiscal", fiscalRoutes);
+app.use("/promocoes", promocoesRoutes);
 
 // Servidor
 app.listen(PORT, () => {
