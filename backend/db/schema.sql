@@ -112,6 +112,38 @@ CREATE TABLE IF NOT EXISTS item_venda (
 );
 
 -- =========================================================
+-- 5) PROMOÇÃO
+-- =========================================================
+CREATE TABLE IF NOT EXISTS promocao (
+  id_promocao INTEGER PRIMARY KEY AUTOINCREMENT,
+  id_variacao INTEGER NOT NULL,
+  nome_campanha TEXT NOT NULL,
+  percentual_desconto REAL NOT NULL
+    CHECK (percentual_desconto > 0 AND percentual_desconto <= 15),
+  preco_base REAL NOT NULL CHECK (preco_base >= 0),
+  preco_promocional REAL NOT NULL CHECK (preco_promocional >= 0),
+  data_inicio TEXT NOT NULL,
+  data_fim TEXT NOT NULL,
+  parcelas_sem_juros INTEGER NOT NULL DEFAULT 0
+    CHECK (parcelas_sem_juros IN (0, 3)),
+  valor_minimo_parcelamento REAL NOT NULL DEFAULT 100.00
+    CHECK (valor_minimo_parcelamento >= 0),
+  status TEXT NOT NULL DEFAULT 'AGENDADA'
+    CHECK (status IN ('AGENDADA','ATIVA','ENCERRADA','CANCELADA')),
+  criado_por INTEGER NOT NULL,
+  criado_em TEXT NOT NULL DEFAULT (datetime('now','localtime')),
+  atualizado_em TEXT,
+  cancelado_por INTEGER,
+  cancelado_em TEXT,
+  motivo_cancelamento TEXT,
+  FOREIGN KEY (id_variacao) REFERENCES variacao_produto(id_variacao),
+  FOREIGN KEY (criado_por) REFERENCES usuario(id_usuario),
+  FOREIGN KEY (cancelado_por) REFERENCES usuario(id_usuario),
+  CHECK (datetime(data_inicio) < datetime(data_fim))
+);
+
+
+-- =========================================================
 -- 5) ÍNDICES ÚTEIS (POC)
 -- =========================================================
 CREATE INDEX IF NOT EXISTS idx_variacao_produto ON variacao_produto(id_produto);
@@ -119,6 +151,15 @@ CREATE INDEX IF NOT EXISTS idx_mov_variacao     ON movimentacao_estoque(id_varia
 CREATE INDEX IF NOT EXISTS idx_mov_usuario      ON movimentacao_estoque(id_usuario);
 CREATE INDEX IF NOT EXISTS idx_item_venda_venda ON item_venda(id_venda);
 CREATE INDEX IF NOT EXISTS idx_item_venda_var   ON item_venda(id_variacao);
+
+CREATE INDEX IF NOT EXISTS idx_promocao_variacao
+  ON promocao(id_variacao);
+
+CREATE INDEX IF NOT EXISTS idx_promocao_status
+  ON promocao(status);
+
+CREATE INDEX IF NOT EXISTS idx_promocao_periodo
+  ON promocao(data_inicio, data_fim);
 
 -- =========================================================
 -- 6) FISCAL (SIMULADO / PI)
