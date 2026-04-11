@@ -1,0 +1,136 @@
+<section class="page-section">
+  <div class="page-header">
+    <div>
+      <h2>Gestão de Promoções</h2>
+      <p>Cadastro e acompanhamento das promoções cadastradas pelo gerente.</p>
+    </div>
+  </div>
+
+  <section class="card">
+    <div class="table-header">
+      <h3>Nova promoção</h3>
+      <span class="status-text">Desconto máximo de 15%</span>
+    </div>
+
+    <div class="gerente-promocoes-form">
+      <div class="field">
+        <label for="promoVariacao">
+          <strong>Produto / variação</strong>
+        </label>
+        <select id="promoVariacao" class="pdv-select">
+          <option value="">Selecione uma variação</option>
+        </select>
+      </div>
+
+      <div class="field">
+        <label for="promoCampanha">
+          <strong>Campanha / motivo</strong>
+        </label>
+        <input
+          type="text"
+          id="promoCampanha"
+          class="pdv-search-input"
+          placeholder="Ex.: Semana do Cliente"
+        />
+      </div>
+
+      <div class="gerente-promocoes-row">
+        <div class="field">
+          <label for="promoDesconto">
+            <strong>Desconto (%)</strong>
+          </label>
+          <input
+            type="number"
+            id="promoDesconto"
+            class="pdv-search-input"
+            min="1"
+            max="15"
+            step="1"
+            placeholder="Até 15"
+          />
+        </div>
+
+        <div class="field">
+          <label for="promoPrecoBase">
+            <strong>Preço base</strong>
+          </label>
+          <input
+            type="text"
+            id="promoPrecoBase"
+            class="pdv-search-input"
+            disabled
+            placeholder="R$ 0,00"
+          />
+        </div>
+      </div>
+
+      <div class="gerente-promocoes-row">
+        <div class="field">
+          <label for="promoDataInicio">
+            <strong>Data/hora início</strong>
+          </label>
+          <input
+            type="datetime-local"
+            id="promoDataInicio"
+            class="pdv-search-input"
+          />
+        </div>
+
+        <div class="field">
+          <label for="promoDataFim">
+            <strong>Data/hora fim</strong>
+          </label>
+          <input
+            type="datetime-local"
+            id="promoDataFim"
+            class="pdv-search-input"
+          />
+        </div>
+      </div>
+
+      <div class="gerente-promocoes-preview">
+        <span>Preço promocional previsto</span>
+        <strong id="promoPrecoPrevisto">R$ 0,00</strong>
+      </div>
+
+      <div class="gerente-promocoes-actions">
+        <button type="button" class="btn-primary" id="btnSalvarPromocao">
+          Salvar promoção
+        </button>
+      </div>
+
+      <div id="promoFeedback" class="pdv-feedback"></div>
+    </div>
+  </section>
+
+  <section class="card" style="margin-top: 24px">
+    <div class="table-header">
+      <h3>Promoções cadastradas</h3>
+      <span class="status-text" id="promoStatusLista">
+        0 registro(s)
+      </span>
+    </div>
+
+    <div class="table-wrapper">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>Produto</th>
+            <th>Campanha</th>
+            <th>Desconto</th>
+            <th>Preço promocional</th>
+            <th>Período</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody id="promoTabela">
+          <tr>
+            <td colspan="6" class="empty-state">
+              Nenhuma promoção cadastrada.
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+</section>;

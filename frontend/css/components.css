@@ -2848,3 +2848,43 @@
 .kpi-card.kpi-card-critical {
   border-left: 4px solid var(--color-danger);
 }
+
+/* DASHBOARD  gerente promoções*/
+.gerente-promocoes-form {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.gerente-promocoes-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+}
+
+.gerente-promocoes-preview {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 14px;
+  border-radius: 12px;
+  background: rgba(37, 99, 235, 0.08);
+  color: #1d4ed8;
+  font-weight: 600;
+}
+
+.gerente-promocoes-actions {
+  display: flex;
+  justify-content: flex-start;
+}
+
+.status-neutral {
+  background: #e5e7eb;
+  color: #374151;
+}
+
+@media (max-width: 900px) {
+  .gerente-promocoes-row {
+    grid-template-columns: 1fr;
+  }
+}

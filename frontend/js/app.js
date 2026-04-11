@@ -60,6 +60,7 @@ function obterMenuPorPerfil(perfil) {
       { label: "Dashboard", page: "dashboard-gerente" },
       { label: "Consultar Estoque", page: "estoque" },
       { label: "Vendas", page: "pdv/vendas" },
+      { label: "Promoções", page: "gerente/promocoes" },
       { label: "Sair", page: "login" },
     ],
   };
@@ -155,6 +156,7 @@ async function loadPage(page) {
       dashboard: window.inicializarTelaDashboard,
       "dashboard-pdv": window.inicializarTelaDashboardPdv,
       "dashboard-gerente": window.inicializarTelaDashboardGerente,
+      "gerente/promocoes": window.inicializarTelaPromocoesGerente,
       estoque: window.inicializarTelaEstoque,
       produtos: window.inicializarTelaProdutos,
       movimentacoes: window.inicializarTelaMovimentacoes,
