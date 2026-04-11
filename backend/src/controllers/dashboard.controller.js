@@ -28,18 +28,18 @@ async function obterDashboard(req, res) {
         date('now', 'localtime', '-6 days') AS inicio_7dias
     ),
     resumo_vendas AS (
-      SELECT
-        COUNT(DISTINCT v.id_venda) AS pedidos_7dias,
-        ROUND(COALESCE(SUM(v.total), 0), 2) AS faturamento_7dias,
-        ROUND(
-          COALESCE(SUM(v.total), 0) / NULLIF(COUNT(DISTINCT v.id_venda), 0),
-          2
-        ) AS ticket_medio_7dias
-      FROM venda v
-      JOIN params ON 1=1
-      WHERE v.status = 'CONCLUIDA'
-        AND date(datetime(v.criado_em, 'localtime')) BETWEEN params.inicio_7dias AND params.hoje
-    ),
+  SELECT
+    COUNT(DISTINCT v.id_venda) AS pedidos_dia,
+    ROUND(COALESCE(SUM(v.total), 0), 2) AS faturamento_dia,
+    ROUND(
+      COALESCE(SUM(v.total), 0) / NULLIF(COUNT(DISTINCT v.id_venda), 0),
+      2
+    ) AS ticket_medio_dia
+  FROM venda v
+  JOIN params ON 1=1
+  WHERE v.status = 'CONCLUIDA'
+    AND date(datetime(v.criado_em, 'localtime')) = params.hoje
+),
     resumo_estoque AS (
       SELECT
         COALESCE(SUM(quantidade), 0) AS estoque_total
@@ -65,9 +65,9 @@ async function obterDashboard(req, res) {
     SELECT
       re.estoque_total,
       rc.itens_criticos,
-      rv.pedidos_7dias,
-      rv.faturamento_7dias,
-      rv.ticket_medio_7dias,
+      rv.pedidos_dia,
+      rv.faturamento_dia,
+      rv.ticket_medio_dia,
       rs.ultima_sincronizacao
     FROM resumo_vendas rv
     CROSS JOIN resumo_estoque re
@@ -108,10 +108,17 @@ async function obterDashboard(req, res) {
      SELECT * FROM vw_dashboard_estoque_abaixo_min_por_produto
     `);
 
-    const formas_pagamento_7dias = await all(`
-      SELECT * FROM vw_dashboard_formas_pagamento_7dias
-      ORDER BY total DESC
-    `);
+   const formas_pagamento_dia = await all(`
+  SELECT
+    v.forma_pagamento,
+    COUNT(*) AS quantidade,
+    ROUND(COALESCE(SUM(v.total), 0), 2) AS total
+  FROM venda v
+  WHERE v.status = 'CONCLUIDA'
+    AND date(datetime(v.criado_em, 'localtime')) = date('now', 'localtime')
+  GROUP BY v.forma_pagamento
+  ORDER BY total DESC
+`);
 
     const produtos_mais_vendidos_24h = await all(`
       SELECT * FROM vw_dashboard_produtos_mais_vendidos_24h
@@ -124,9 +131,9 @@ async function obterDashboard(req, res) {
         estoque_total: Number(cards.estoque_total || 0),
         itens_criticos: Number(cards.itens_criticos || 0),
         pedidos_hoje: Number(cards.pedidos_hoje || 0),
-        faturamento_7dias: Number(cards.faturamento_7dias || 0),
-        ticket_medio_7dias: Number(cards.ticket_medio_7dias || 0),
-        pedidos_7dias: Number(cards.pedidos_7dias || 0),
+        pedidos_dia: Number(cards.pedidos_dia || 0),
+        faturamento_dia: Number(cards.faturamento_dia || 0),
+        ticket_medio_dia: Number(cards.ticket_medio_dia || 0),
         ultima_sincronizacao: cards.ultima_sincronizacao || null,
       },
       breakdowns: {
@@ -134,7 +141,7 @@ async function obterDashboard(req, res) {
         estoque_por_produto,
         criticos_por_produto,
         abaixo_min_por_produto,
-        formas_pagamento_7dias,
+        formas_pagamento_dia,
         produtos_mais_vendidos_24h,
       },
     });
