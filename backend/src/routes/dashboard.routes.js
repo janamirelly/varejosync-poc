@@ -9,6 +9,7 @@ const { authorizeRoles } = require("../middlewares/authorize.middleware");
 const {
   obterDashboard,
   obterDashboardPdv,
+  obterFaturamentoAnalitico,
 } = require("../controllers/dashboard.controller");
 
 // GET /dashboard
@@ -27,4 +28,6 @@ router.get(
   audit("DASHBOARD_PDV"),
   obterDashboardPdv,
 );
+
+router.get("/faturamento", obterFaturamentoAnalitico);
 module.exports = router;

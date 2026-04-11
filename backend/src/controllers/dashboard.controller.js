@@ -108,7 +108,7 @@ async function obterDashboard(req, res) {
      SELECT * FROM vw_dashboard_estoque_abaixo_min_por_produto
     `);
 
-   const formas_pagamento_dia = await all(`
+    const formas_pagamento_dia = await all(`
   SELECT
     v.forma_pagamento,
     COUNT(*) AS quantidade,
@@ -363,7 +363,397 @@ async function obterDashboardPdv(req, res) {
   }
 }
 
+async function obterFaturamentoAnalitico(req, res) {
+  try {
+    const periodo = String(req.query.periodo || "mensal").toLowerCase();
+    const referencia = String(req.query.referencia || "").trim();
+
+    const periodosValidos = ["diario", "semanal", "mensal", "anual"];
+    if (!periodosValidos.includes(periodo)) {
+      return res.status(400).json({
+        erro: "periodo inválido. Use: diario, semanal, mensal ou anual.",
+      });
+    }
+
+    let sqlAtual = "";
+    let sqlAnterior = "";
+    let paramsAtual = [];
+    let paramsAnterior = [];
+    let rotuloAtual = "";
+    let rotuloAnterior = "";
+
+    let sqlTopProdutos = "";
+    let sqlTopVariacoes = "";
+    let paramsTopProdutos = [];
+    let paramsTopVariacoes = [];
+
+    if (periodo === "diario") {
+      const ref = referencia || new Date().toISOString().slice(0, 10);
+
+      sqlAtual = `
+        SELECT
+          COUNT(DISTINCT id_venda) AS pedidos,
+          ROUND(COALESCE(SUM(total), 0), 2) AS faturamento,
+          ROUND(
+            COALESCE(SUM(total), 0) / NULLIF(COUNT(DISTINCT id_venda), 0),
+            2
+          ) AS ticket_medio
+        FROM venda
+        WHERE status = 'CONCLUIDA'
+          AND date(datetime(criado_em, 'localtime')) = date(?)
+      `;
+      paramsAtual = [ref];
+
+      sqlAnterior = `
+        SELECT
+          COUNT(DISTINCT id_venda) AS pedidos,
+          ROUND(COALESCE(SUM(total), 0), 2) AS faturamento,
+          ROUND(
+            COALESCE(SUM(total), 0) / NULLIF(COUNT(DISTINCT id_venda), 0),
+            2
+          ) AS ticket_medio
+        FROM venda
+        WHERE status = 'CONCLUIDA'
+          AND date(datetime(criado_em, 'localtime')) = date(?, '-1 day')
+      `;
+      paramsAnterior = [ref];
+
+      sqlTopProdutos = `
+        SELECT
+          p.nome AS produto,
+          SUM(iv.quantidade) AS unidades,
+          ROUND(SUM(iv.subtotal), 2) AS receita
+        FROM item_venda iv
+        JOIN variacao_produto vp ON vp.id_variacao = iv.id_variacao
+        JOIN produto p ON p.id_produto = vp.id_produto
+        JOIN venda v ON v.id_venda = iv.id_venda
+        WHERE v.status = 'CONCLUIDA'
+          AND date(datetime(v.criado_em, 'localtime')) = date(?)
+        GROUP BY p.id_produto, p.nome
+        ORDER BY receita DESC, unidades DESC
+        LIMIT 3
+      `;
+      paramsTopProdutos = [ref];
+
+      sqlTopVariacoes = `
+        SELECT
+          p.nome AS produto,
+          vp.sku,
+          vp.cor,
+          vp.tamanho,
+          SUM(iv.quantidade) AS unidades,
+          ROUND(SUM(iv.subtotal), 2) AS receita
+        FROM item_venda iv
+        JOIN variacao_produto vp ON vp.id_variacao = iv.id_variacao
+        JOIN produto p ON p.id_produto = vp.id_produto
+        JOIN venda v ON v.id_venda = iv.id_venda
+        WHERE v.status = 'CONCLUIDA'
+          AND date(datetime(v.criado_em, 'localtime')) = date(?)
+        GROUP BY vp.id_variacao, p.nome, vp.sku, vp.cor, vp.tamanho
+        ORDER BY receita DESC, unidades DESC
+        LIMIT 3
+      `;
+      paramsTopVariacoes = [ref];
+
+      rotuloAtual = ref;
+      rotuloAnterior = "Dia anterior";
+    }
+
+    if (periodo === "semanal") {
+      const ref = referencia || new Date().toISOString().slice(0, 10);
+
+      sqlAtual = `
+        WITH base AS (
+          SELECT
+            date(?) AS data_ref,
+            date(?, '-' || ((strftime('%w', ?) + 6) % 7) || ' days') AS inicio_periodo,
+            date(?, '-' || ((strftime('%w', ?) + 6) % 7) || ' days', '+6 days') AS fim_periodo
+        )
+        SELECT
+          COUNT(DISTINCT v.id_venda) AS pedidos,
+          ROUND(COALESCE(SUM(v.total), 0), 2) AS faturamento,
+          ROUND(
+            COALESCE(SUM(v.total), 0) / NULLIF(COUNT(DISTINCT v.id_venda), 0),
+            2
+          ) AS ticket_medio
+        FROM venda v
+        JOIN base b ON 1=1
+        WHERE v.status = 'CONCLUIDA'
+          AND date(datetime(v.criado_em, 'localtime')) BETWEEN b.inicio_periodo AND b.fim_periodo
+      `;
+      paramsAtual = [ref, ref, ref, ref, ref];
+
+      sqlAnterior = `
+        WITH base AS (
+          SELECT
+            date(?) AS data_ref,
+            date(?, '-' || ((strftime('%w', ?) + 6) % 7) || ' days', '-7 days') AS inicio_periodo,
+            date(?, '-' || ((strftime('%w', ?) + 6) % 7) || ' days', '-1 day') AS fim_periodo
+        )
+        SELECT
+          COUNT(DISTINCT v.id_venda) AS pedidos,
+          ROUND(COALESCE(SUM(v.total), 0), 2) AS faturamento,
+          ROUND(
+            COALESCE(SUM(v.total), 0) / NULLIF(COUNT(DISTINCT v.id_venda), 0),
+            2
+          ) AS ticket_medio
+        FROM venda v
+        JOIN base b ON 1=1
+        WHERE v.status = 'CONCLUIDA'
+          AND date(datetime(v.criado_em, 'localtime')) BETWEEN b.inicio_periodo AND b.fim_periodo
+      `;
+      paramsAnterior = [ref, ref, ref, ref, ref];
+
+      sqlTopProdutos = `
+        WITH base AS (
+          SELECT
+            date(?) AS data_ref,
+            date(?, '-' || ((strftime('%w', ?) + 6) % 7) || ' days') AS inicio_periodo,
+            date(?, '-' || ((strftime('%w', ?) + 6) % 7) || ' days', '+6 days') AS fim_periodo
+        )
+        SELECT
+          p.nome AS produto,
+          SUM(iv.quantidade) AS unidades,
+          ROUND(SUM(iv.subtotal), 2) AS receita
+        FROM item_venda iv
+        JOIN variacao_produto vp ON vp.id_variacao = iv.id_variacao
+        JOIN produto p ON p.id_produto = vp.id_produto
+        JOIN venda v ON v.id_venda = iv.id_venda
+        JOIN base b ON 1=1
+        WHERE v.status = 'CONCLUIDA'
+          AND date(datetime(v.criado_em, 'localtime')) BETWEEN b.inicio_periodo AND b.fim_periodo
+        GROUP BY p.id_produto, p.nome
+        ORDER BY receita DESC, unidades DESC
+        LIMIT 3
+      `;
+      paramsTopProdutos = [ref, ref, ref, ref, ref];
+
+      sqlTopVariacoes = `
+        WITH base AS (
+          SELECT
+            date(?) AS data_ref,
+            date(?, '-' || ((strftime('%w', ?) + 6) % 7) || ' days') AS inicio_periodo,
+            date(?, '-' || ((strftime('%w', ?) + 6) % 7) || ' days', '+6 days') AS fim_periodo
+        )
+        SELECT
+          p.nome AS produto,
+          vp.sku,
+          vp.cor,
+          vp.tamanho,
+          SUM(iv.quantidade) AS unidades,
+          ROUND(SUM(iv.subtotal), 2) AS receita
+        FROM item_venda iv
+        JOIN variacao_produto vp ON vp.id_variacao = iv.id_variacao
+        JOIN produto p ON p.id_produto = vp.id_produto
+        JOIN venda v ON v.id_venda = iv.id_venda
+        JOIN base b ON 1=1
+        WHERE v.status = 'CONCLUIDA'
+          AND date(datetime(v.criado_em, 'localtime')) BETWEEN b.inicio_periodo AND b.fim_periodo
+        GROUP BY vp.id_variacao, p.nome, vp.sku, vp.cor, vp.tamanho
+        ORDER BY receita DESC, unidades DESC
+        LIMIT 3
+      `;
+      paramsTopVariacoes = [ref, ref, ref, ref, ref];
+
+      rotuloAtual = "Semana selecionada";
+      rotuloAnterior = "Semana anterior";
+    }
+
+    if (periodo === "mensal") {
+      const ref = referencia || new Date().toISOString().slice(0, 7);
+
+      sqlAtual = `
+        SELECT
+          COUNT(DISTINCT id_venda) AS pedidos,
+          ROUND(COALESCE(SUM(total), 0), 2) AS faturamento,
+          ROUND(
+            COALESCE(SUM(total), 0) / NULLIF(COUNT(DISTINCT id_venda), 0),
+            2
+          ) AS ticket_medio
+        FROM venda
+        WHERE status = 'CONCLUIDA'
+          AND strftime('%Y-%m', datetime(criado_em, 'localtime')) = ?
+      `;
+      paramsAtual = [ref];
+
+      sqlAnterior = `
+        SELECT
+          COUNT(DISTINCT id_venda) AS pedidos,
+          ROUND(COALESCE(SUM(total), 0), 2) AS faturamento,
+          ROUND(
+            COALESCE(SUM(total), 0) / NULLIF(COUNT(DISTINCT id_venda), 0),
+            2
+          ) AS ticket_medio
+        FROM venda
+        WHERE status = 'CONCLUIDA'
+          AND strftime('%Y-%m', datetime(criado_em, 'localtime')) =
+              strftime('%Y-%m', date(? || '-01', '-1 month'))
+      `;
+      paramsAnterior = [ref];
+
+      sqlTopProdutos = `
+        SELECT
+          p.nome AS produto,
+          SUM(iv.quantidade) AS unidades,
+          ROUND(SUM(iv.subtotal), 2) AS receita
+        FROM item_venda iv
+        JOIN variacao_produto vp ON vp.id_variacao = iv.id_variacao
+        JOIN produto p ON p.id_produto = vp.id_produto
+        JOIN venda v ON v.id_venda = iv.id_venda
+        WHERE v.status = 'CONCLUIDA'
+          AND strftime('%Y-%m', datetime(v.criado_em, 'localtime')) = ?
+        GROUP BY p.id_produto, p.nome
+        ORDER BY receita DESC, unidades DESC
+        LIMIT 3
+      `;
+      paramsTopProdutos = [ref];
+
+      sqlTopVariacoes = `
+        SELECT
+          p.nome AS produto,
+          vp.sku,
+          vp.cor,
+          vp.tamanho,
+          SUM(iv.quantidade) AS unidades,
+          ROUND(SUM(iv.subtotal), 2) AS receita
+        FROM item_venda iv
+        JOIN variacao_produto vp ON vp.id_variacao = iv.id_variacao
+        JOIN produto p ON p.id_produto = vp.id_produto
+        JOIN venda v ON v.id_venda = iv.id_venda
+        WHERE v.status = 'CONCLUIDA'
+          AND strftime('%Y-%m', datetime(v.criado_em, 'localtime')) = ?
+        GROUP BY vp.id_variacao, p.nome, vp.sku, vp.cor, vp.tamanho
+        ORDER BY receita DESC, unidades DESC
+        LIMIT 3
+      `;
+      paramsTopVariacoes = [ref];
+
+      rotuloAtual = ref;
+      rotuloAnterior = "Mês anterior";
+    }
+
+    if (periodo === "anual") {
+      const ref = referencia || String(new Date().getFullYear());
+
+      sqlAtual = `
+        SELECT
+          COUNT(DISTINCT id_venda) AS pedidos,
+          ROUND(COALESCE(SUM(total), 0), 2) AS faturamento,
+          ROUND(
+            COALESCE(SUM(total), 0) / NULLIF(COUNT(DISTINCT id_venda), 0),
+            2
+          ) AS ticket_medio
+        FROM venda
+        WHERE status = 'CONCLUIDA'
+          AND strftime('%Y', datetime(criado_em, 'localtime')) = ?
+      `;
+      paramsAtual = [ref];
+
+      sqlAnterior = `
+        SELECT
+          COUNT(DISTINCT id_venda) AS pedidos,
+          ROUND(COALESCE(SUM(total), 0), 2) AS faturamento,
+          ROUND(
+            COALESCE(SUM(total), 0) / NULLIF(COUNT(DISTINCT id_venda), 0),
+            2
+          ) AS ticket_medio
+        FROM venda
+        WHERE status = 'CONCLUIDA'
+          AND strftime('%Y', datetime(criado_em, 'localtime')) = CAST(? AS INTEGER) - 1
+      `;
+      paramsAnterior = [ref];
+
+      sqlTopProdutos = `
+        SELECT
+          p.nome AS produto,
+          SUM(iv.quantidade) AS unidades,
+          ROUND(SUM(iv.subtotal), 2) AS receita
+        FROM item_venda iv
+        JOIN variacao_produto vp ON vp.id_variacao = iv.id_variacao
+        JOIN produto p ON p.id_produto = vp.id_produto
+        JOIN venda v ON v.id_venda = iv.id_venda
+        WHERE v.status = 'CONCLUIDA'
+          AND strftime('%Y', datetime(v.criado_em, 'localtime')) = ?
+        GROUP BY p.id_produto, p.nome
+        ORDER BY receita DESC, unidades DESC
+        LIMIT 3
+      `;
+      paramsTopProdutos = [ref];
+
+      sqlTopVariacoes = `
+        SELECT
+          p.nome AS produto,
+          vp.sku,
+          vp.cor,
+          vp.tamanho,
+          SUM(iv.quantidade) AS unidades,
+          ROUND(SUM(iv.subtotal), 2) AS receita
+        FROM item_venda iv
+        JOIN variacao_produto vp ON vp.id_variacao = iv.id_variacao
+        JOIN produto p ON p.id_produto = vp.id_produto
+        JOIN venda v ON v.id_venda = iv.id_venda
+        WHERE v.status = 'CONCLUIDA'
+          AND strftime('%Y', datetime(v.criado_em, 'localtime')) = ?
+        GROUP BY vp.id_variacao, p.nome, vp.sku, vp.cor, vp.tamanho
+        ORDER BY receita DESC, unidades DESC
+        LIMIT 3
+      `;
+      paramsTopVariacoes = [ref];
+
+      rotuloAtual = ref;
+      rotuloAnterior = "Ano anterior";
+    }
+
+    const atual = (await get(sqlAtual, paramsAtual)) || {};
+    const anterior = (await get(sqlAnterior, paramsAnterior)) || {};
+    const top_produtos = (await all(sqlTopProdutos, paramsTopProdutos)) || [];
+    const top_variacoes =
+      (await all(sqlTopVariacoes, paramsTopVariacoes)) || [];
+
+    const faturamentoAtual = Number(atual.faturamento || 0);
+    const faturamentoAnterior = Number(anterior.faturamento || 0);
+
+    let variacaoPercentual = 0;
+    if (faturamentoAnterior > 0) {
+      variacaoPercentual = Number(
+        (
+          ((faturamentoAtual - faturamentoAnterior) * 100) /
+          faturamentoAnterior
+        ).toFixed(2),
+      );
+    } else if (faturamentoAtual > 0) {
+      variacaoPercentual = 100;
+    }
+
+    return res.json({
+      periodo,
+      referencia,
+      atual: {
+        rotulo: rotuloAtual,
+        faturamento: faturamentoAtual,
+        pedidos: Number(atual.pedidos || 0),
+        ticket_medio: Number(atual.ticket_medio || 0),
+      },
+      anterior: {
+        rotulo: rotuloAnterior,
+        faturamento: faturamentoAnterior,
+        pedidos: Number(anterior.pedidos || 0),
+        ticket_medio: Number(anterior.ticket_medio || 0),
+      },
+      variacao_percentual: variacaoPercentual,
+      top_produtos,
+      top_variacoes,
+    });
+  } catch (err) {
+    console.error("[DASHBOARD FATURAMENTO] erro:", err);
+    return res.status(500).json({
+      erro: "Erro ao montar faturamento analítico.",
+    });
+  }
+}
+
 module.exports = {
   obterDashboard,
   obterDashboardPdv,
+  obterFaturamentoAnalitico,
 };
