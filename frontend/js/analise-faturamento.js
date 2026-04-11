@@ -14,7 +14,28 @@
     const el = document.getElementById(id);
     if (!el) return;
     el.textContent = valor;
-  }
+    }
+    
+    function aplicarClasseVariacao(percentual) {
+      const card = document.getElementById("cardAnaliseVariacao");
+      if (!card) return;
+
+      card.classList.remove(
+        "kpi-variacao-positiva",
+        "kpi-variacao-negativa",
+        "kpi-variacao-neutra",
+      );
+
+      const valor = Number(percentual || 0);
+
+      if (valor > 0) {
+        card.classList.add("kpi-variacao-positiva");
+      } else if (valor < 0) {
+        card.classList.add("kpi-variacao-negativa");
+      } else {
+        card.classList.add("kpi-variacao-neutra");
+      }
+    }
 
   function renderizarLista(id, itens, renderItem, emptyText) {
     const el = document.getElementById(id);
@@ -88,7 +109,8 @@
     setText(
       "kpiAnaliseVariacao",
       `${Number(data?.variacao_percentual || 0).toLocaleString("pt-BR")}%`,
-    );
+      );
+      aplicarClasseVariacao(data?.variacao_percentual || 0);
     setText("kpiAnaliseRotuloAtual", data?.atual?.rotulo || "Período atual");
     setText(
       "kpiAnaliseRotuloAnterior",

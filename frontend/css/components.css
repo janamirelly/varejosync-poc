@@ -2888,3 +2888,110 @@
     grid-template-columns: 1fr;
   }
 }
+
+/* gerente -analise-faturamento*/
+
+.analise-filtros-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr auto;
+  gap: 16px;
+  align-items: end;
+}
+
+.analise-filtros-actions {
+  display: flex;
+  align-items: end;
+}
+
+.analise-filtros-actions .btn-primary {
+  height: 48px;
+  padding: 0 20px;
+  white-space: nowrap;
+}
+
+.analise-card .kpi-label,
+.kpi-card .kpi-label {
+  font-size: 0.95rem;
+  color: var(--color-text-soft);
+}
+
+.analise-card .kpi-value,
+.kpi-card .kpi-value {
+  font-size: clamp(2rem, 3vw, 2.5rem);
+  line-height: 1.1;
+  font-weight: 700;
+  color: var(--color-primary-dark);
+  letter-spacing: -0.02em;
+  word-break: break-word;
+}
+
+.analise-card {
+  min-width: 0;
+}
+
+.analise-card .kpi-value {
+  overflow-wrap: anywhere;
+}
+
+.analise-card .kpi-value,
+.card-dashboard-gerente small {
+  font-variant-numeric: tabular-nums;
+}
+.analise-card .kpi-hint,
+.kpi-card .kpi-hint {
+  margin-top: 10px;
+  font-size: 0.95rem;
+  color: var(--color-text-soft);
+}
+
+.kpi-variacao-positiva .kpi-value {
+  color: var(--color-success);
+}
+
+.kpi-variacao-negativa .kpi-value {
+  color: var(--color-danger);
+}
+
+.kpi-variacao-neutra .kpi-value {
+  color: var(--color-neutral);
+}
+
+.card-dashboard-gerente .list-row {
+  padding: 16px 0;
+  border-bottom: 1px solid var(--color-border-soft);
+}
+
+.card-dashboard-gerente .list-row:last-child {
+  border-bottom: 0;
+}
+
+.card-dashboard-gerente .list-main strong {
+  display: block;
+  margin-bottom: 4px;
+  color: var(--color-text);
+  font-weight: 700;
+}
+
+.card-dashboard-gerente .list-main span {
+  color: var(--color-text-soft);
+}
+
+.card-dashboard-gerente small {
+  color: var(--color-primary-dark);
+  font-weight: 600;
+}
+
+@media (max-width: 980px) {
+  .analise-filtros-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .analise-filtros-actions .btn-primary {
+    width: 100%;
+  }
+
+  .analise-card .kpi-value,
+  .kpi-card .kpi-value {
+    font-size: 2.4rem;
+  }
+}
