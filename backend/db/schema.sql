@@ -35,6 +35,8 @@ CREATE TABLE IF NOT EXISTS variacao_produto (
   id_produto  INTEGER NOT NULL,
   cor         TEXT NOT NULL,
   tamanho     TEXT NOT NULL,
+  cor_normalizada TEXT,
+  tamanho_normalizado TEXT,
   sku         TEXT NOT NULL UNIQUE,
   preco       REAL NOT NULL DEFAULT 0 CHECK (preco >= 0),
   ativo       INTEGER NOT NULL DEFAULT 1 CHECK (ativo IN (0,1)),
@@ -42,6 +44,8 @@ CREATE TABLE IF NOT EXISTS variacao_produto (
   FOREIGN KEY (id_produto) REFERENCES produto(id_produto)
 );
 
+-- CREATE UNIQUE INDEX IF NOT EXISTS ux_variacao_produto_combinacao
+-- ON variacao_produto (id_produto, cor_normalizada, tamanho_normalizado);
 -- =========================================================
 -- 3) ESTOQUE / MOVIMENTAÇÃO
 -- =========================================================

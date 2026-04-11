@@ -491,7 +491,14 @@ UPDATE venda
 SET desconto_total = 0
 WHERE desconto_total IS NULL;
 
---ALTER TABLE venda ADD COLUMN juros_percentual REAL NOT NULL DEFAULT 0;
---ALTER TABLE venda ADD COLUMN valor_juros REAL NOT NULL DEFAULT 0;
+-- ALTER TABLE variacao_produto ADD COLUMN cor_normalizada TEXT;
+-- ALTER TABLE variacao_produto ADD COLUMN tamanho_normalizado TEXT;
 
---ALTER TABLE venda ADD COLUMN cancelado_em TEXT;
+UPDATE variacao_produto
+SET cor_normalizada = UPPER(TRIM(cor)),
+    tamanho_normalizado = UPPER(TRIM(tamanho))
+WHERE cor_normalizada IS NULL
+   OR tamanho_normalizado IS NULL;
+
+CREATE UNIQUE INDEX IF NOT EXISTS ux_variacao_produto_combinacao
+ON variacao_produto (id_produto, cor_normalizada, tamanho_normalizado);

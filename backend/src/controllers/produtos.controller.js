@@ -1,5 +1,19 @@
 const { db } = require("../db/database");
 
+function normalizarTexto(valor) {
+  return String(valor || "")
+    .trim()
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .replace(/\s+/g, " ")
+    .toUpperCase();
+}
+
+// Mantive caso você vá usar depois no gerador de SKU
+function normalizarSkuParte(valor) {
+  return normalizarTexto(valor).replace(/\s+/g, "-");
+}
+
 // GET /produtos
 function listarProdutos(req, res) {
   const sql = `
@@ -19,7 +33,7 @@ function listarProdutos(req, res) {
       return res.status(500).json({ erro: "Erro ao buscar produtos" });
     }
 
-    res.json(rows);
+    return res.json(rows);
   });
 }
 
@@ -99,12 +113,17 @@ function criarProduto(req, res) {
         let falhou = false;
 
         listaVariacoes.forEach((variacao) => {
+          if (falhou) return;
+
           const cor =
             typeof variacao.cor === "string" ? variacao.cor.trim() : "";
           const tamanho =
             typeof variacao.tamanho === "string" ? variacao.tamanho.trim() : "";
           const sku =
             typeof variacao.sku === "string" ? variacao.sku.trim() : "";
+
+          const corNormalizada = normalizarTexto(cor);
+          const tamanhoNormalizado = normalizarTexto(tamanho);
 
           if (!cor || !tamanho || !sku) {
             falhou = true;
@@ -114,95 +133,144 @@ function criarProduto(req, res) {
             });
           }
 
-          db.run(
+          db.get(
             `
-            INSERT INTO variacao_produto
-              (id_produto, cor, tamanho, sku, preco)
-            VALUES (?, ?, ?, ?, ?)
+            SELECT id_variacao, sku
+            FROM variacao_produto
+            WHERE id_produto = ?
+              AND cor_normalizada = ?
+              AND tamanho_normalizado = ?
+            LIMIT 1
             `,
-            [idProduto, cor, tamanho, sku, precoBase],
-            (errVar) => {
+            [idProduto, corNormalizada, tamanhoNormalizado],
+            (errDup, existente) => {
               if (falhou) return;
 
-              if (errVar) {
+              if (errDup) {
                 falhou = true;
-                console.error(errVar);
+                console.error(errDup);
                 db.run("ROLLBACK");
-
-                if (String(errVar.message || "").includes("UNIQUE")) {
-                  return res.status(400).json({
-                    erro: `SKU já cadastrado: ${sku}`,
-                  });
-                }
-
                 return res.status(500).json({
-                  erro: "Erro ao cadastrar variações do produto",
+                  erro: "Erro ao validar duplicidade da variação.",
                 });
               }
 
-              restante -= 1;
+              if (existente) {
+                falhou = true;
+                db.run("ROLLBACK");
+                return res.status(400).json({
+                  erro: `A variação ${cor}/${tamanho} já existe para este produto.`,
+                  sku_existente: existente.sku,
+                });
+              }
 
-              if (restante === 0 && !falhou) {
-                db.all(
-                  `
-                  SELECT
-                    id_variacao,
+              db.run(
+                `
+                INSERT INTO variacao_produto
+                  (
                     id_produto,
                     cor,
                     tamanho,
+                    cor_normalizada,
+                    tamanho_normalizado,
                     sku,
-                    preco,
-                    ativo,
-                    criado_em
-                  FROM variacao_produto
-                  WHERE id_produto = ?
-                  ORDER BY id_variacao
-                  `,
-                  [idProduto],
-                  (err3, variacoesCriadas) => {
-                    if (err3) {
-                      console.error(err3);
-                      db.run("ROLLBACK");
-                      return res.status(500).json({
-                        erro: "Produto cadastrado, mas falhou ao buscar variações",
+                    preco
+                  )
+                VALUES (?, ?, ?, ?, ?, ?, ?)
+                `,
+                [
+                  idProduto,
+                  cor,
+                  tamanho,
+                  corNormalizada,
+                  tamanhoNormalizado,
+                  sku,
+                  precoBase,
+                ],
+                (errVar) => {
+                  if (falhou) return;
+
+                  if (errVar) {
+                    falhou = true;
+                    console.error(errVar);
+                    db.run("ROLLBACK");
+
+                    if (String(errVar.message || "").includes("UNIQUE")) {
+                      return res.status(400).json({
+                        erro: `SKU já cadastrado: ${sku}`,
                       });
                     }
 
-                    db.get(
+                    return res.status(500).json({
+                      erro: "Erro ao cadastrar variações do produto",
+                    });
+                  }
+
+                  restante -= 1;
+
+                  if (restante === 0 && !falhou) {
+                    db.all(
                       `
-                      SELECT id_produto, nome, descricao, ativo, criado_em
-                      FROM produto
+                      SELECT
+                        id_variacao,
+                        id_produto,
+                        cor,
+                        tamanho,
+                        sku,
+                        preco,
+                        ativo,
+                        criado_em
+                      FROM variacao_produto
                       WHERE id_produto = ?
+                      ORDER BY id_variacao
                       `,
                       [idProduto],
-                      (err4, produtoCriado) => {
-                        if (err4) {
-                          console.error(err4);
+                      (err3, variacoesCriadas) => {
+                        if (err3) {
+                          console.error(err3);
                           db.run("ROLLBACK");
                           return res.status(500).json({
-                            erro: "Produto cadastrado, mas falhou ao buscar retorno",
+                            erro: "Produto cadastrado, mas falhou ao buscar variações",
                           });
                         }
 
-                        db.run("COMMIT", (commitErr) => {
-                          if (commitErr) {
-                            console.error(commitErr);
-                            db.run("ROLLBACK");
-                            return res.status(500).json({
-                              erro: "Produto cadastrado, mas falhou ao finalizar transação",
-                            });
-                          }
+                        db.get(
+                          `
+                          SELECT id_produto, nome, descricao, ativo, criado_em
+                          FROM produto
+                          WHERE id_produto = ?
+                          `,
+                          [idProduto],
+                          (err4, produtoCriado) => {
+                            if (err4) {
+                              console.error(err4);
+                              db.run("ROLLBACK");
+                              return res.status(500).json({
+                                erro: "Produto cadastrado, mas falhou ao buscar retorno",
+                              });
+                            }
 
-                          return res.status(201).json({
-                            ...produtoCriado,
-                            variacoes: variacoesCriadas,
-                          });
-                        });
+                            db.run("COMMIT", (commitErr) => {
+                              if (commitErr) {
+                                console.error(commitErr);
+                                db.run("ROLLBACK");
+                                return res.status(500).json({
+                                  erro: "Produto cadastrado, mas falhou ao finalizar transação",
+                                });
+                              }
+
+                              return res.status(201).json({
+                                ...produtoCriado,
+                                variacoes: variacoesCriadas,
+                              });
+                            });
+                          },
+                        );
                       },
                     );
-                  },
-                );
-              }
+                  }
+                },
+              );
             },
           );
         });
@@ -292,7 +360,7 @@ function listarProdutosPDV(req, res) {
         .json({ erro: "Erro ao buscar produtos para o PDV" });
     }
 
-    res.json(rows);
+    return res.json(rows);
   });
 }
 
