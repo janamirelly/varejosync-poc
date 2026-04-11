@@ -81,6 +81,35 @@ function calcularStatusPromocao(dataInicio, dataFim) {
   return "ENCERRADA";
 }
 
+function statusDinamicoSql(alias = "pr") {
+  return `
+    CASE
+      WHEN ${alias}.status = 'CANCELADA' THEN 'CANCELADA'
+      WHEN datetime('now','localtime') < datetime(${alias}.data_inicio) THEN 'AGENDADA'
+      WHEN datetime('now','localtime') BETWEEN datetime(${alias}.data_inicio) AND datetime(${alias}.data_fim) THEN 'ATIVA'
+      ELSE 'ENCERRADA'
+    END
+  `;
+}
+
+function calcularStatusPromocaoDinamico(statusAtual, dataInicio, dataFim) {
+  if (String(statusAtual || "").toUpperCase() === "CANCELADA") {
+    return "CANCELADA";
+  }
+
+  const agora = new Date();
+  const inicio = new Date(String(dataInicio).replace(" ", "T"));
+  const fim = new Date(String(dataFim).replace(" ", "T"));
+
+  if (Number.isNaN(inicio.getTime()) || Number.isNaN(fim.getTime())) {
+    return String(statusAtual || "AGENDADA").toUpperCase();
+  }
+
+  if (agora < inicio) return "AGENDADA";
+  if (agora >= inicio && agora <= fim) return "ATIVA";
+  return "ENCERRADA";
+}
+
 async function buscarVariacao(idVariacao) {
   const sql = `
     SELECT
@@ -115,7 +144,7 @@ async function buscarPromocaoPorId(idPromocao) {
       pr.data_fim,
       pr.parcelas_sem_juros,
       pr.valor_minimo_parcelamento,
-      pr.status,
+      ${statusDinamicoSql("pr")} AS status,
       pr.criado_por,
       pr.criado_em,
       pr.atualizado_em,
@@ -147,7 +176,8 @@ async function existeSobreposicaoPromocao(
     SELECT id_promocao
     FROM promocao
     WHERE id_variacao = ?
-      AND status IN ('AGENDADA', 'ATIVA')
+      AND status <> 'CANCELADA'
+      AND datetime(data_fim) >= datetime('now','localtime')
       AND (
         datetime(?) <= datetime(data_fim)
         AND datetime(?) >= datetime(data_inicio)
@@ -323,7 +353,7 @@ exports.listarPromocoes = async (req, res) => {
         pr.data_fim,
         pr.parcelas_sem_juros,
         pr.valor_minimo_parcelamento,
-        pr.status,
+        ${statusDinamicoSql("pr")} AS status,
         pr.criado_em,
         vp.sku,
         vp.cor,
@@ -339,14 +369,14 @@ exports.listarPromocoes = async (req, res) => {
 
     const params = [];
 
-    if (status) {
-      sql += ` AND pr.status = ?`;
-      params.push(normalizarTexto(status));
-    }
-
     if (id_variacao) {
       sql += ` AND pr.id_variacao = ?`;
       params.push(Number(id_variacao));
+    }
+
+    if (status) {
+      sql += ` AND ${statusDinamicoSql("pr")} = ?`;
+      params.push(normalizarTexto(status));
     }
 
     sql += ` ORDER BY datetime(pr.data_inicio) DESC, pr.id_promocao DESC`;
@@ -424,13 +454,19 @@ exports.cancelarPromocao = async (req, res) => {
       });
     }
 
-    if (promocao.status === "CANCELADA") {
+    const statusAtual = calcularStatusPromocaoDinamico(
+      promocao.status,
+      promocao.data_inicio,
+      promocao.data_fim,
+    );
+
+    if (statusAtual === "CANCELADA") {
       return res.status(409).json({
         erro: "A promoção já está cancelada.",
       });
     }
 
-    if (promocao.status === "ENCERRADA") {
+    if (statusAtual === "ENCERRADA") {
       return res.status(409).json({
         erro: "Não é possível cancelar uma promoção já encerrada.",
       });
