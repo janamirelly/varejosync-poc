@@ -1,0 +1,97 @@
+<section class="page-section">
+  <div class="page-header">
+    <div>
+      <h2>Análise de Faturamento</h2>
+      <p>Visão analítica por período com comparativos e ranking de vendas.</p>
+    </div>
+  </div>
+
+  <section class="card">
+    <div class="table-header">
+      <h3>Filtros da análise</h3>
+    </div>
+
+    <div class="analise-filtros-grid">
+      <div class="field">
+        <label for="filtroPeriodo"><strong>Período</strong></label>
+        <select id="filtroPeriodo" class="pdv-select">
+          <option value="diario">Diário</option>
+          <option value="semanal">Semanal</option>
+          <option value="mensal" selected>Mensal</option>
+          <option value="anual">Anual</option>
+        </select>
+      </div>
+
+      <div class="field" id="wrapReferenciaData">
+        <label for="filtroReferenciaData"><strong>Referência</strong></label>
+        <input type="date" id="filtroReferenciaData" class="pdv-search-input" />
+      </div>
+
+      <div class="field hidden" id="wrapReferenciaMes">
+        <label for="filtroReferenciaMes"><strong>Mês/Ano</strong></label>
+        <input type="month" id="filtroReferenciaMes" class="pdv-search-input" />
+      </div>
+
+      <div class="field hidden" id="wrapReferenciaAno">
+        <label for="filtroReferenciaAno"><strong>Ano</strong></label>
+        <input type="number" id="filtroReferenciaAno" class="pdv-search-input" min="2020" max="2100" />
+      </div>
+
+      <div class="analise-filtros-actions">
+        <button type="button" class="btn-primary" id="btnAtualizarAnalise">
+          Atualizar análise
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <div class="grid-kpis" style="margin-top: 24px;">
+    <article class="card kpi-card">
+      <div class="kpi-label">Faturamento</div>
+      <div class="kpi-value" id="kpiAnaliseFaturamento">R$ 0,00</div>
+      <div class="kpi-hint" id="kpiAnaliseRotuloAtual">Período atual</div>
+    </article>
+
+    <article class="card kpi-card">
+      <div class="kpi-label">Pedidos</div>
+      <div class="kpi-value" id="kpiAnalisePedidos">0</div>
+      <div class="kpi-hint">Pedidos concluídos no período</div>
+    </article>
+
+    <article class="card kpi-card">
+      <div class="kpi-label">Ticket médio</div>
+      <div class="kpi-value" id="kpiAnaliseTicket">R$ 0,00</div>
+      <div class="kpi-hint">Média por pedido</div>
+    </article>
+
+    <article class="card kpi-card">
+      <div class="kpi-label">Variação %</div>
+      <div class="kpi-value" id="kpiAnaliseVariacao">0%</div>
+      <div class="kpi-hint" id="kpiAnaliseRotuloAnterior">Comparação com período anterior</div>
+    </article>
+  </div>
+
+  <div class="grid-dashboard-gerente" style="margin-top: 24px;">
+    <article class="card card-dashboard-gerente">
+      <div class="card-header-gerente">
+        <h2>Top 3 produtos</h2>
+      </div>
+      <div class="card-body-gerente">
+        <ul class="list-clean" id="listaTopProdutosAnalise">
+          <li class="empty-state">Nenhum dado encontrado.</li>
+        </ul>
+      </div>
+    </article>
+
+    <article class="card card-dashboard-gerente">
+      <div class="card-header-gerente">
+        <h2>Top 3 variações</h2>
+      </div>
+      <div class="card-body-gerente">
+        <ul class="list-clean" id="listaTopVariacoesAnalise">
+          <li class="empty-state">Nenhum dado encontrado.</li>
+        </ul>
+      </div>
+    </article>
+  </div>
+</section>

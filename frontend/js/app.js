@@ -61,6 +61,7 @@ function obterMenuPorPerfil(perfil) {
       { label: "Consultar Estoque", page: "estoque" },
       { label: "Vendas", page: "pdv/vendas" },
       { label: "Promoções", page: "gerente/promocoes" },
+      { label: "Análise de Faturamento", page: "gerente/analise-faturamento" },
       { label: "Sair", page: "login" },
     ],
   };
@@ -157,6 +158,7 @@ async function loadPage(page) {
       "dashboard-pdv": window.inicializarTelaDashboardPdv,
       "dashboard-gerente": window.inicializarTelaDashboardGerente,
       "gerente/promocoes": window.inicializarTelaPromocoesGerente,
+      "gerente/analise-faturamento": window.inicializarTelaAnaliseFaturamento,
       estoque: window.inicializarTelaEstoque,
       produtos: window.inicializarTelaProdutos,
       movimentacoes: window.inicializarTelaMovimentacoes,
