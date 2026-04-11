@@ -46,9 +46,9 @@
   function renderizarKpis(cards) {
     setText("kpiEstoqueTotal", formatarNumero(cards.estoque_total));
     setText("kpiItensCriticos", formatarNumero(cards.itens_criticos));
-    setText("kpiPedidos7Dias", formatarNumero(cards.pedidos_7dias));
-    setText("kpiFaturamento7Dias", formatarMoeda(cards.faturamento_7dias));
-    setText("ticketMedioGerente", formatarMoeda(cards.ticket_medio_7dias));
+    setText("kpiPedidos7Dias", formatarNumero(cards.pedidos_dia));
+    setText("kpiFaturamento7Dias", formatarMoeda(cards.faturamento_dia));
+    setText("ticketMedioGerente", formatarMoeda(cards.ticket_medio_dia));
     setText(
       "gerenteAtualizacao",
       `Última sincronização: ${formatarDataHora(cards.ultima_sincronizacao)}`,
@@ -128,7 +128,7 @@
 
       renderizarKpis(cards);
       renderizarMaisVendidos24h(breakdowns.produtos_mais_vendidos_24h || []);
-      renderizarFormasPagamento(breakdowns.formas_pagamento_7dias || []);
+      renderizarFormasPagamento(breakdowns.formas_pagamento_dia || []);
       renderizarCriticos(breakdowns.criticos_por_produto || []);
     } catch (error) {
       console.error("[DASHBOARD GERENTE] erro:", error);
