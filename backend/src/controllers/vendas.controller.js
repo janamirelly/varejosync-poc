@@ -167,36 +167,36 @@ function registrarVenda(req, res) {
       });
     };
 
-    const sqlVariacoes = `
-      SELECT
-        v.id_variacao,
-        v.preco AS preco_original,
-        v.ativo,
-        COALESCE(e.quantidade, 0) AS estoque_atual,
+   const sqlVariacoes = `
+  SELECT
+    v.id_variacao,
+    v.preco AS preco_original,
+    v.ativo,
+    COALESCE(e.quantidade, 0) AS estoque_atual,
 
-        pr.id_promocao,
-        pr.nome_campanha,
-        pr.percentual_desconto,
-        pr.preco_promocional,
-        pr.parcelas_sem_juros,
-        pr.valor_minimo_parcelamento,
+    pr.id_promocao,
+    pr.nome_campanha,
+    pr.percentual_desconto,
+    pr.preco_promocional,
+    pr.parcelas_sem_juros,
+    pr.valor_minimo_parcelamento,
 
-        CASE
-          WHEN pr.id_promocao IS NOT NULL
-            AND pr.status = 'ATIVA'
-            AND datetime('now','localtime') BETWEEN datetime(pr.data_inicio) AND datetime(pr.data_fim)
-          THEN 1
-          ELSE 0
-        END AS em_promocao
-      FROM variacao_produto v
-      LEFT JOIN estoque e
-        ON e.id_variacao = v.id_variacao
-      LEFT JOIN promocao pr
-        ON pr.id_variacao = v.id_variacao
-       AND pr.status = 'ATIVA'
-       AND datetime('now','localtime') BETWEEN datetime(pr.data_inicio) AND datetime(pr.data_fim)
-      WHERE v.id_variacao IN (${placeholders})
-    `;
+    CASE
+      WHEN pr.id_promocao IS NOT NULL
+        AND pr.status <> 'CANCELADA'
+        AND datetime('now','localtime') BETWEEN datetime(pr.data_inicio) AND datetime(pr.data_fim)
+      THEN 1
+      ELSE 0
+    END AS em_promocao
+  FROM variacao_produto v
+  LEFT JOIN estoque e
+    ON e.id_variacao = v.id_variacao
+  LEFT JOIN promocao pr
+    ON pr.id_variacao = v.id_variacao
+   AND pr.status <> 'CANCELADA'
+   AND datetime('now','localtime') BETWEEN datetime(pr.data_inicio) AND datetime(pr.data_fim)
+  WHERE v.id_variacao IN (${placeholders})
+`;
 
     const buscarVariacoes = () => {
       db.all(sqlVariacoes, ids, (err, rows) => {
