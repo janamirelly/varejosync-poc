@@ -61,21 +61,12 @@
 
   function gerarSkuBaseAutomatico() {
     const skuDigitado = getValor("produtoSkuBase");
+    if (!skuDigitado) return "";
 
-    if (skuDigitado) {
-      const baseNormalizada = slugSku(skuDigitado);
+    const baseNormalizada = slugSku(skuDigitado);
 
-      // Mantém só a base principal antes dos sufixos de cor/tamanho
-      // Ex.: CAM-BRANCO-M -> CAM
-      return baseNormalizada.split("-")[0];
-    }
-
-    const nome = getValor("produtoNome");
-    if (!nome) return "";
-
-    // Se não digitou SKU, usa a primeira palavra do nome como base
-    // Ex.: Camiseta Básica -> CAMISETA
-    return slugSku(nome).split("-")[0];
+    // Se o usuário colar algo como CAM-BRANCO-M, mantém só a base CAM
+    return baseNormalizada.split("-")[0];
   }
 
   function renderizarPreviewImagem() {
@@ -236,7 +227,7 @@
       return {
         ok: false,
         mensagem:
-          "Preencha nome, SKU base, categoria, preço de venda e estoque inicial.",
+          "Preencha nome, SKU base oficial, categoria, preço de venda e estoque inicial.",
       };
     }
 
