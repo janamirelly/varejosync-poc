@@ -2850,42 +2850,194 @@
 }
 
 /* DASHBOARD  gerente promoções*/
+/* =========================
+   PROMOÇÕES - FORMULÁRIO
+========================= */
+
 .gerente-promocoes-form {
-  display: flex;
-  flex-direction: column;
-  gap: 14px;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 18px 16px;
+  margin-top: 18px;
 }
 
-.gerente-promocoes-row {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 14px;
+.gerente-promocoes-col-full {
+  grid-column: 1 / -1;
+}
+
+.gerente-promocoes-form .field {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.gerente-promocoes-form label {
+  color: var(--color-text, #374151);
+  font-weight: 600;
+  font-size: 0.98rem;
+}
+
+.gerente-promocoes-form .pdv-search-input,
+.gerente-promocoes-form .pdv-select {
+  min-height: 48px;
+  border-radius: 12px;
 }
 
 .gerente-promocoes-preview {
   display: flex;
-  justify-content: space-between;
   align-items: center;
-  padding: 12px 14px;
-  border-radius: 12px;
-  background: rgba(37, 99, 235, 0.08);
-  color: #1d4ed8;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 18px 20px;
+  border-radius: 16px;
+  background: linear-gradient(
+    135deg,
+    var(--color-primary-soft, #dbeafe),
+    #eef4ff
+  );
+  border: 1px solid rgba(37, 99, 235, 0.12);
+}
+
+.gerente-promocoes-preview-label {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.gerente-promocoes-preview-label span {
+  color: var(--color-primary-dark, #1d4ed8);
   font-weight: 600;
+  font-size: 1rem;
+}
+
+.gerente-promocoes-preview strong {
+  color: var(--color-primary-dark, #1d4ed8);
+  font-size: 1.9rem;
+  line-height: 1;
+  font-weight: 800;
+  white-space: nowrap;
 }
 
 .gerente-promocoes-actions {
   display: flex;
+  align-items: center;
   justify-content: flex-start;
+  margin-top: 4px;
 }
 
-.status-neutral {
-  background: #e5e7eb;
-  color: #374151;
+.gerente-promocoes-actions .btn-primary {
+  min-width: 190px;
 }
+
+#promoFeedback {
+  min-height: 22px;
+  margin-top: -4px;
+}
+
+/* =========================
+   PROMOÇÕES - FILTROS
+========================= */
+
+.promo-filtros {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin: 16px 0 18px;
+  padding: 6px;
+  background: var(--color-card-soft, #f9fafb);
+  border: 1px solid var(--color-border, #e5e7eb);
+  border-radius: 14px;
+  width: fit-content;
+}
+
+.promo-filtro-btn {
+  appearance: none;
+  border: 0;
+  background: transparent;
+  color: var(--color-text, #374151);
+  font: inherit;
+  font-weight: 700;
+  font-size: 0.96rem;
+  line-height: 1;
+  padding: 11px 16px;
+  border-radius: 10px;
+  cursor: pointer;
+  transition:
+    background-color 0.2s ease,
+    color 0.2s ease,
+    box-shadow 0.2s ease,
+    transform 0.15s ease;
+}
+
+.promo-filtro-btn:hover {
+  background: var(--color-primary-soft, #dbeafe);
+  color: var(--color-primary-dark, #1d4ed8);
+}
+
+.promo-filtro-btn.active {
+  background: var(--color-primary, #2563eb);
+  color: #fff;
+  box-shadow: 0 6px 14px rgba(37, 99, 235, 0.18);
+}
+
+.promo-filtro-btn:focus-visible {
+  outline: 2px solid var(--color-primary, #2563eb);
+  outline-offset: 2px;
+}
+
+/* =========================
+   PROMOÇÕES - TABELA
+========================= */
+
+#promoTabela td {
+  vertical-align: top;
+}
+
+#promoTabela td strong {
+  display: inline-block;
+  margin-bottom: 4px;
+  color: var(--color-title, #111827);
+}
+
+#promoTabela td span {
+  color: var(--color-text-soft, #6b7280);
+  font-size: 0.92rem;
+  line-height: 1.45;
+}
+
+#promoTabela .text-muted {
+  color: var(--color-text-soft, #6b7280);
+  font-size: 0.88rem;
+  word-break: break-word;
+}
+
+/* =========================
+   RESPONSIVO
+========================= */
 
 @media (max-width: 900px) {
-  .gerente-promocoes-row {
+  .gerente-promocoes-form {
     grid-template-columns: 1fr;
+  }
+
+  .gerente-promocoes-preview {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .gerente-promocoes-preview strong {
+    font-size: 1.6rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .promo-filtros {
+    width: 100%;
+  }
+
+  .promo-filtro-btn {
+    flex: 1 1 calc(50% - 10px);
+    text-align: center;
   }
 }
 

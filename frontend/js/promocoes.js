@@ -1,6 +1,9 @@
 (function () {
   let variacoesPromocao = [];
 
+  let promocoesCache = [];
+  let filtroStatusAtual = "ATIVA";
+
   function formatarMoeda(valor) {
     return Number(valor || 0).toLocaleString("pt-BR", {
       style: "currency",
@@ -119,35 +122,46 @@
     if (!tbody || !statusEl) return;
 
     const promocoes = Array.isArray(lista) ? lista : [];
-    statusEl.textContent = `${promocoes.length} registro(s)`;
 
-    if (!promocoes.length) {
+    const listaFiltrada =
+      filtroStatusAtual === "TODAS"
+        ? promocoes
+        : promocoes.filter(
+            (item) => obterStatusPromocao(item) === filtroStatusAtual,
+          );
+
+    statusEl.textContent = `${listaFiltrada.length} registro(s)`;
+
+    if (!listaFiltrada.length) {
       tbody.innerHTML = `
-        <tr>
-          <td colspan="6" class="empty-state">Nenhuma promoção cadastrada.</td>
-        </tr>
-      `;
+      <tr>
+        <td colspan="6" class="empty-state">
+          Nenhuma promoção encontrada para o filtro selecionado.
+        </td>
+      </tr>
+    `;
       return;
     }
 
-    tbody.innerHTML = promocoes
+    tbody.innerHTML = listaFiltrada
       .map(
         (item) => `
-          <tr>
-            <td>
-              <strong>${item.produto || "Produto"}</strong><br />
-              <span>${item.cor || "—"} / ${item.tamanho || "—"} • ${item.sku || "—"}</span>
-            </td>
-            <td>${item.nome_campanha || "—"}</td>
-            <td>${Number(item.percentual_desconto || 0)}%</td>
-            <td>${formatarMoeda(item.preco_promocional || 0)}</td>
-            <td>
-              ${formatarDataHora(item.data_inicio)}<br />
-              ${formatarDataHora(item.data_fim)}
-            </td>
-            <td>${montarStatusHtml(obterStatusPromocao(item))}</td>
-          </tr>
-        `,
+        <tr>
+          <td>
+            <strong>${item.produto || "Produto"}</strong><br />
+            <span>${item.cor || "—"} / ${item.tamanho || "—"}</span><br />
+            <span class="text-muted">${item.sku || "—"}</span>
+          </td>
+          <td>${item.nome_campanha || "—"}</td>
+          <td>${Number(item.percentual_desconto || 0)}%</td>
+          <td>${formatarMoeda(item.preco_promocional || 0)}</td>
+          <td>
+            <strong>Início:</strong> ${formatarDataHora(item.data_inicio)}<br />
+            <strong>Fim:</strong> ${formatarDataHora(item.data_fim)}
+          </td>
+          <td>${montarStatusHtml(obterStatusPromocao(item))}</td>
+        </tr>
+      `,
       )
       .join("");
   }
@@ -155,7 +169,8 @@
   async function carregarPromocoes() {
     try {
       const data = await apiGet("/promocoes");
-      renderizarPromocoes(data?.promocoes || []);
+      promocoesCache = Array.isArray(data?.promocoes) ? data.promocoes : [];
+      renderizarPromocoes(promocoesCache);
     } catch (error) {
       console.error("[PROMOCOES] erro ao carregar promoções:", error);
     }
@@ -210,6 +225,22 @@
     }
   }
 
+  function bindFiltrosPromocao() {
+    const botoes = document.querySelectorAll(".promo-filtro-btn");
+    if (!botoes.length) return;
+
+    botoes.forEach((botao) => {
+      botao.addEventListener("click", function () {
+        filtroStatusAtual = this.dataset.status || "TODAS";
+
+        botoes.forEach((btn) => btn.classList.remove("active"));
+        this.classList.add("active");
+
+        renderizarPromocoes(promocoesCache);
+      });
+    });
+  }
+
   function bindEventosPromocao() {
     const variacaoEl = document.getElementById("promoVariacao");
     const descontoEl = document.getElementById("promoDesconto");
@@ -232,6 +263,7 @@
     await carregarVariacoesPromocao();
     await carregarPromocoes();
     bindEventosPromocao();
+    bindFiltrosPromocao();
     atualizarPreviewPromocao();
   };
 })();

@@ -13,7 +13,7 @@
     </div>
 
     <div class="gerente-promocoes-form">
-      <div class="field">
+      <div class="field gerente-promocoes-col-full">
         <label for="promoVariacao">
           <strong>Produto / variação</strong>
         </label>
@@ -22,7 +22,7 @@
         </select>
       </div>
 
-      <div class="field">
+      <div class="field gerente-promocoes-col-full">
         <label for="promoCampanha">
           <strong>Campanha / motivo</strong>
         </label>
@@ -34,72 +34,73 @@
         />
       </div>
 
-      <div class="gerente-promocoes-row">
-        <div class="field">
-          <label for="promoDesconto">
-            <strong>Desconto (%)</strong>
-          </label>
-          <input
-            type="number"
-            id="promoDesconto"
-            class="pdv-search-input"
-            min="1"
-            max="15"
-            step="1"
-            placeholder="Até 15"
-          />
-        </div>
-
-        <div class="field">
-          <label for="promoPrecoBase">
-            <strong>Preço base</strong>
-          </label>
-          <input
-            type="text"
-            id="promoPrecoBase"
-            class="pdv-search-input"
-            disabled
-            placeholder="R$ 0,00"
-          />
-        </div>
+      <div class="field">
+        <label for="promoDesconto">
+          <strong>Desconto (%)</strong>
+        </label>
+        <input
+          type="number"
+          id="promoDesconto"
+          class="pdv-search-input"
+          min="1"
+          max="15"
+          step="1"
+          placeholder="Até 15"
+        />
       </div>
 
-      <div class="gerente-promocoes-row">
-        <div class="field">
-          <label for="promoDataInicio">
-            <strong>Data/hora início</strong>
-          </label>
-          <input
-            type="datetime-local"
-            id="promoDataInicio"
-            class="pdv-search-input"
-          />
-        </div>
-
-        <div class="field">
-          <label for="promoDataFim">
-            <strong>Data/hora fim</strong>
-          </label>
-          <input
-            type="datetime-local"
-            id="promoDataFim"
-            class="pdv-search-input"
-          />
-        </div>
+      <div class="field">
+        <label for="promoPrecoBase">
+          <strong>Preço base</strong>
+        </label>
+        <input
+          type="text"
+          id="promoPrecoBase"
+          class="pdv-search-input"
+          disabled
+          placeholder="R$ 0,00"
+        />
       </div>
 
-      <div class="gerente-promocoes-preview">
-        <span>Preço promocional previsto</span>
+      <div class="field">
+        <label for="promoDataInicio">
+          <strong>Data/hora início</strong>
+        </label>
+        <input
+          type="datetime-local"
+          id="promoDataInicio"
+          class="pdv-search-input"
+        />
+      </div>
+
+      <div class="field">
+        <label for="promoDataFim">
+          <strong>Data/hora fim</strong>
+        </label>
+        <input
+          type="datetime-local"
+          id="promoDataFim"
+          class="pdv-search-input"
+        />
+      </div>
+
+      <div class="gerente-promocoes-preview gerente-promocoes-col-full">
+        <div class="gerente-promocoes-preview-label">
+          <span>Preço promocional previsto</span>
+        </div>
         <strong id="promoPrecoPrevisto">R$ 0,00</strong>
       </div>
 
-      <div class="gerente-promocoes-actions">
+      <div class="gerente-promocoes-actions gerente-promocoes-col-full">
         <button type="button" class="btn-primary" id="btnSalvarPromocao">
           Salvar promoção
         </button>
       </div>
 
-      <div id="promoFeedback" class="pdv-feedback"></div>
+      <div
+        id="promoFeedback"
+        class="pdv-feedback gerente-promocoes-col-full"
+      ></div>
     </div>
   </section>
 
@@ -109,6 +110,21 @@
       <span class="status-text" id="promoStatusLista">
         0 registro(s)
       </span>
+    </div>
+
+    <div class="promo-filtros">
+      <button type="button" class="promo-filtro-btn active" data-status="ATIVA">
+        Ativas
+      </button>
+      <button type="button" class="promo-filtro-btn" data-status="AGENDADA">
+        Agendadas
+      </button>
+      <button type="button" class="promo-filtro-btn" data-status="ENCERRADA">
+        Encerradas
+      </button>
+      <button type="button" class="promo-filtro-btn" data-status="TODAS">
+        Todas
+      </button>
     </div>
 
     <div class="table-wrapper">
@@ -133,4 +149,4 @@
       </table>
     </div>
   </section>
-</section>;
+</section>
