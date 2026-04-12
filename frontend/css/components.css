@@ -2935,18 +2935,64 @@
 }
 
 /* =========================
-   PROMOÇÕES - FILTROS
+   PROMOÇÕES - POLIMENTO FINAL
 ========================= */
 
+/* card de promoções com respiro melhor */
+.page-section .card {
+  overflow: hidden;
+}
+
+.gerente-promocoes-form {
+  gap: 20px 18px;
+}
+
+.gerente-promocoes-actions {
+  margin-top: 8px;
+}
+
+.gerente-promocoes-actions .btn-primary {
+  min-width: 220px;
+  min-height: 48px;
+  padding: 0 22px;
+  font-weight: 700;
+  border-radius: 12px;
+}
+
+#promoFeedback {
+  min-height: 24px;
+  margin-top: -2px;
+  font-size: 0.95rem;
+}
+
+/* preview com mais presença */
+.gerente-promocoes-preview {
+  padding: 20px 22px;
+  border-radius: 18px;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.5);
+}
+
+.gerente-promocoes-preview-label span {
+  font-size: 1.02rem;
+}
+
+.gerente-promocoes-preview strong {
+  font-size: 2.05rem;
+  letter-spacing: -0.02em;
+}
+
+/* =========================
+   FILTROS - REFINO
+========================= */
 .promo-filtros {
   display: flex;
   flex-wrap: wrap;
   gap: 10px;
-  margin: 16px 0 18px;
+  margin: 14px 0 20px;
   padding: 6px;
   background: var(--color-card-soft, #f9fafb);
   border: 1px solid var(--color-border, #e5e7eb);
-  border-radius: 14px;
+  border-radius: 16px;
   width: fit-content;
 }
 
@@ -2959,6 +3005,7 @@
   font-weight: 700;
   font-size: 0.96rem;
   line-height: 1;
+  min-width: 112px;
   padding: 11px 16px;
   border-radius: 10px;
   cursor: pointer;
@@ -2978,6 +3025,7 @@
   background: var(--color-primary, #2563eb);
   color: #fff;
   box-shadow: 0 6px 14px rgba(37, 99, 235, 0.18);
+  transform: translateY(-1px);
 }
 
 .promo-filtro-btn:focus-visible {
@@ -2986,29 +3034,111 @@
 }
 
 /* =========================
-   PROMOÇÕES - TABELA
+   TABELA - CABEÇALHO
 ========================= */
 
-#promoTabela td {
-  vertical-align: top;
-}
-
-#promoTabela td strong {
-  display: inline-block;
-  margin-bottom: 4px;
-  color: var(--color-title, #111827);
-}
-
-#promoTabela td span {
-  color: var(--color-text-soft, #6b7280);
+.data-table thead th {
+  background: #f3f4f6;
+  color: #64748b;
   font-size: 0.92rem;
-  line-height: 1.45;
+  font-weight: 700;
+  letter-spacing: 0.01em;
+  border-bottom: 1px solid #e5e7eb;
+  padding-top: 16px;
+  padding-bottom: 16px;
 }
 
-#promoTabela .text-muted {
-  color: var(--color-text-soft, #6b7280);
+/* linhas mais elegantes */
+.data-table tbody td {
+  padding-top: 16px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+/* =========================
+   COLUNA PRODUTO
+========================= */
+
+.promo-produto-nome {
+  display: inline-block;
+  margin-bottom: 6px;
+  color: #111827;
+  font-size: 1rem;
+  font-weight: 700;
+  line-height: 1.35;
+}
+
+.promo-produto-variacao {
+  display: block;
+  color: #4b5563;
+  font-size: 0.95rem;
+  line-height: 1.45;
+  margin-bottom: 4px;
+}
+
+.promo-produto-sku {
+  display: block;
+  color: #94a3b8;
   font-size: 0.88rem;
+  line-height: 1.4;
   word-break: break-word;
+}
+
+/* =========================
+   COLUNA PERÍODO
+========================= */
+
+.promo-periodo {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 210px;
+}
+
+.promo-periodo-item {
+  color: #111827;
+  font-size: 0.95rem;
+  line-height: 1.4;
+}
+
+.promo-periodo-item strong {
+  color: #111827;
+  font-weight: 700;
+  margin-right: 4px;
+}
+
+/* valores numéricos mais limpos */
+.promo-valor,
+.promo-desconto {
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+}
+
+/* status melhor alinhado */
+.data-table td .status {
+  white-space: nowrap;
+}
+
+/* =========================
+   CABEÇALHO DA LISTAGEM
+========================= */
+
+.promo-lista-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.promo-lista-header .status-text {
+  padding: 6px 10px;
+  border-radius: 999px;
+  background: #f8fafc;
+  border: 1px solid #e5e7eb;
+  color: #64748b;
+  font-size: 0.9rem;
+  line-height: 1;
 }
 
 /* =========================
@@ -3016,28 +3146,13 @@
 ========================= */
 
 @media (max-width: 900px) {
-  .gerente-promocoes-form {
-    grid-template-columns: 1fr;
-  }
-
-  .gerente-promocoes-preview {
-    align-items: flex-start;
-    flex-direction: column;
-  }
-
-  .gerente-promocoes-preview strong {
-    font-size: 1.6rem;
-  }
-}
-
-@media (max-width: 768px) {
-  .promo-filtros {
+  .gerente-promocoes-actions .btn-primary {
     width: 100%;
+    min-width: 0;
   }
 
-  .promo-filtro-btn {
-    flex: 1 1 calc(50% - 10px);
-    text-align: center;
+  .promo-periodo {
+    min-width: 0;
   }
 }
 

@@ -146,22 +146,28 @@
     tbody.innerHTML = listaFiltrada
       .map(
         (item) => `
-        <tr>
-          <td>
-            <strong>${item.produto || "Produto"}</strong><br />
-            <span>${item.cor || "—"} / ${item.tamanho || "—"}</span><br />
-            <span class="text-muted">${item.sku || "—"}</span>
-          </td>
-          <td>${item.nome_campanha || "—"}</td>
-          <td>${Number(item.percentual_desconto || 0)}%</td>
-          <td>${formatarMoeda(item.preco_promocional || 0)}</td>
-          <td>
-            <strong>Início:</strong> ${formatarDataHora(item.data_inicio)}<br />
-            <strong>Fim:</strong> ${formatarDataHora(item.data_fim)}
-          </td>
-          <td>${montarStatusHtml(obterStatusPromocao(item))}</td>
-        </tr>
-      `,
+      <tr>
+        <td>
+          <span class="promo-produto-nome">${item.produto || "Produto"}</span>
+          <span class="promo-produto-variacao">${item.cor || "—"} / ${item.tamanho || "—"}</span>
+          <span class="promo-produto-sku">${item.sku || "—"}</span>
+        </td>
+        <td>${item.nome_campanha || "—"}</td>
+        <td class="promo-desconto">${Number(item.percentual_desconto || 0)}%</td>
+        <td class="promo-valor">${formatarMoeda(item.preco_promocional || 0)}</td>
+        <td>
+          <div class="promo-periodo">
+            <span class="promo-periodo-item">
+              <strong>Início:</strong> ${formatarDataHora(item.data_inicio)}
+            </span>
+            <span class="promo-periodo-item">
+              <strong>Fim:</strong> ${formatarDataHora(item.data_fim)}
+            </span>
+          </div>
+        </td>
+        <td>${montarStatusHtml(obterStatusPromocao(item))}</td>
+      </tr>
+    `,
       )
       .join("");
   }
