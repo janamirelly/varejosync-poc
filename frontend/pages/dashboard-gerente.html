@@ -39,13 +39,31 @@
   </div>
 
   <div class="grid-dashboard-gerente">
-    <article class="card card-dashboard-gerente">
+    <article class="card card-dashboard-gerente card-ticket-gerente">
       <div class="card-header-gerente">
         <h2>Ticket médio</h2>
       </div>
-      <div class="card-body-gerente">
+
+      <div class="card-body-gerente card-body-ticket-gerente">
         <div class="metric-highlight" id="ticketMedioGerente">—</div>
-        <p class="card-note">Média por pedido do dia.</p>
+
+        <div class="ticket-trend" id="ticketTrendGerente">Sem comparação</div>
+
+        <p class="card-note" id="ticketBaseGerente">
+          Base: — pedidos concluídos
+        </p>
+
+        <div class="ticket-insights">
+          <div class="ticket-insight-item">
+            <span class="ticket-insight-label">Maior pedido</span>
+            <strong id="ticketMaiorPedidoGerente">—</strong>
+          </div>
+
+          <div class="ticket-insight-item">
+            <span class="ticket-insight-label">Menor pedido</span>
+            <strong id="ticketMenorPedidoGerente">—</strong>
+          </div>
+        </div>
       </div>
     </article>
 

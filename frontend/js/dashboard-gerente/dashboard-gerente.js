@@ -31,6 +31,54 @@
     el.textContent = valor;
   }
 
+  function setHtml(id, valor) {
+    const el = document.getElementById(id);
+    if (!el) return;
+    el.innerHTML = valor;
+  }
+
+  function calcularVariacaoPercentual(atual, anterior) {
+    const hoje = Number(atual || 0);
+    const ontem = Number(anterior || 0);
+
+    if (!ontem || ontem <= 0) return null;
+
+    return Number((((hoje - ontem) / ontem) * 100).toFixed(1));
+  }
+
+  function renderizarTicketTrend(ticketHoje, ticketOntem) {
+    const variacao = calcularVariacaoPercentual(ticketHoje, ticketOntem);
+
+    if (variacao === null) {
+      setHtml(
+        "ticketTrendGerente",
+        `<span class="ticket-trend-neutral">Sem base de comparação com ontem</span>`,
+      );
+      return;
+    }
+
+    if (variacao > 0) {
+      setHtml(
+        "ticketTrendGerente",
+        `<span class="ticket-trend-positive">▲ ${formatarNumero(variacao)}% vs ontem</span>`,
+      );
+      return;
+    }
+
+    if (variacao < 0) {
+      setHtml(
+        "ticketTrendGerente",
+        `<span class="ticket-trend-negative">▼ ${formatarNumero(Math.abs(variacao))}% vs ontem</span>`,
+      );
+      return;
+    }
+
+    setHtml(
+      "ticketTrendGerente",
+      `<span class="ticket-trend-neutral">Sem variação vs ontem</span>`,
+    );
+  }
+
   function renderizarLista(id, itens, renderItem, emptyText) {
     const el = document.getElementById(id);
     if (!el) return;
@@ -48,7 +96,25 @@
     setText("kpiItensCriticos", formatarNumero(cards.itens_criticos));
     setText("kpiPedidos7Dias", formatarNumero(cards.pedidos_dia));
     setText("kpiFaturamento7Dias", formatarMoeda(cards.faturamento_dia));
+
     setText("ticketMedioGerente", formatarMoeda(cards.ticket_medio_dia));
+    renderizarTicketTrend(cards.ticket_medio_dia, cards.ticket_medio_ontem);
+
+    setText(
+      "ticketBaseGerente",
+      `Base: ${formatarNumero(cards.pedidos_dia)} pedido(s) concluído(s) no dia`,
+    );
+
+    setText(
+      "ticketMaiorPedidoGerente",
+      formatarMoeda(cards.maior_pedido_dia || 0),
+    );
+
+    setText(
+      "ticketMenorPedidoGerente",
+      formatarMoeda(cards.menor_pedido_dia || 0),
+    );
+
     setText(
       "gerenteAtualizacao",
       `Última sincronização: ${formatarDataHora(cards.ultima_sincronizacao)}`,

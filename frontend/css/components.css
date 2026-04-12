@@ -3262,3 +3262,60 @@
     font-size: 2.4rem;
   }
 }
+
+/* =========================
+   DASHBOARD GERENTE - TICKET MÉDIO
+========================= */
+
+.card-ticket-gerente .card-body-ticket-gerente {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  min-height: 100%;
+}
+
+.ticket-trend {
+  min-height: 24px;
+  font-size: 0.98rem;
+  font-weight: 700;
+}
+
+.ticket-trend-positive {
+  color: var(--color-success, #16a34a);
+}
+
+.ticket-trend-negative {
+  color: #dc2626;
+}
+
+.ticket-trend-neutral {
+  color: #64748b;
+}
+
+.ticket-insights {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 12px;
+  margin-top: 6px;
+}
+
+.ticket-insight-item {
+  padding: 14px 16px;
+  border-radius: 14px;
+  background: var(--color-card-soft, #f8fafc);
+  border: 1px solid var(--color-border, #e5e7eb);
+}
+
+.ticket-insight-label {
+  display: block;
+  margin-bottom: 6px;
+  color: #64748b;
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+.ticket-insight-item strong {
+  color: #111827;
+  font-size: 1.05rem;
+  font-weight: 800;
+}
