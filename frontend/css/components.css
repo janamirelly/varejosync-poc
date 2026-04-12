@@ -2276,35 +2276,100 @@
   line-height: 1.5;
 }
 
+.pdv-modal-card-finalizar {
+  width: min(720px, 92vw);
+  max-height: 88vh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.pdv-modal-card-finalizar h3,
+.pdv-modal-card-finalizar > p {
+  flex-shrink: 0;
+}
+
+.pdv-modal-scroll-area {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
+  margin: 14px 0 18px;
+  padding-right: 8px;
+}
+
 .pdv-modal-lista {
   display: flex;
   flex-direction: column;
   gap: 10px;
-  margin: 0 0 18px;
-  padding: 16px 18px;
-  border: 1px solid var(--color-border-soft);
-  border-radius: 14px;
-  background: var(--color-card-soft);
-  text-align: left;
 }
 
-.pdv-modal-lista div {
-  font-size: 14px;
-  color: var(--color-text);
-  line-height: 1.4;
+.pdv-modal-resumo-fixo {
+  flex-shrink: 0;
+  border-top: 1px solid var(--color-border-soft);
+  padding-top: 18px;
+  background: var(--color-card, #ffffff);
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
 }
 
 .pdv-modal-total {
-  margin: 0 0 22px;
-  padding-top: 14px;
-  border-top: 1px solid var(--color-border-soft);
-  font-size: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  font-size: 1.05rem;
   font-weight: 700;
+  margin-bottom: 14px;
+  padding-top: 0;
+  border-top: none;
+  color: var(--color-text);
+}
+
+.pdv-modal-item-row {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 14px 16px;
+  border: 1px solid var(--color-border-soft);
+  border-radius: 14px;
+  background: var(--color-card-soft);
+}
+
+.pdv-modal-item-main {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+  text-align: left;
+}
+
+.pdv-modal-item-main strong {
+  color: var(--color-text);
+}
+
+.pdv-modal-item-main span,
+.pdv-modal-item-main small {
+  color: var(--color-text-soft);
+  line-height: 1.4;
+}
+
+.pdv-modal-item-values {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  text-align: right;
+  white-space: nowrap;
+}
+
+.pdv-modal-item-values strong {
   color: var(--color-text);
 }
 
 .pdv-modal-total strong {
-  color: var(--color-primary-dark);
+  font-size: 20px;
+  color: var(--color-primary);
 }
 
 .produto-modal-actions {
@@ -2400,40 +2465,40 @@
 /* PDV - PAGAMENTO NO MODAL FINALIZAR */
 
 .pdv-pagamento-box {
-  margin-top: 18px;
-  padding-top: 18px;
-  border-top: 1px solid var(--color-border-soft);
-  display: flex;
-  flex-direction: column;
-  gap: 14px;
+  padding: 16px 18px;
+  border: 1px solid var(--color-border, #e5e7eb);
+  border-radius: 16px;
+  background: var(--color-card-soft, #f9fafb);
   text-align: left;
+}
+
+.pdv-pagamento-box > label,
+.pdv-pagamento-box > div > label {
+  display: inline-block;
+  margin-bottom: 8px;
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--color-text);
+  line-height: 1.3;
 }
 
 .pdv-pagamento-linha,
 .pdv-parcelas-linha {
-  display: grid;
-  grid-template-columns: 160px 1fr;
-  align-items: center;
-  gap: 12px;
-}
-
-.pdv-pagamento-linha label,
-.pdv-parcelas-linha label {
-  margin: 0;
-  font-size: 14px;
-  font-weight: 700;
-  color: var(--color-text);
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 8px;
 }
 
 .pdv-select {
   width: 100%;
-  height: 46px;
+  min-height: 48px;
   border: 1px solid var(--color-border);
   border-radius: 14px;
   background: var(--color-card);
   color: var(--color-text);
   padding: 0 14px;
-  font-size: 14px;
+  font-size: 15px;
   outline: none;
   box-sizing: border-box;
 }
@@ -2445,32 +2510,17 @@
 }
 
 .pdv-resumo-pagamento {
-  margin-top: 4px;
   padding: 12px 14px;
   border-radius: 12px;
-  background: var(--color-primary-soft);
-  color: var(--color-primary-dark);
-  font-size: 14px;
+  background: var(--color-primary-soft, #dbeafe);
+  color: var(--color-primary-dark, #1d4ed8);
   font-weight: 700;
   line-height: 1.4;
   text-align: center;
 }
 
-.pdv-modal-total {
-  margin-top: 18px;
-  font-size: 18px;
-  font-weight: 700;
-  color: var(--color-text);
-  text-align: center;
-}
-
-.pdv-modal-total strong {
-  font-size: 20px;
-  color: var(--color-primary);
-}
-
 .pdv-modal-card .produto-modal-actions {
-  margin-top: 22px;
+  margin-top: 6px;
   display: flex;
   gap: 14px;
   justify-content: center;
@@ -2488,6 +2538,25 @@
   .pdv-parcelas-linha {
     grid-template-columns: 1fr;
     gap: 8px;
+  }
+
+  .pdv-modal-card-finalizar {
+    width: min(96vw, 96vw);
+    max-height: 92vh;
+  }
+
+  .pdv-modal-item-row {
+    flex-direction: column;
+  }
+
+  .pdv-modal-item-values {
+    text-align: left;
+    white-space: normal;
+  }
+
+  .pdv-modal-total {
+    flex-direction: column;
+    align-items: flex-start;
   }
 
   .pdv-modal-card .produto-modal-actions {

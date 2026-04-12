@@ -152,47 +152,51 @@
 
 <!-- MODAL FINALIZAR -->
 <div class="mov-modal hidden" id="pdvModalFinalizar">
-  <div class="mov-modal-card pdv-modal-card">
+  <div class="mov-modal-card pdv-modal-card pdv-modal-card-finalizar">
     <h3>Finalizar venda</h3>
     <p>Deseja finalizar esta venda?</p>
 
-    <div class="pdv-modal-lista" id="pdvModalListaItens"></div>
-
-    <div class="pdv-modal-total">
-      Total da venda: <strong id="pdvModalTotal">R$ 0,00</strong>
+    <div class="pdv-modal-scroll-area">
+      <div class="pdv-modal-lista" id="pdvModalListaItens"></div>
     </div>
 
-    <div class="pdv-resumo-pagamento" id="pdvResumoPagamento"></div>
-
-    <div class="pdv-pagamento-box">
-      <label for="pdvFormaPagamento"><strong>Forma de pagamento</strong></label>
-      <select id="pdvFormaPagamento" class="pdv-select">
-        <option value="PIX">PIX</option>
-        <option value="DEBITO">Cartão de débito</option>
-        <option value="CREDITO">Cartão de crédito</option>
-        <option value="DINHEIRO">Dinheiro</option>
-      </select>
-
-      <div id="pdvParcelasWrap" class="hidden" style="margin-top: 12px">
-        <label for="pdvParcelas"><strong>Parcelas</strong></label>
-        <select id="pdvParcelas" class="pdv-select">
-          <option value="1">1x</option>
-          <option value="2">2x</option>
-          <option value="3">3x</option>
-          <option value="4">4x</option>
-          <option value="5">5x</option>
-          <option value="6">6x</option>
-        </select>
+    <div class="pdv-modal-resumo-fixo">
+      <div class="pdv-modal-total">
+        Total da venda: <strong id="pdvModalTotal">R$ 0,00</strong>
       </div>
-    </div>
 
-    <div class="produto-modal-actions">
-      <button type="button" class="btn-cancel" id="btnFecharModalFinalizar">
-        Cancelar
-      </button>
-      <button type="button" class="btn-primary" id="btnConfirmarFinalizarVenda">
-        Finalizar
-      </button>
+      <div class="pdv-resumo-pagamento" id="pdvResumoPagamento"></div>
+
+      <div class="pdv-pagamento-box">
+        <label for="pdvFormaPagamento"><strong>Forma de pagamento</strong></label>
+        <select id="pdvFormaPagamento" class="pdv-select">
+          <option value="PIX">PIX</option>
+          <option value="DEBITO">Cartão de débito</option>
+          <option value="CREDITO">Cartão de crédito</option>
+          <option value="DINHEIRO">Dinheiro</option>
+        </select>
+
+        <div id="pdvParcelasWrap" class="hidden" style="margin-top: 12px">
+          <label for="pdvParcelas"><strong>Parcelas</strong></label>
+          <select id="pdvParcelas" class="pdv-select">
+            <option value="1">1x</option>
+            <option value="2">2x</option>
+            <option value="3">3x</option>
+            <option value="4">4x</option>
+            <option value="5">5x</option>
+            <option value="6">6x</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="produto-modal-actions">
+        <button type="button" class="btn-cancel" id="btnFecharModalFinalizar">
+          Cancelar
+        </button>
+        <button type="button" class="btn-primary" id="btnConfirmarFinalizarVenda">
+          Finalizar
+        </button>
+      </div>
     </div>
   </div>
 </div>
